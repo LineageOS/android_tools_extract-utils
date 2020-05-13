@@ -922,6 +922,11 @@ soong_namespace {
 
 EOF
 
+    cat << EOF >> "$BOARDMK"
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+
+EOF
+
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
     cat << EOF >> "$PRODUCTMK"
 PRODUCT_SOONG_NAMESPACES += \\
