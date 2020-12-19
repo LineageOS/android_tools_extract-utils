@@ -21,8 +21,6 @@ set -e
 DEVICE=*** FILL IN DEVICE ****
 VENDOR=*** FILL IN VENDOR ****
 
-INITIAL_COPYRIGHT_YEAR=**** FILL IN COPYRIGHT YEAR ****
-
 # Load extract_utils and do some sanity checks
 MY_DIR="${BASH_SOURCE%/*}"
 if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
@@ -39,7 +37,7 @@ fi
 # Initialize the helper
 setup_vendor "$DEVICE" "$VENDOR" "$ANDROID_ROOT"
 
-# Copyright headers and guards
+# Warning headers and guards
 write_headers
 
 write_makefiles "$MY_DIR"/proprietary-files.txt
