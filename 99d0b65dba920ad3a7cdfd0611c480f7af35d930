@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b9268e0_5d00c57c",
+        "filename": "templates/multi-device/common/extract-files.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2020-12-28T10:08:16Z",
+      "side": 1,
+      "message": "Indentation is wrong.",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 10
+      },
+      "revId": "99d0b65dba920ad3a7cdfd0611c480f7af35d930",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76942a77_23dc3e0f",
+        "filename": "templates/multi-device/device/extract-files.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2020-12-28T10:08:16Z",
+      "side": 1,
+      "message": "Indentation is wrong.",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 10
+      },
+      "revId": "99d0b65dba920ad3a7cdfd0611c480f7af35d930",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9843eefe_25806abc",
+        "filename": "templates/single-device/extract-files.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2020-12-28T10:08:16Z",
+      "side": 1,
+      "message": "Indentation is wrong.",
+      "range": {
+        "startLine": 64,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 10
+      },
+      "revId": "99d0b65dba920ad3a7cdfd0611c480f7af35d930",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
