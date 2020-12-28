@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0fd4a75d_ba8ad1d6",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1533,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2020-12-28T02:54:17Z",
+      "side": 0,
+      "message": "This probably needs some work so you can still extract from sbin to different location",
+      "range": {
+        "startLine": 1523,
+        "startChar": 0,
+        "endLine": 1533,
+        "endChar": 10
+      },
+      "revId": "35bff57ede1c548ef11c6c8acac55a5aa2c5e5b8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
