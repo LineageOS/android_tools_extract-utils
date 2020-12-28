@@ -494,18 +494,7 @@ function write_blueprint_packages() {
             fi
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            if [ "$ARGS" = "rootfs" ]; then
-                SRC="$SRC/rootfs"
-                if [ "$EXTRA" = "sbin" ]; then
-                    SRC="$SRC/sbin"
-                    printf '\tdist {\n'
-                    printf '\t\tdest: "%s",\n' "root/sbin"
-                    printf '\t},'
-                fi
-            else
-                SRC="$SRC/bin"
-            fi
-            printf '\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
+            printf '\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
             if [ "$EXTENSION" != "sh" ]; then
                 printf '\tcheck_elf_files: false,\n'
                 printf '\tstrip: {\n'
@@ -547,154 +536,6 @@ function write_blueprint_packages() {
             printf '\tdevice_specific: true,\n'
         fi
         printf '}\n\n'
-    done
-}
-
-#
-# write_makefile_packages:
-#
-# $1: The LOCAL_MODULE_CLASS for the given module list
-# $2: /odm, /product, /system_ext, or /vendor partition
-# $3: type-specific extra flags
-# $4: Name of the array holding the target list
-#
-# Internal function which writes out the BUILD_PREBUILT stanzas
-# for all modules in the list. This is called by write_product_packages
-# after the modules are categorized.
-#
-function write_makefile_packages() {
-
-    local CLASS="$1"
-    local PARTITION="$2"
-    local EXTRA="$3"
-
-    # Yes, this is a horrible hack - we create a new array using indirection
-    local ARR_NAME="$4[@]"
-    local FILELIST=("${!ARR_NAME}")
-
-    local FILE=
-    local ARGS=
-    local BASENAME=
-    local EXTENSION=
-    local PKGNAME=
-    local SRC=
-
-    for P in "${FILELIST[@]}"; do
-        FILE=$(target_file "$P")
-        ARGS=$(target_args "$P")
-
-        BASENAME=$(basename "$FILE")
-        DIRNAME=$(dirname "$FILE")
-        EXTENSION=${BASENAME##*.}
-        EXTENSION="."$EXTENSION
-        if [ "$EXTENSION" = ".jar" ]; then
-                EXTENSION="\$(COMMON_JAVA_PACKAGE_SUFFIX)"
-        elif [ "$EXTENSION" = ".apk" ]; then
-                EXTENSION="\$(COMMON_ANDROID_PACKAGE_SUFFIX)"
-        fi
-        PKGNAME=${BASENAME%.*}
-
-        # Add to final package list
-        PACKAGE_LIST+=("$PKGNAME")
-
-        SRC="proprietary"
-        if [ "$PARTITION" = "system" ]; then
-            SRC+="/system"
-        elif [ "$PARTITION" = "vendor" ]; then
-            SRC+="/vendor"
-        elif [ "$PARTITION" = "product" ]; then
-            SRC+="/product"
-        elif [ "$PARTITION" = "system_ext" ]; then
-            SRC+="/system_ext"
-        elif [ "$PARTITION" = "odm" ]; then
-            SRC+="/odm"
-        fi
-
-        printf 'include $(CLEAR_VARS)\n'
-        printf 'LOCAL_MODULE := %s\n' "$PKGNAME"
-        printf 'LOCAL_MODULE_OWNER := %s\n' "$VENDOR"
-        if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
-            if [ "$EXTRA" = "both" ]; then
-                printf 'LOCAL_SRC_FILES_64 := %s/lib64/%s\n' "$SRC" "$FILE"
-                printf 'LOCAL_SRC_FILES_32 := %s/lib/%s\n' "$SRC" "$FILE"
-                #if [ "$VENDOR_PKG" = "true" ]; then
-                #    echo "LOCAL_MODULE_PATH_64 := \$(TARGET_OUT_VENDOR_SHARED_LIBRARIES)"
-                #    echo "LOCAL_MODULE_PATH_32 := \$(2ND_TARGET_OUT_VENDOR_SHARED_LIBRARIES)"
-                #else
-                #    echo "LOCAL_MODULE_PATH_64 := \$(TARGET_OUT_SHARED_LIBRARIES)"
-                #    echo "LOCAL_MODULE_PATH_32 := \$(2ND_TARGET_OUT_SHARED_LIBRARIES)"
-                #fi
-            elif [ "$EXTRA" = "64" ]; then
-                printf 'LOCAL_SRC_FILES := %s/lib64/%s\n' "$SRC" "$FILE"
-            else
-                printf 'LOCAL_SRC_FILES := %s/lib/%s\n' "$SRC" "$FILE"
-            fi
-            if [ "$EXTRA" != "none" ]; then
-                printf 'LOCAL_MULTILIB := %s\n' "$EXTRA"
-            fi
-        elif [ "$CLASS" = "APPS" ]; then
-            if [ "$EXTRA" = "priv-app" ]; then
-                SRC="$SRC/priv-app"
-            else
-                SRC="$SRC/app"
-            fi
-            printf 'LOCAL_SRC_FILES := %s/%s\n' "$SRC" "$FILE"
-            local CERT=platform
-            if [ ! -z "$ARGS" ]; then
-                CERT="$ARGS"
-            fi
-            printf 'LOCAL_CERTIFICATE := %s\n' "$CERT"
-        elif [ "$CLASS" = "JAVA_LIBRARIES" ]; then
-            printf 'LOCAL_SRC_FILES := %s/framework/%s\n' "$SRC" "$FILE"
-            local CERT=platform
-            if [ ! -z "$ARGS" ]; then
-                CERT="$ARGS"
-            fi
-            printf 'LOCAL_CERTIFICATE := %s\n' "$CERT"
-        elif [ "$CLASS" = "ETC" ]; then
-            printf 'LOCAL_SRC_FILES := %s/etc/%s\n' "$SRC" "$FILE"
-        elif [ "$CLASS" = "EXECUTABLES" ]; then
-            if [ "$ARGS" = "rootfs" ]; then
-                SRC="$SRC/rootfs"
-                if [ "$EXTRA" = "sbin" ]; then
-                    SRC="$SRC/sbin"
-                    printf '%s\n' "LOCAL_MODULE_PATH := \$(TARGET_ROOT_OUT_SBIN)"
-                    printf '%s\n' "LOCAL_UNSTRIPPED_PATH := \$(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)"
-                fi
-            else
-                SRC="$SRC/bin"
-            fi
-            printf 'LOCAL_SRC_FILES := %s/%s\n' "$SRC" "$FILE"
-            unset EXTENSION
-        else
-            printf 'LOCAL_SRC_FILES := %s/%s\n' "$SRC" "$FILE"
-        fi
-        printf 'LOCAL_MODULE_TAGS := optional\n'
-        printf 'LOCAL_MODULE_CLASS := %s\n' "$CLASS"
-        if [ "$CLASS" = "APPS" ]; then
-            printf 'LOCAL_DEX_PREOPT := false\n'
-        fi
-        if [ ! -z "$EXTENSION" ]; then
-            printf 'LOCAL_MODULE_SUFFIX := %s\n' "$EXTENSION"
-        fi
-        if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ]; then
-            if [ "$DIRNAME" != "." ]; then
-                printf 'LOCAL_MODULE_RELATIVE_PATH := %s\n' "$DIRNAME"
-            fi
-        fi
-        if [ "$EXTRA" = "priv-app" ]; then
-            printf 'LOCAL_PRIVILEGED_MODULE := true\n'
-        fi
-        if [ "$PARTITION" = "vendor" ]; then
-            printf 'LOCAL_VENDOR_MODULE := true\n'
-        elif [ "$PARTITION" = "product" ]; then
-            printf 'LOCAL_PRODUCT_MODULE := true\n'
-        elif [ "$PARTITION" = "system_ext" ]; then
-            printf 'LOCAL_SYSTEM_EXT_MODULE := true\n'
-        elif [ "$PARTITION" = "odm" ]; then
-            printf 'LOCAL_ODM_MODULE := true\n'
-        fi
-        printf 'include $(BUILD_PREBUILT)\n\n'
     done
 }
 
@@ -958,11 +799,6 @@ function write_product_packages() {
     if [ "${#O_BIN[@]}" -gt "0" ]; then
         write_blueprint_packages "EXECUTABLES" "odm" "" "O_BIN" >> "$ANDROIDBP"
     fi
-    local SBIN=( $(prefix_match "sbin/") )
-    if [ "${#SBIN[@]}" -gt "0" ]; then
-        write_makefile_packages "EXECUTABLES" "" "sbin" "SBIN" >> "$ANDROIDMK"
-    fi
-
 
     # Actually write out the final PRODUCT_PACKAGES list
     local PACKAGE_COUNT=${#PACKAGE_LIST[@]}
@@ -1626,17 +1462,10 @@ function extract() {
             IS_PRODUCT_PACKAGE=true
         fi
 
-        if [ "${SPEC_ARGS}" = "rootfs" ]; then
-            OUTPUT_DIR="${OUTPUT_ROOT}/rootfs"
-            TMP_DIR="${OUTPUT_TMP}/rootfs"
-            SRC_FILE="/${SPEC_SRC_FILE}"
-            DST_FILE="/${SPEC_DST_FILE}"
-        else
-            OUTPUT_DIR="${OUTPUT_ROOT}"
-            TMP_DIR="${OUTPUT_TMP}"
-            SRC_FILE="/system/${SPEC_SRC_FILE}"
-            DST_FILE="/system/${SPEC_DST_FILE}"
-        fi
+        OUTPUT_DIR="${OUTPUT_ROOT}"
+        TMP_DIR="${OUTPUT_TMP}"
+        SRC_FILE="/system/${SPEC_SRC_FILE}"
+        DST_FILE="/system/${SPEC_DST_FILE}"
 
         # Strip the file path in the vendor repo of "system", if present
         local BLOB_DISPLAY_NAME="${DST_FILE#/system/}"
@@ -1714,7 +1543,7 @@ function extract() {
             if [ -f "${VENDOR_REPO_FILE}" ]; then
                 local DIR=$(dirname "${VENDOR_REPO_FILE}")
                 local TYPE="${DIR##*/}"
-                if [ "$TYPE" = "bin" -o "$TYPE" = "sbin" ]; then
+                if [ "$TYPE" = "bin" ]; then
                     chmod 755 "${VENDOR_REPO_FILE}"
                 else
                     chmod 644 "${VENDOR_REPO_FILE}"
