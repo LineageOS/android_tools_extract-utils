@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "faa7151f_cefe47a6",
+        "filename": "templates/multi-device/common/extract-files.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2020-12-28T18:22:38Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be more clear to switch to `-n \"${ONLY_COMMON}\"` ?",
+      "range": {
+        "startLine": 67,
+        "startChar": 5,
+        "endLine": 67,
+        "endChar": 24
+      },
+      "revId": "8cf085e80d4b198dcb12f1f20f1d0b472b90ca71",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bc31b0c_6c4fdf31",
+        "filename": "templates/multi-device/common/extract-files.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2020-12-28T18:22:38Z",
+      "side": 1,
+      "message": "and a similar change here",
+      "range": {
+        "startLine": 74,
+        "startChar": 5,
+        "endLine": 74,
+        "endChar": 24
+      },
+      "revId": "8cf085e80d4b198dcb12f1f20f1d0b472b90ca71",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
