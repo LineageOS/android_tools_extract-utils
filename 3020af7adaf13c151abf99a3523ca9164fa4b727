@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "515004ef_85ad5ff5",
+        "filename": "templates/multi-device/common/extract-files.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2020-12-28T13:55:32Z",
+      "side": 1,
+      "message": "... as you can see here it is sourcing the device specific script so it picks up the device specific blob_fixup function.",
+      "range": {
+        "startLine": 77,
+        "startChar": 4,
+        "endLine": 78,
+        "endChar": 16
+      },
+      "revId": "3020af7adaf13c151abf99a3523ca9164fa4b727",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6ec8151f_13724646",
         "filename": "templates/multi-device/device/extract-files.sh",
         "patchSetId": 2
@@ -13,6 +36,24 @@
       "writtenOn": "2020-12-28T10:31:54Z",
       "side": 1,
       "message": "I never tried this before. Do you know if it works fine if we have another blob_fixup function set in the common script?",
+      "revId": "3020af7adaf13c151abf99a3523ca9164fa4b727",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a233ebd5_21403d98",
+        "filename": "templates/multi-device/device/extract-files.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2020-12-28T13:55:32Z",
+      "side": 1,
+      "message": "I use this setup on xiaomi msm8998 it should work",
+      "parentUuid": "6ec8151f_13724646",
       "revId": "3020af7adaf13c151abf99a3523ca9164fa4b727",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
