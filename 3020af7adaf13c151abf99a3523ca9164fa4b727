@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ec8151f_13724646",
+        "filename": "templates/multi-device/device/extract-files.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2020-12-28T10:31:54Z",
+      "side": 1,
+      "message": "I never tried this before. Do you know if it works fine if we have another blob_fixup function set in the common script?",
+      "revId": "3020af7adaf13c151abf99a3523ca9164fa4b727",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
