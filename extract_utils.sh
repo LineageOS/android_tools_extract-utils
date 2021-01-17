@@ -97,6 +97,10 @@ function setup_vendor() {
     if [ -z "$PATCHELF" ]; then
         export PATCHELF="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin/patchelf
     fi
+
+    if [ -z "$PATCHELF_ALTERNATIVE" ]; then
+        export PATCHELF_ALTERNATIVE="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin/patchelf-v0.8
+    fi
 }
 
 # Helper functions for parsing a spec.
