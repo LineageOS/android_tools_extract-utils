@@ -1102,6 +1102,11 @@ function parse_file_list() {
             FIXUP_HASH=${SPLIT[2]}
         fi
 
+        # Skip parsing well known to be prohibited files
+        if suffix_match_file ".lic" "$SPEC" ; then
+            continue
+        fi
+
         # if line starts with a dash, it needs to be packaged
         if [[ "$SPEC" =~ ^- ]]; then
             PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
