@@ -1589,7 +1589,7 @@ function extract() {
             done
 
             if [ "${FOUND}" = false ]; then
-                printf '    !! %s: file not found in source\n' "${BLOB_DISPLAY_NAME}"
+                colored_echo red "    !! ${BLOB_DISPLAY_NAME}: file not found in source"
                 continue
             fi
         fi
@@ -1634,8 +1634,8 @@ function extract() {
             printf "    + Fixed up %s\n" "${BLOB_DISPLAY_NAME}"
             # Now sanity-check the spec for this blob.
             if [ "${KANG}" = false ] && [ "${FIXUP_HASH}" = "x" ] && [ "${HASH}" != "x" ]; then
-                printf "WARNING: The %s file was fixed up, but it is pinned.\n" ${BLOB_DISPLAY_NAME}
-                printf "This is a mistake and you want to either remove the hash completely, or add an extra one.\n"
+                colored_echo yellow "WARNING: The ${BLOB_DISPLAY_NAME} file was fixed up, but it is pinned."
+                colored_echo yellow "This is a mistake and you want to either remove the hash completely, or add an extra one."
             fi
         fi
 
