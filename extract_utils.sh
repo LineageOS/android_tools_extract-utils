@@ -1099,6 +1099,11 @@ function parse_file_list() {
             FIXUP_HASH=${SPLIT[2]}
         fi
 
+        # Skip parsing well known to be prohibited files
+        if suffix_match_file ".lic" "$SPEC" ; then
+            continue
+        fi
+
         # if line starts with a dash, it needs to be packaged
         if [[ "$SPEC" =~ ^- ]]; then
             PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
@@ -1765,6 +1770,10 @@ function generate_prop_list_from_image() {
         fi
         # Skip device defined skipped files since they will be re-generated at build time
         if array_contains "$FILE" "${skipped_vendor_files[@]}"; then
+            continue
+        fi
+        # Skip parsing well known to be prohibited files
+        if suffix_match_file ".lic" "$FILE" ; then
             continue
         fi
         if suffix_match_file ".apk" "$FILE" ; then
