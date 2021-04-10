@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15be5418_0bf4014c",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1778,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2021-04-10T15:10:46Z",
+      "side": 1,
+      "message": "On a second thought, this can be removed from here. There is no problem generating a bloblist with these included as it won\u0027t be parsed anyway when the files are actually being extracted.",
+      "range": {
+        "startLine": 1775,
+        "startChar": 0,
+        "endLine": 1778,
+        "endChar": 10
+      },
+      "revId": "2b684e589c64711d88344622d9c363037c127a9d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
