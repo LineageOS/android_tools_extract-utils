@@ -1797,7 +1797,11 @@ function colored_echo() {
         white|*) color=7 ;; # white or invalid color
         esac
     fi
-    tput setaf $color
-    printf '%s\n' "$*"
-    tput sgr0
+    if [ -t 1 ] ; then
+        tput setaf $color
+        printf '%s\n' "$*"
+        tput sgr0
+    else
+        printf '%s\n' "$*"
+    fi
 }
