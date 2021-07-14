@@ -412,7 +412,7 @@ function write_blueprint_packages() {
             if [ "$EXTRA" != "none" ]; then
                 printf '\tcompile_multilib: "%s",\n' "$EXTRA"
             fi
-            printf '\tcheck_elf_files: false,\n'
+            IGNORE_ELF_FILES_CHECK="true"
         elif [ "$CLASS" = "APPS" ]; then
             printf 'android_app_import {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
@@ -450,6 +450,7 @@ function write_blueprint_packages() {
                 printf 'sh_binary {\n'
             else
                 printf 'cc_prebuilt_binary {\n'
+                IGNORE_ELF_FILES_CHECK="true"
             fi
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
@@ -483,6 +484,10 @@ function write_blueprint_packages() {
             if [ "$DIRNAME" != "." ]; then
                 printf '\tsub_dir: "%s",\n' "$DIRNAME"
             fi
+        fi
+        if [ "$IGNORE_ELF_FILES_CHECK" = "true" ]; then
+            printf '\tcheck_elf_files: false,\n'
+            unset IGNORE_ELF_FILES_CHECK
         fi
         if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] ; then
             printf '\tprefer: true,\n'
