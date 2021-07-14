@@ -465,6 +465,9 @@ function write_blueprint_packages() {
                 SRC="$SRC/bin"
             fi
             printf '\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
+            if [ "$EXTENSION" != "sh" ]; then
+                printf '\tcheck_elf_files: false,\n'
+            fi
             unset EXTENSION
         else
             printf '\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
