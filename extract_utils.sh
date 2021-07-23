@@ -366,7 +366,11 @@ function write_blueprint_packages() {
         BASENAME=$(basename "$FILE")
         DIRNAME=$(dirname "$FILE")
         EXTENSION=${BASENAME##*.}
-        PKGNAME=${BASENAME%.*}
+        if [ "$EXTENSION" = "xml" ]; then
+            PKGNAME=$BASENAME
+        else
+            PKGNAME=${BASENAME%.*}
+        fi
 
         # Add to final package list
         PACKAGE_LIST+=("$PKGNAME")
