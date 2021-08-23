@@ -425,20 +425,22 @@ function write_blueprint_packages() {
             fi
             printf '\tapk: "%s/%s",\n' "$SRC" "$FILE"
             ARGS=(${ARGS//;/ })
-            if [ -z "$ARGS" ]; then
+            USE_PLATFORM_CERTIFICATE="true"
+            for ARG in "${ARGS[@]}"; do
+                if [ "$ARG" = "PRESIGNED" ]; then
+                    USE_PLATFORM_CERTIFICATE="false"
+                    printf '\tpresigned: true,\n'
+                elif [[ "$ARG" =~ "OVERRIDES" ]]; then
+                    OVERRIDEPKG=${ARG#*=}
+                    OVERRIDEPKG=${OVERRIDEPKG//,/ }
+                    printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
+                elif [ ! -z "$ARG" ]; then
+                    USE_PLATFORM_CERTIFICATE="false"
+                    printf '\tcertificate: "%s",\n' "$ARG"
+                fi
+            done
+            if [ "$USE_PLATFORM_CERTIFICATE" = "true" ]; then
                 printf '\tcertificate: "platform",\n'
-            else
-                for ARG in "${ARGS[@]}"; do
-                    if [ "$ARG" = "PRESIGNED" ]; then
-                        printf '\tpresigned: true,\n'
-                    elif [[ "$ARG" =~ "OVERRIDES" ]]; then
-                        OVERRIDEPKG=${ARG#*=}
-                        OVERRIDEPKG=${OVERRIDEPKG//,/ }
-                        printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
-                    elif [ ! -z "$ARG" ]; then
-                        printf '\tcertificate: "%s",\n' "$ARG"
-                    fi
-                done
             fi
         elif [ "$CLASS" = "JAVA_LIBRARIES" ]; then
             printf 'dex_import {\n'
