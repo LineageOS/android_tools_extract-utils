@@ -432,7 +432,7 @@ function write_blueprint_packages() {
                     printf '\tpresigned: true,\n'
                 elif [[ "$ARG" =~ "OVERRIDES" ]]; then
                     OVERRIDEPKG=${ARG#*=}
-                    OVERRIDEPKG=${OVERRIDEPKG//,/ }
+                    OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
                     printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
                 elif [ ! -z "$ARG" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
