@@ -1119,6 +1119,11 @@ function parse_file_list() {
             PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
+        # if line contains vintf fragment, it needs to be packaged
+        elif [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
+            PRODUCT_PACKAGES_LIST+=("$SPEC")
+            PRODUCT_PACKAGES_HASHES+=("$HASH")
+            PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
         else
             PRODUCT_COPY_FILES_LIST+=("$SPEC")
             PRODUCT_COPY_FILES_HASHES+=("$HASH")
