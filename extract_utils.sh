@@ -1119,6 +1119,13 @@ function parse_file_list() {
             PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
+        # if line contains apk, jar or vintf fragment, it needs to be packaged
+        elif suffix_match_file ".apk" "$(src_file "$SPEC")" || \
+             suffix_match_file ".jar" "$(src_file "$SPEC")" || \
+             [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
+            PRODUCT_PACKAGES_LIST+=("$SPEC")
+            PRODUCT_PACKAGES_HASHES+=("$HASH")
+            PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
         else
             PRODUCT_COPY_FILES_LIST+=("$SPEC")
             PRODUCT_COPY_FILES_HASHES+=("$HASH")
@@ -1762,11 +1769,7 @@ function generate_prop_list_from_image() {
         if array_contains "$FILE" "${skipped_vendor_files[@]}"; then
             continue
         fi
-        if suffix_match_file ".apk" "$FILE" ; then
-            echo "-vendor/$FILE" >> "$output_list_tmp"
-        else
-            echo "vendor/$FILE" >> "$output_list_tmp"
-        fi
+        echo "vendor/$FILE" >> "$output_list_tmp"
     done
 
     # Sort merged file with all lists
