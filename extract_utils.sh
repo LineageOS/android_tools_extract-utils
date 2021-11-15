@@ -1794,7 +1794,7 @@ function generate_prop_list_from_image() {
     done
 
     # Sort merged file with all lists
-    sort -u "$output_list_tmp" > "$output_list"
+    LC_ALL=C sort -u "$output_list_tmp" > "$output_list"
 
     # Clean-up
     rm -f "$output_list_tmp"
