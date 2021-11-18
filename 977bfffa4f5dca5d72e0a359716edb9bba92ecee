@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca9ecf05_0d117cb4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2021-11-18T23:29:21Z",
+      "side": 1,
+      "message": "Not sure if there\u0027s a better place to do this but it works fine",
+      "revId": "977bfffa4f5dca5d72e0a359716edb9bba92ecee",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
