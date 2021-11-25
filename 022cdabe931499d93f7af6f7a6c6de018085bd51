@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4cf5c5d3_2702d154",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-11-25T23:47:15Z",
+      "side": 1,
+      "message": "Will add this to prebuilts",
+      "revId": "022cdabe931499d93f7af6f7a6c6de018085bd51",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3cea9913_7134b22f",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1535,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-11-25T23:47:15Z",
+      "side": 1,
+      "message": "exit?",
+      "revId": "022cdabe931499d93f7af6f7a6c6de018085bd51",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
