@@ -1550,6 +1550,29 @@ function extract() {
         SRC="$DUMPDIR"
     fi
 
+    if [ -d "$SRC" ] && [ -f "$SRC"/system.img ]; then
+        DUMPDIR="$TMPDIR"/system_dump
+        mkdir -p "$DUMPDIR"
+
+        for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+        do
+            echo "Extracting "$PARTITION""
+            local IMAGE="$SRC"/"$PARTITION".img
+            if [ -f "$IMAGE" ]; then
+                if [[ $(file -b "$IMAGE") == Linux* ]]; then
+                    extract_img_data "$IMAGE" "$DUMPDIR"/"$PARTITION"
+                elif [[ $(file -b "$IMAGE") == Android* ]]; then
+                    simg2img "$IMAGE" "$DUMPDIR"/"$PARTITION".raw
+                    extract_img_data "$DUMPDIR"/"$PARTITION".raw "$DUMPDIR"/"$PARTITION"/
+                else
+                    echo "Unsupported "$IMAGE""
+                fi
+            fi
+        done
+
+        SRC="$DUMPDIR"
+    fi
+
     if [ "$VENDOR_STATE" -eq "0" ]; then
         echo "Cleaning output directory ($OUTPUT_ROOT).."
         rm -rf "${OUTPUT_TMP:?}"
