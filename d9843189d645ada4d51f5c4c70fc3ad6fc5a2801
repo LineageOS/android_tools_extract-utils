@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "17d5614a_adc4fe6f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-11-26T19:06:42Z",
+      "side": 1,
+      "message": "Does not support dynamic retrofit OTAs.\n\ni.e. crosshatch, bonito.\n\nScript can extract payload fine, but after that we don\u0027t know what to do with it.\n\n$ file\nsystem.img: data\nvendor.img: data",
+      "revId": "d9843189d645ada4d51f5c4c70fc3ad6fc5a2801",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
