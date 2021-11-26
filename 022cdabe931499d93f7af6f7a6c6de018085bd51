@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "41e11dc4_39da8f9e",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1532,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-11-26T19:05:55Z",
+      "side": 1,
+      "message": "Decided against it, since simg2img is both an android host prebuilt, and also available as a package on many distros.",
+      "parentUuid": "4cf5c5d3_2702d154",
+      "revId": "022cdabe931499d93f7af6f7a6c6de018085bd51",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3cea9913_7134b22f",
