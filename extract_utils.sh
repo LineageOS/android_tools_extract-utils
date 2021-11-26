@@ -1538,11 +1538,8 @@ function extract() {
                     python "$ANDROID_ROOT"/tools/extract-utils/sdat2img.py "$DUMPDIR"/"$PARTITION".transfer.list "$DUMPDIR"/"$PARTITION".new.dat "$DUMPDIR"/"$PARTITION".img 2>&1
                     rm -rf "$DUMPDIR"/"$PARTITION".new.dat "$DUMPDIR"/"$PARTITION"
                     mkdir "$DUMPDIR"/"$PARTITION" "$DUMPDIR"/tmp
-                    echo "Requesting sudo access to mount the "$PARTITION".img"
-                    sudo mount -o loop "$DUMPDIR"/"$PARTITION".img "$DUMPDIR"/tmp
-                    cp -r "$DUMPDIR"/tmp/* "$DUMPDIR"/"$PARTITION"/
-                    sudo umount "$DUMPDIR"/tmp
-                    rm -rf "$DUMPDIR"/tmp "$DUMPDIR"/"$PARTITION".img
+                    extract_img_data "$DUMPDIR"/"$PARTITION".img "$DUMPDIR"/"$PARTITION"/
+                    rm "$DUMPDIR"/"$PARTITION".img
                 fi
             done
         fi
