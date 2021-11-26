@@ -1519,10 +1519,9 @@ function extract() {
             unzip "$SRC" -d "$DUMPDIR"
             echo "$MD5" > "$DUMPDIR"/zipmd5.txt
 
-            # Stop if an A/B OTA zip is detected. We cannot extract these.
+            # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
-                echo "A/B style OTA zip detected. This is not supported at this time. Stopping..."
-                exit 1
+                python3 "$ANDROID_ROOT"/tools/extract-utils/extract_ota.py "$DUMPDIR"/payload.bin -o "$DUMPDIR" -p "system" "odm" "product" "system_ext" "vendor" 2>&1
             fi
 
             for PARTITION in "system" "odm" "product" "system_ext" "vendor"
@@ -1540,6 +1539,9 @@ function extract() {
                     mkdir "$DUMPDIR"/"$PARTITION" "$DUMPDIR"/tmp
                     extract_img_data "$DUMPDIR"/"$PARTITION".img "$DUMPDIR"/"$PARTITION"/
                     rm "$DUMPDIR"/"$PARTITION".img
+                fi
+                if [ -a "$DUMPDIR"/"$PARTITION".img ]; then
+                    extract_img_data "$DUMPDIR"/"$PARTITION".img "$DUMPDIR"/"$PARTITION"/
                 fi
             done
         fi
