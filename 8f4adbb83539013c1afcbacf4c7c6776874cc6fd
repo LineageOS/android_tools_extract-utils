@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "76f1954e_373ca3e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-28T19:55:40Z",
+      "side": 1,
+      "message": "I dunno how I feel about this. I\u0027d kinda rather just leave it because then you know exactly what you\u0027re getting from the txt file, you don\u0027t have to think about it.",
+      "revId": "8f4adbb83539013c1afcbacf4c7c6776874cc6fd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
