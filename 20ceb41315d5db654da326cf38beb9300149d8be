@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e30498c4_cc8e8d6b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11801
+      },
+      "writtenOn": "2021-11-28T19:54:48Z",
+      "side": 1,
+      "message": "I\u0027d kinda want to support a txt file for skip files, but this is fine.",
+      "revId": "20ceb41315d5db654da326cf38beb9300149d8be",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
