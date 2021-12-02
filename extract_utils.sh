@@ -1805,7 +1805,8 @@ function generate_prop_list_from_image() {
     local image_dir="$TMPDIR/image-temp"
     local output_list="$2"
     local output_list_tmp="$TMPDIR/_proprietary-blobs.txt"
-    local -n skipped_vendor_files="$3"
+    local -n skipped_files="$3"
+    local partition="$4"
 
     extract_img_data "$image_file" "$image_dir"
 
@@ -1815,10 +1816,14 @@ function generate_prop_list_from_image() {
             continue
         fi
         # Skip device defined skipped files since they will be re-generated at build time
-        if array_contains "$FILE" "${skipped_vendor_files[@]}"; then
+        if array_contains "$FILE" "${skipped_files[@]}"; then
             continue
         fi
-        echo "vendor/$FILE" >> "$output_list_tmp"
+        if [ -z "$partition" ]; then
+            echo "vendor/$FILE" >> "$output_list_tmp"
+        else
+            echo "$partition/$FILE" >> "$output_list_tmp"
+        fi
     done
 
     # Sort merged file with all lists
