@@ -1808,7 +1808,17 @@ function generate_prop_list_from_image() {
     local -n skipped_files="$3"
     local partition="$4"
 
-    extract_img_data "$image_file" "$image_dir"
+    mkdir -p "$image_dir"
+
+    if [[ $(file -b "$image_file") == Linux* ]]; then
+        extract_img_data "$image_file" "$image_dir"
+    elif [[ $(file -b "$image_file") == Android* ]]; then
+        simg2img "$image_file" "$image_dir"/"$(basename "$image_file").raw"
+        extract_img_data "$image_dir"/"$(basename "$image_file").raw" "$image_dir"
+        rm "$image_dir"/"$(basename "$image_file").raw"
+    else
+        echo "Unsupported "$image_file""
+    fi
 
     find "$image_dir" -not -type d | sed "s#^$image_dir/##" | while read -r FILE
     do
