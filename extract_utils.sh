@@ -414,6 +414,13 @@ function write_blueprint_packages() {
                 printf '\tcompile_multilib: "%s",\n' "$EXTRA"
             fi
             printf '\tcheck_elf_files: false,\n'
+        elif [ "$CLASS" = "APEX" ]; then
+            printf 'prebuilt_apex {\n'
+            printf '\tname: "%s",\n' "$PKGNAME"
+            printf '\towner: "%s",\n' "$VENDOR"
+            SRC="$SRC/apex"
+            printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
+            printf '\tfilename: "%s",\n' "$FILE"
         elif [ "$CLASS" = "APPS" ]; then
             printf 'android_app_import {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
@@ -781,6 +788,24 @@ function write_product_packages() {
         write_blueprint_packages "SHARED_LIBRARIES" "odm" "64" "O_LIB64" >> "$ANDROIDBP"
     fi
 
+    # APEX
+    local APEX=( $(prefix_match "apex/") )
+    if [ "${#APEX[@]}" -gt "0" ]; then
+        write_blueprint_packages "APEX" "" "" "APEX" >> "$ANDROIDBP"
+    fi
+    local S_APEX=( $(prefix_match "system/apex/") )
+    if [ "${#S_APEX[@]}" -gt "0" ]; then
+        write_blueprint_packages "APEX" "system" "" "S_APEX" >> "$ANDROIDBP"
+    fi
+    local V_APEX=( $(prefix_match "vendor/apex/") )
+    if [ "${#V_APEX[@]}" -gt "0" ]; then
+        write_blueprint_packages "APEX" "vendor" "" "V_APEX" >> "$ANDROIDBP"
+    fi
+    local SE_APEX=( $(prefix_match "system_ext/apex/") )
+    if [ "${#SE_APEX[@]}" -gt "0" ]; then
+        write_blueprint_packages "APEX" "system_ext" "" "SE_APEX" >> "$ANDROIDBP"
+    fi
+
     # Apps
     local APPS=( $(prefix_match "app/") )
     if [ "${#APPS[@]}" -gt "0" ]; then
@@ -1119,8 +1144,9 @@ function parse_file_list() {
             PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
-        # if line contains apk, jar or vintf fragment, it needs to be packaged
-        elif suffix_match_file ".apk" "$(src_file "$SPEC")" || \
+        # if line contains apex, apk, jar or vintf fragment, it needs to be packaged
+        elif suffix_match_file ".apex" "$(src_file "$SPEC")" || \
+             suffix_match_file ".apk" "$(src_file "$SPEC")" || \
              suffix_match_file ".jar" "$(src_file "$SPEC")" || \
              [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
             PRODUCT_PACKAGES_LIST+=("$SPEC")
