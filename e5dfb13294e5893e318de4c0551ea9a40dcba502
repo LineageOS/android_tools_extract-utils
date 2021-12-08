@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65ebeb65_ba9dc674",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-12-08T23:32:12Z",
+      "side": 1,
+      "message": "Works with Pixel 4, 4a, 5, 6 OTAs",
+      "revId": "e5dfb13294e5893e318de4c0551ea9a40dcba502",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
