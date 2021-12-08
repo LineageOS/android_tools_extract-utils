@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bda4c3c0_257c0703",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2021-12-08T23:33:16Z",
+      "side": 1,
+      "message": "Works with my custom script to generate blob lists for product/system_ext partitions on all Pixel devices",
+      "revId": "288b2253748e464df8aa042837d71039c8cc359a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
