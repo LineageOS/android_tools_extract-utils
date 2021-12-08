@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b294bdac_2ab8b35d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-12-08T23:47:39Z",
+      "side": 1,
+      "message": "\u003e Patch Set 3:\n\u003e \n\u003e [ -z \"$partition\" ] \u0026\u0026 partition\u003d\"vendor\" ?\n\nActually\n\npartition\u003d${4:-vendor} might work too.",
+      "revId": "3e6a2fe5ebdf8915ed06c78095321e2a895985c3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
