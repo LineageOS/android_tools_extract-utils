@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "29abef3c_5f13e662",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-12-08T23:31:55Z",
+      "side": 1,
+      "message": "Existing scripts didn\u0027t have a license so I just wrote something myself based on AOSP code.\n\nMost of it is copied from AOSP, hence the license.\n\nTested with Pixel OTAs, extracts images fine.\n\nCan be used for normal extract-utils extraction, and also firmware extraction.\n",
+      "revId": "c43ffc45287345183610879572584e9d79db880e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
