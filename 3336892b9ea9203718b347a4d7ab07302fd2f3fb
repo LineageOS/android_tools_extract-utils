@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3aecfae1_11956bc1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2021-12-08T23:36:15Z",
+      "side": 1,
+      "message": "I don\u0027t fully like this yet, will revisit later and merge a better version",
+      "revId": "3336892b9ea9203718b347a4d7ab07302fd2f3fb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
