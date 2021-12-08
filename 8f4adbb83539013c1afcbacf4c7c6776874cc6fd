@@ -34,6 +34,24 @@
       "parentUuid": "76f1954e_373ca3e2",
       "revId": "8f4adbb83539013c1afcbacf4c7c6776874cc6fd",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b95c8e5_6f2064fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2021-12-08T23:29:45Z",
+      "side": 1,
+      "message": "You can\u0027t use PRODUCT_COPY_FILES on any of these targets anymore, the build errors out. Also the general plan is to convert everything to targets when we can and remove all the hacks we had to do like `check_elf_files: false` and `BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES :\u003d true`",
+      "parentUuid": "276fa002_69a395fb",
+      "revId": "8f4adbb83539013c1afcbacf4c7c6776874cc6fd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
