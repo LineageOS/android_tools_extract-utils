@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cba5d573_9c3a8372",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2021-12-08T23:33:32Z",
+      "side": 1,
+      "message": "Tested with Pixel factory images.",
+      "revId": "c699ba61faff07cd0bd678965d7187b56d983ab7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
