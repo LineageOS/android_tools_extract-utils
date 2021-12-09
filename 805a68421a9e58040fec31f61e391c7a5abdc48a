@@ -16,6 +16,24 @@
       "message": "Should add https://github.com/xpirt/sdat2img/commit/b432c988a412c06ff24d196132e354712fc18929\n\nMaybe just add it to the file? or a SPDX-Identifier in the file, and full text in the repo.",
       "revId": "805a68421a9e58040fec31f61e391c7a5abdc48a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ffd1b989_ff46a850",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2021-12-09T00:08:18Z",
+      "side": 1,
+      "message": "https://review.lineageos.org/c/LineageOS/android_tools_extract-utils/+/320135",
+      "parentUuid": "45b42767_038afd1a",
+      "revId": "805a68421a9e58040fec31f61e391c7a5abdc48a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
