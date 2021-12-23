@@ -362,16 +362,27 @@ function write_blueprint_packages() {
     local EXTENSION=
     local PKGNAME=
     local SRC=
+    local STEM=
     local OVERRIDEPKG=
 
     for P in "${FILELIST[@]}"; do
         FILE=$(target_file "$P")
         ARGS=$(target_args "$P")
+        ARGS=(${ARGS//;/ })
 
         BASENAME=$(basename "$FILE")
         DIRNAME=$(dirname "$FILE")
         EXTENSION=${BASENAME##*.}
         PKGNAME=${BASENAME%.*}
+
+        # Allow overriding module name
+        STEM=
+        for ARG in "${ARGS[@]}"; do
+            if [[ "$ARG" =~ "MODULE" ]]; then
+                STEM="$PKGNAME"
+                PKGNAME=${ARG#*=}
+            fi
+        done
 
         # Add to final package list
         PACKAGE_LIST+=("$PKGNAME")
@@ -392,6 +403,9 @@ function write_blueprint_packages() {
         if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf 'cc_prebuilt_library_shared {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
+            if [ ! -z "$STEM" ]; then
+                printf '\tstem: "%s",\n' "$STEM"
+            fi
             printf '\towner: "%s",\n' "$VENDOR"
             printf '\tstrip: {\n'
             printf '\t\tnone: true,\n'
@@ -435,7 +449,6 @@ function write_blueprint_packages() {
                 SRC="$SRC/app"
             fi
             printf '\tapk: "%s/%s",\n' "$SRC" "$FILE"
-            ARGS=(${ARGS//;/ })
             USE_PLATFORM_CERTIFICATE="true"
             for ARG in "${ARGS[@]}"; do
                 if [ "$ARG" = "PRESIGNED" ]; then
