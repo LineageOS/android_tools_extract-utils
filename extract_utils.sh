@@ -694,9 +694,9 @@ function write_product_packages() {
     # I really should not be doing this in bash due to shitty array passing :(
     local T_LIB32=( $(prefix_match "lib/") )
     local T_LIB64=( $(prefix_match "lib64/") )
-    local MULTILIBS=( $(comm -12 <(printf '%s\n' "${T_LIB32[@]}") <(printf '%s\n' "${T_LIB64[@]}")) )
-    local LIB32=( $(comm -23 <(printf '%s\n'  "${T_LIB32[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
-    local LIB64=( $(comm -23 <(printf '%s\n' "${T_LIB64[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
+    local MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_LIB32[@]}") <(printf '%s\n' "${T_LIB64[@]}")) )
+    local LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${T_LIB32[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
+    local LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_LIB64[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
 
     if [ "${#MULTILIBS[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "" "both" "MULTILIBS" >> "$ANDROIDBP"
@@ -710,9 +710,9 @@ function write_product_packages() {
 
     local T_S_LIB32=( $(prefix_match "system/lib/") )
     local T_S_LIB64=( $(prefix_match "system/lib64/") )
-    local S_MULTILIBS=( $(comm -12 <(printf '%s\n' "${T_S_LIB32[@]}") <(printf '%s\n' "${T_S_LIB64[@]}")) )
-    local S_LIB32=( $(comm -23 <(printf '%s\n'  "${T_S_LIB32[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
-    local S_LIB64=( $(comm -23 <(printf '%s\n' "${T_S_LIB64[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
+    local S_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_S_LIB32[@]}") <(printf '%s\n' "${T_S_LIB64[@]}")) )
+    local S_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${T_S_LIB32[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
+    local S_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_S_LIB64[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
 
     if [ "${#S_MULTILIBS[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "system" "both" "S_MULTILIBS" >> "$ANDROIDBP"
@@ -726,9 +726,9 @@ function write_product_packages() {
 
     local T_V_LIB32=( $(prefix_match "vendor/lib/") )
     local T_V_LIB64=( $(prefix_match "vendor/lib64/") )
-    local V_MULTILIBS=( $(comm -12 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${T_V_LIB64[@]}")) )
-    local V_LIB32=( $(comm -23 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
-    local V_LIB64=( $(comm -23 <(printf '%s\n' "${T_V_LIB64[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
+    local V_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${T_V_LIB64[@]}")) )
+    local V_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
+    local V_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB64[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
 
     if [ "${#V_MULTILIBS[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "vendor" "both" "V_MULTILIBS" >> "$ANDROIDBP"
@@ -742,9 +742,9 @@ function write_product_packages() {
 
     local T_P_LIB32=( $(prefix_match "product/lib/") )
     local T_P_LIB64=( $(prefix_match "product/lib64/") )
-    local P_MULTILIBS=( $(comm -12 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${T_P_LIB64[@]}")) )
-    local P_LIB32=( $(comm -23 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
-    local P_LIB64=( $(comm -23 <(printf '%s\n' "${T_P_LIB64[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
+    local P_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${T_P_LIB64[@]}")) )
+    local P_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
+    local P_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_P_LIB64[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
 
     if [ "${#P_MULTILIBS[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "product" "both" "P_MULTILIBS" >> "$ANDROIDBP"
@@ -758,9 +758,9 @@ function write_product_packages() {
 
     local T_SE_LIB32=( $(prefix_match "system_ext/lib/") )
     local T_SE_LIB64=( $(prefix_match "system_ext/lib64/") )
-    local SE_MULTILIBS=( $(comm -12 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${T_SE_LIB64[@]}")) )
-    local SE_LIB32=( $(comm -23 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
-    local SE_LIB64=( $(comm -23 <(printf '%s\n' "${T_SE_LIB64[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
+    local SE_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${T_SE_LIB64[@]}")) )
+    local SE_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
+    local SE_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_SE_LIB64[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
 
     if [ "${#SE_MULTILIBS[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "both" "SE_MULTILIBS" >> "$ANDROIDBP"
@@ -774,9 +774,9 @@ function write_product_packages() {
 
     local T_O_LIB32=( $(prefix_match "odm/lib/") )
     local T_O_LIB64=( $(prefix_match "odm/lib64/") )
-    local O_MULTILIBS=( $(comm -12 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${T_O_LIB64[@]}")) )
-    local O_LIB32=( $(comm -23 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
-    local O_LIB64=( $(comm -23 <(printf '%s\n' "${T_O_LIB64[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
+    local O_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${T_O_LIB64[@]}")) )
+    local O_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
+    local O_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_O_LIB64[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
 
     if [ "${#O_MULTILIBS[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "odm" "both" "O_MULTILIBS" >> "$ANDROIDBP"
