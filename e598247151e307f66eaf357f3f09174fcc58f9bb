@@ -52,6 +52,23 @@
       "parentUuid": "db7c337d_3e96f6e0",
       "revId": "e598247151e307f66eaf357f3f09174fcc58f9bb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "47663cf7_b45be8e9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29914
+      },
+      "writtenOn": "2022-01-18T12:33:36Z",
+      "side": 1,
+      "message": "Tested on s20",
+      "revId": "e598247151e307f66eaf357f3f09174fcc58f9bb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
