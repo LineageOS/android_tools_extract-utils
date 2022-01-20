@@ -376,6 +376,12 @@ function write_blueprint_packages() {
             EXTENSION=""
         fi
 
+        if [ "$CLASS" = "ETC" ]; then
+            if [[ "$FILE" =~ "vintf" ]] && [[ ! "$PKGNAME" =~ "manifest_" ]]; then
+                PKGNAME="manifest_""$PKGNAME"
+            fi
+        fi
+
         # Allow overriding module name
         STEM=
         for ARG in "${ARGS[@]}"; do
