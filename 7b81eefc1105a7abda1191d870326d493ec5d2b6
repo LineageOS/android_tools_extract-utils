@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f090a5c_f7032b12",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2022-01-22T09:40:20Z",
+      "side": 1,
+      "message": "err that\u0027s ugly, just move the last condition to a new if (see line 526), but keep \"then\" after the \";\"",
+      "range": {
+        "startLine": 380,
+        "startChar": 8,
+        "endLine": 380,
+        "endChar": 12
+      },
+      "revId": "7b81eefc1105a7abda1191d870326d493ec5d2b6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}

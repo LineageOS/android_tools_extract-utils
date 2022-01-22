@@ -36,6 +36,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f72fca6_7706111d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2022-01-22T09:40:20Z",
+      "side": 1,
+      "message": "You better add vintf_fragment (and init_rc) to cc_binary where needed then",
+      "parentUuid": "8bdb6c7d_9d0386b4",
+      "revId": "19f031f0a3b783f92769c73270b671cb3039dbe0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a9a3b3f7_b3c63562",
