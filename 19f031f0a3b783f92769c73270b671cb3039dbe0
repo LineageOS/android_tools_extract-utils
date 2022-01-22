@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "09a07e57_b6a8ecf7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2022-01-22T09:26:22Z",
+      "side": 1,
+      "message": "Why?",
+      "revId": "19f031f0a3b783f92769c73270b671cb3039dbe0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a9a3b3f7_b3c63562",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2022-01-22T09:26:22Z",
+      "side": 1,
+      "message": "Exceeds 100 characters",
+      "range": {
+        "startLine": 379,
+        "startChar": 0,
+        "endLine": 379,
+        "endChar": 102
+      },
+      "revId": "19f031f0a3b783f92769c73270b671cb3039dbe0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
