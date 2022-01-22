@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8bdb6c7d_9d0386b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 18590
+      },
+      "writtenOn": "2022-01-22T09:29:11Z",
+      "side": 1,
+      "message": "pixel has module name collisions if all ELFs are made into packages",
+      "parentUuid": "09a07e57_b6a8ecf7",
+      "revId": "19f031f0a3b783f92769c73270b671cb3039dbe0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a9a3b3f7_b3c63562",
@@ -31,6 +49,30 @@
       "writtenOn": "2022-01-22T09:26:22Z",
       "side": 1,
       "message": "Exceeds 100 characters",
+      "range": {
+        "startLine": 379,
+        "startChar": 0,
+        "endLine": 379,
+        "endChar": 102
+      },
+      "revId": "19f031f0a3b783f92769c73270b671cb3039dbe0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f52e0ff0_276e845c",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 18590
+      },
+      "writtenOn": "2022-01-22T09:29:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9a3b3f7_b3c63562",
       "range": {
         "startLine": 379,
         "startChar": 0,
