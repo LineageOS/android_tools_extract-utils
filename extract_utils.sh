@@ -709,6 +709,9 @@ function write_makefile_packages() {
 function write_product_packages() {
     PACKAGE_LIST=()
 
+    # Sort the package list for comm
+    PRODUCT_PACKAGES_LIST=($(printf '%s\n' "${PRODUCT_PACKAGES_LIST[@]}" | sort))
+
     local COUNT=${#PRODUCT_PACKAGES_LIST[@]}
 
     if [ "$COUNT" = "0" ]; then
