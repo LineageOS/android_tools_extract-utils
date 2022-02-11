@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b08d667_161be9b6",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 713,
+      "author": {
+        "id": 19282
+      },
+      "writtenOn": "2022-02-11T09:05:52Z",
+      "side": 1,
+      "message": "all other usages of sort use `LC_ALL\u003dC sort` to not depend on the system locale set.",
+      "range": {
+        "startLine": 713,
+        "startChar": 75,
+        "endLine": 713,
+        "endChar": 79
+      },
+      "revId": "e22b57c2cc6cc388bfa31d9f8f494816854220ef",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
