@@ -1410,6 +1410,23 @@ function extract() {
         SRC="$DUMPDIR"
     fi
 
+    if [ -d "$SRC" ] && [ -f "$SRC"/super.img ]; then
+        DUMPDIR="$TMPDIR"/super_dump
+        mkdir -p "$DUMPDIR"
+
+        echo "Unpacking super.img"
+        simg2img "$SRC"/super.img "$DUMPDIR"/super.raw
+
+        for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+        do
+            echo "Preparing "$PARTITION"_a"
+            lpunpack -p "$PARTITION"_a "$DUMPDIR"/super.raw "$DUMPDIR"
+            mv "$DUMPDIR"/"$PARTITION"_a.img "$DUMPDIR"/"$PARTITION".img
+        done
+
+        SRC="$DUMPDIR"
+    fi
+
     if [ -d "$SRC" ] && [ -f "$SRC"/system.img ]; then
         DUMPDIR="$TMPDIR"/system_dump
         mkdir -p "$DUMPDIR"
