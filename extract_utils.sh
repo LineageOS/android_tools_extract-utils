@@ -97,6 +97,7 @@ function setup_vendor() {
     export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
+    export LPUNPACK="$BINARIES_LOCATION"/lpunpack
 
     for version in 0_8 0_9; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
@@ -1411,6 +1412,26 @@ function extract() {
                 fi
             done
         fi
+
+        SRC="$DUMPDIR"
+    fi
+
+    if [ -d "$SRC" ] && [ -f "$SRC"/super.img ]; then
+        DUMPDIR="$TMPDIR"/super_dump
+        mkdir -p "$DUMPDIR"
+
+        echo "Unpacking super.img"
+        "$SIMG2IMG" "$SRC"/super.img "$DUMPDIR"/super.raw
+
+        for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+        do
+            echo "Preparing "$PARTITION""
+            if "$LPUNPACK" -p "$PARTITION"_a "$DUMPDIR"/super.raw "$DUMPDIR" ; then
+                mv "$DUMPDIR"/"$PARTITION"_a.img "$DUMPDIR"/"$PARTITION".img
+            else
+                "$LPUNPACK" -p "$PARTITION" "$DUMPDIR"/super.raw "$DUMPDIR"
+            fi
+        done
 
         SRC="$DUMPDIR"
     fi
