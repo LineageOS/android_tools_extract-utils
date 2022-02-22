@@ -1248,21 +1248,47 @@ function write_makefiles() {
 #
 # append_firmware_calls_to_makefiles:
 #
-# Appends to Android.mk the calls to all images present in radio folder
-# (filesmap file used by releasetools to map firmware images should be kept in the device tree)
+# Appends the calls to all images present in radio folder to Android.mk
 #
 function append_firmware_calls_to_makefiles() {
     cat << EOF >> "$ANDROIDMK"
-ifeq (\$(LOCAL_PATH)/radio, \$(wildcard \$(LOCAL_PATH)/radio))
-
 RADIO_FILES := \$(wildcard \$(LOCAL_PATH)/radio/*)
 \$(foreach f, \$(notdir \$(RADIO_FILES)), \\
     \$(call add-radio-file,radio/\$(f)))
-\$(call add-radio-file,../../../device/$VENDOR/$DEVICE/radio/filesmap)
-
-endif
 
 EOF
+}
+
+#
+# append_firmware_ab_ota_to_makefiles:
+#
+# $1: file containing the list of items to extract
+#
+# Appends all images in radio folder to BoardConfigVendor.mk
+#
+function append_firmware_ab_ota_to_makefiles() {
+    parse_file_list "$1"
+
+    local FILELIST=(${PRODUCT_COPY_FILES_LIST[@]})
+    local COUNT=${#FILELIST[@]}
+
+    printf '%s\n' "AB_OTA_PARTITIONS += \\" >> "$BOARDMK"
+    for (( i=1; i<COUNT+1; i++ )); do
+        local DST_FILE=$(target_file "${FILELIST[$i-1]}")
+        local ARGS=$(target_args "${FILELIST[$i-1]}")
+        DST_FILE=(${DST_FILE//.img/ })
+        ARGS=(${ARGS//;/ })
+        LINEEND=" \\"
+        if [ "$i" -eq "$COUNT" ]; then
+            LINEEND=""
+        fi
+
+        for ARG in "${ARGS[@]}"; do
+            if [[ "$ARG" =~ "AB" ]]; then
+                printf '    %s%s\n' "$DST_FILE" "$LINEEND" >> "$BOARDMK"
+            fi
+        done
+    done
 }
 
 #
@@ -1893,14 +1919,16 @@ function extract_firmware() {
     echo "Extracting $COUNT files in $1 from $SRC:"
 
     for (( i=1; i<COUNT+1; i++ )); do
-        local FILE="${FILELIST[$i-1]}"
-        printf '  - %s \n' "/radio/$FILE"
+        local SRC_FILE=$(src_file "${FILELIST[$i-1]}")
+        local DST_FILE=$(target_file "${FILELIST[$i-1]}")
+
+        printf '  - %s \n' "radio/$DST_FILE"
 
         if [ ! -d "$OUTPUT_DIR" ]; then
             mkdir -p "$OUTPUT_DIR"
         fi
-        cp "$SRC/$FILE" "$OUTPUT_DIR/$FILE"
-        chmod 644 "$OUTPUT_DIR/$FILE"
+        cp "$SRC/$SRC_FILE" "$OUTPUT_DIR/$DST_FILE"
+        chmod 644 "$OUTPUT_DIR/$DST_FILE"
     done
 }
 
