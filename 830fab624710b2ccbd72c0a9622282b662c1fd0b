@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "44f6e1af_ceded6ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29914
+      },
+      "writtenOn": "2022-02-23T16:19:18Z",
+      "side": 1,
+      "message": "This would be a great thing to have, but unfortunately it does not work on a-only dynamic partitions devices (gta4xl, galaxy s20)",
+      "revId": "830fab624710b2ccbd72c0a9622282b662c1fd0b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
