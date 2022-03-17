@@ -16,6 +16,23 @@
       "message": "This would be a great thing to have, but unfortunately it does not work on a-only dynamic partitions devices (gta4xl, galaxy s20)",
       "revId": "830fab624710b2ccbd72c0a9622282b662c1fd0b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1b8265b7_1bc1ea4e",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1423,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2022-03-17T00:55:15Z",
+      "side": 1,
+      "message": "We can either make 326916: partition_tools: Add lpdump_static target | https://review.lineageos.org/c/LineageOS/android_system_extras/+/326916 work, or do one thing.\n\nIf unpacking \"$PARTITION\"_a fails, try just \"$PARTITION\"",
+      "revId": "830fab624710b2ccbd72c0a9622282b662c1fd0b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
