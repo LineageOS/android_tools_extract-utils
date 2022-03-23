@@ -33,6 +33,24 @@
       "message": "We can either make 326916: partition_tools: Add lpdump_static target | https://review.lineageos.org/c/LineageOS/android_system_extras/+/326916 work, or do one thing.\n\nIf unpacking \"$PARTITION\"_a fails, try just \"$PARTITION\"",
       "revId": "830fab624710b2ccbd72c0a9622282b662c1fd0b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b313ae75_9c89afe6",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1423,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2022-03-23T22:01:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b8265b7_1bc1ea4e",
+      "revId": "830fab624710b2ccbd72c0a9622282b662c1fd0b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
