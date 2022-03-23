@@ -98,6 +98,7 @@ function setup_vendor() {
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
+    export SIGSCAN="$BINARIES_LOCATION"/SigScan
 
     for version in 0_8 0_9; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
