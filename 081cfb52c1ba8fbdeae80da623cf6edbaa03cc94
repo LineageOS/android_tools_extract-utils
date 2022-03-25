@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9e2aaa3_f3fc140a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2022-03-25T16:01:37Z",
+      "side": 1,
+      "message": "Fixes multilib detection when there are a lot of shared libs marked as build targets",
+      "revId": "081cfb52c1ba8fbdeae80da623cf6edbaa03cc94",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
