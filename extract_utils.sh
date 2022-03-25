@@ -190,17 +190,19 @@ function target_args() {
 #
 function prefix_match() {
     local PREFIX="$1"
+    local NEW_ARRAY=()
     for LINE in "${PRODUCT_PACKAGES_LIST[@]}"; do
         local FILE=$(target_file "$LINE")
         if [[ "$FILE" =~ ^"$PREFIX" ]]; then
             local ARGS=$(target_args "$LINE")
             if [ -z "${ARGS}" ]; then
-                echo "${FILE#$PREFIX}"
+                NEW_ARRAY+=("${FILE#$PREFIX}")
             else
-                echo "${FILE#$PREFIX};${ARGS}"
+                NEW_ARRAY+=("${FILE#$PREFIX};${ARGS}")
             fi
         fi
     done
+    printf '%s\n' "${NEW_ARRAY[@]}" | LC_ALL=C sort
 }
 
 #
