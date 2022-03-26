@@ -616,6 +616,7 @@ function write_shared_library_targets() {
     local SRC_32=
     local SRC_64=
     local STEM=
+    local OVERRIDEPKG=
 
     # values: true, false
     local IS_IN_ROOT=
@@ -644,10 +645,14 @@ function write_shared_library_targets() {
 
         # Allow overriding module name
         STEM=
+        OVERRIDEPKG=
         for ARG in "${ARGS[@]}"; do
             if [[ "$ARG" =~ "MODULE" ]]; then
                 STEM="$PKGNAME"
                 PKGNAME=${ARG#*=}
+            elif [[ "$ARG" =~ "OVERRIDES" ]]; then
+                OVERRIDEPKG=${ARG#*=}
+                OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
             fi
         done
 
@@ -784,6 +789,9 @@ function write_shared_library_targets() {
         printf '\t},\n'
         if [ ! -z "$STEM" ]; then
             printf '\tstem: "%s",\n' "$STEM"
+        fi
+        if [ ! -z "$OVERRIDEPKG" ]; then
+            printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
         fi
 
         printf '\ttarget: {\n'
