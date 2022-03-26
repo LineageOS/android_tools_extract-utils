@@ -368,7 +368,6 @@ function write_blueprint_packages() {
     local EXTENSION=
     local PKGNAME=
     local SRC=
-    local STEM=
     local OVERRIDEPKG=
 
     for P in "${FILELIST[@]}"; do
@@ -386,15 +385,6 @@ function write_blueprint_packages() {
             EXTENSION=""
         fi
 
-        # Allow overriding module name
-        STEM=
-        for ARG in "${ARGS[@]}"; do
-            if [[ "$ARG" =~ "MODULE" ]]; then
-                STEM="$PKGNAME"
-                PKGNAME=${ARG#*=}
-            fi
-        done
-
         # Add to final package list
         PACKAGE_LIST+=("$PKGNAME")
 
@@ -411,39 +401,7 @@ function write_blueprint_packages() {
             SRC+="/odm"
         fi
 
-        if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
-            printf 'cc_prebuilt_library_shared {\n'
-            printf '\tname: "%s",\n' "$PKGNAME"
-            if [ ! -z "$STEM" ]; then
-                printf '\tstem: "%s",\n' "$STEM"
-            fi
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tstrip: {\n'
-            printf '\t\tnone: true,\n'
-            printf '\t},\n'
-            printf '\ttarget: {\n'
-            if [ "$EXTRA" = "both" ]; then
-                printf '\t\tandroid_arm: {\n'
-                printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
-                printf '\t\t},\n'
-                printf '\t\tandroid_arm64: {\n'
-                printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
-                printf '\t\t},\n'
-            elif [ "$EXTRA" = "64" ]; then
-                printf '\t\tandroid_arm64: {\n'
-                printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
-                printf '\t\t},\n'
-            else
-                printf '\t\tandroid_arm: {\n'
-                printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
-                printf '\t\t},\n'
-            fi
-            printf '\t},\n'
-            if [ "$EXTRA" != "none" ]; then
-                printf '\tcompile_multilib: "%s",\n' "$EXTRA"
-            fi
-            printf '\tcheck_elf_files: false,\n'
-        elif [ "$CLASS" = "APEX" ]; then
+        if [ "$CLASS" = "APEX" ]; then
             printf 'prebuilt_apex {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
@@ -516,7 +474,7 @@ function write_blueprint_packages() {
             printf '\t\tenabled: false,\n'
             printf '\t},\n'
         fi
-        if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] ; then
+        if [ "$CLASS" = "EXECUTABLES" ] ; then
             if [ "$DIRNAME" != "." ]; then
                 printf '\trelative_install_path: "%s",\n' "$DIRNAME"
             fi
@@ -526,7 +484,7 @@ function write_blueprint_packages() {
                 printf '\tsub_dir: "%s",\n' "$DIRNAME"
             fi
         fi
-        if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] ; then
+        if [ "$CLASS" = "EXECUTABLES" ] ; then
             printf '\tprefer: true,\n'
         fi
         if [ "$EXTRA" = "priv-app" ]; then
@@ -541,6 +499,381 @@ function write_blueprint_packages() {
         elif [ "$PARTITION" = "odm" ]; then
             printf '\tdevice_specific: true,\n'
         fi
+        printf '}\n\n'
+    done
+}
+
+#
+# array_contains_element:
+#
+# $1: element
+# $2: array ("${array[@]}")
+#
+# Check if the array contains the specified element.
+# https://stackoverflow.com/a/8574392
+#
+function array_contains_element() {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+#
+# gen_multipart_target:
+#
+# Given a library name, this function will output a Soong build rule for
+# the library while specifying where this library can be installed to.
+#
+function gen_shared_library_target() {
+    local ALL_LIBS=()
+
+    # Figure out what's 32-bit, what's 64-bit, and what's multilib
+    # I really should not be doing this in bash due to shitty array passing :(
+
+    # root
+    # TODO: it equals to system, support for it should be dropped by
+    # copying all lib(64)?/ to system/lib(64)?/
+    local ROOT_LIB32=( $(prefix_match "lib/") )
+    local ROOT_LIB64=( $(prefix_match "lib64/") )
+
+    local ROOT_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${ROOT_LIB32[@]}") <(printf '%s\n' "${ROOT_LIB64[@]}")) )
+    ROOT_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${ROOT_LIB32[@]}") <(printf '%s\n' "${ROOT_MULTILIBS[@]}")) )
+    ROOT_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${ROOT_LIB64[@]}") <(printf '%s\n' "${ROOT_MULTILIBS[@]}")) )
+
+    ALL_LIBS+=("${ROOT_MULTILIBS[@]}")
+    ALL_LIBS+=("${ROOT_LIB32[@]}")
+    ALL_LIBS+=("${ROOT_LIB64[@]}")
+
+    # system
+    local SYSTEM_LIB32=( $(prefix_match "system/lib/") )
+    local SYSTEM_LIB64=( $(prefix_match "system/lib64/") )
+
+    local SYSTEM_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${SYSTEM_LIB32[@]}") <(printf '%s\n' "${SYSTEM_LIB64[@]}")) )
+    SYSTEM_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${SYSTEM_LIB32[@]}") <(printf '%s\n' "${SYSTEM_MULTILIBS[@]}")) )
+    SYSTEM_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${SYSTEM_LIB64[@]}") <(printf '%s\n' "${SYSTEM_MULTILIBS[@]}")) )
+
+    ALL_LIBS+=("${SYSTEM_MULTILIBS[@]}")
+    ALL_LIBS+=("${SYSTEM_LIB32[@]}")
+    ALL_LIBS+=("${SYSTEM_LIB64[@]}")
+
+    # vendor
+    local VENDOR_LIB32=( $(prefix_match "vendor/lib/") )
+    local VENDOR_LIB64=( $(prefix_match "vendor/lib64/") )
+
+    local VENDOR_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${VENDOR_LIB32[@]}") <(printf '%s\n' "${VENDOR_LIB64[@]}")) )
+    VENDOR_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${VENDOR_LIB32[@]}") <(printf '%s\n' "${VENDOR_MULTILIBS[@]}")) )
+    VENDOR_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${VENDOR_LIB64[@]}") <(printf '%s\n' "${VENDOR_MULTILIBS[@]}")) )
+
+    ALL_LIBS+=("${VENDOR_MULTILIBS[@]}")
+    ALL_LIBS+=("${VENDOR_LIB32[@]}")
+    ALL_LIBS+=("${VENDOR_LIB64[@]}")
+
+    # product
+    local PRODUCT_LIB32=( $(prefix_match "product/lib/") )
+    local PRODUCT_LIB64=( $(prefix_match "product/lib64/") )
+
+    local PRODUCT_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${PRODUCT_LIB32[@]}") <(printf '%s\n' "${PRODUCT_LIB64[@]}")) )
+    PRODUCT_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${PRODUCT_LIB32[@]}") <(printf '%s\n' "${PRODUCT_MULTILIBS[@]}")) )
+    PRODUCT_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${PRODUCT_LIB64[@]}") <(printf '%s\n' "${PRODUCT_MULTILIBS[@]}")) )
+
+    ALL_LIBS+=("${PRODUCT_MULTILIBS[@]}")
+    ALL_LIBS+=("${PRODUCT_LIB32[@]}")
+    ALL_LIBS+=("${PRODUCT_LIB64[@]}")
+
+    # system_ext
+    local SYSTEM_EXT_LIB32=( $(prefix_match "system_ext/lib/") )
+    local SYSTEM_EXT_LIB64=( $(prefix_match "system_ext/lib64/") )
+
+    local SYSTEM_EXT_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${SYSTEM_EXT_LIB32[@]}") <(printf '%s\n' "${SYSTEM_EXT_LIB64[@]}")) )
+    SYSTEM_EXT_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${SYSTEM_EXT_LIB32[@]}") <(printf '%s\n' "${SYSTEM_EXT_MULTILIBS[@]}")) )
+    SYSTEM_EXT_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${SYSTEM_EXT_LIB64[@]}") <(printf '%s\n' "${SYSTEM_EXT_MULTILIBS[@]}")) )
+
+    ALL_LIBS+=("${SYSTEM_EXT_MULTILIBS[@]}")
+    ALL_LIBS+=("${SYSTEM_EXT_LIB32[@]}")
+    ALL_LIBS+=("${SYSTEM_EXT_LIB64[@]}")
+
+    # odm
+    local ODM_LIB32=( $(prefix_match "odm/lib/") )
+    local ODM_LIB64=( $(prefix_match "odm/lib64/") )
+
+    local ODM_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${ODM_LIB32[@]}") <(printf '%s\n' "${ODM_LIB64[@]}")) )
+    ODM_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${ODM_LIB32[@]}") <(printf '%s\n' "${ODM_MULTILIBS[@]}")) )
+    ODM_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${ODM_LIB64[@]}") <(printf '%s\n' "${ODM_MULTILIBS[@]}")) )
+
+    ALL_LIBS+=("${ODM_MULTILIBS[@]}")
+    ALL_LIBS+=("${ODM_LIB32[@]}")
+    ALL_LIBS+=("${ODM_LIB64[@]}")
+
+    # Remove duplicates
+    ALL_LIBS=($(printf '%s\n' "${ALL_LIBS[@]}" | LC_ALL=C sort -u))
+
+    local FILE=
+    local ARGS=
+    local BASENAME=
+    local PKGNAME=
+    local SRC_32=
+    local SRC_64=
+    local STEM=
+
+    # values: true, false
+    local IS_IN_ROOT=
+    local IS_IN_SYSTEM=
+    local IS_IN_VENDOR=
+    local IS_IN_PRODUCT=
+    local IS_IN_SYSTEM_EXT=
+    local IS_IN_ODM=
+
+    # values: partition containing the file
+    local PARTITION_32=
+    local PARTITION_64=
+
+    local EXTRA=
+
+    local HAS_A_SPECIFIC_PARTITION=
+
+    for P in "${ALL_LIBS[@]}"; do
+        FILE=$(target_file "$P")
+        ARGS=$(target_args "$P")
+        ARGS=(${ARGS//;/ })
+
+        BASENAME=$(basename "$FILE")
+        DIRNAME=$(dirname "$FILE")
+        PKGNAME=${BASENAME%.*}
+
+        # Allow overriding module name
+        STEM=
+        for ARG in "${ARGS[@]}"; do
+            if [[ "$ARG" =~ "MODULE" ]]; then
+                STEM="$PKGNAME"
+                PKGNAME=${ARG#*=}
+            fi
+        done
+
+        PARTITION_32=
+        PARTITION_64=
+
+        if array_contains_element "${P}" "${ROOT_MULTILIBS[@]}"; then
+            IS_IN_ROOT=both
+            if [ -z "$PARTITION_32" ] || [ -z "$PARTITION_64" ] || [ "$PARTITION_32" != "$PARTITION_64" ]; then
+                PARTITION_32=root
+                PARTITION_64=root
+            fi
+        elif array_contains_element "${P}" "${ROOT_LIB64[@]}"; then
+            IS_IN_ROOT=64
+            if [ -z "$PARTITION_64" ]; then
+                PARTITION_64=root
+            fi
+        elif array_contains_element "${P}" "${ROOT_LIB32[@]}"; then
+            IS_IN_ROOT=32
+            if [ -z "$PARTITION_32" ]; then
+                PARTITION_32=root
+            fi
+        else
+            IS_IN_ROOT=none
+        fi
+
+        if array_contains_element "${P}" "${SYSTEM_MULTILIBS[@]}"; then
+            IS_IN_SYSTEM=both
+            if [ -z "$PARTITION_32" ] || [ -z "$PARTITION_64" ] || [ "$PARTITION_32" != "$PARTITION_64" ]; then
+                PARTITION_32=system
+                PARTITION_64=system
+            fi
+        elif array_contains_element "${P}" "${SYSTEM_LIB64[@]}"; then
+            IS_IN_SYSTEM=64
+            if [ -z "$PARTITION_64" ]; then
+                PARTITION_64=system
+            fi
+        elif array_contains_element "${P}" "${SYSTEM_LIB32[@]}"; then
+            IS_IN_SYSTEM=32
+            if [ -z "$PARTITION_32" ]; then
+                PARTITION_32=system
+            fi
+        else
+            IS_IN_SYSTEM=none
+        fi
+
+        if array_contains_element "${P}" "${VENDOR_MULTILIBS[@]}"; then
+            IS_IN_VENDOR=both
+            if [ -z "$PARTITION_32" ] || [ -z "$PARTITION_64" ] || [ "$PARTITION_32" != "$PARTITION_64" ]; then
+                PARTITION_32=vendor
+                PARTITION_64=vendor
+            fi
+        elif array_contains_element "${P}" "${VENDOR_LIB64[@]}"; then
+            IS_IN_VENDOR=64
+            if [ -z "$PARTITION_64" ]; then
+                PARTITION_64=vendor
+            fi
+        elif array_contains_element "${P}" "${VENDOR_LIB32[@]}"; then
+            IS_IN_VENDOR=32
+            if [ -z "$PARTITION_32" ]; then
+                PARTITION_32=vendor
+            fi
+        else
+            IS_IN_VENDOR=none
+        fi
+
+        if array_contains_element "${P}" "${PRODUCT_MULTILIBS[@]}"; then
+            IS_IN_PRODUCT=both
+            if [ -z "$PARTITION_32" ] || [ -z "$PARTITION_64" ] || [ "$PARTITION_32" != "$PARTITION_64" ]; then
+                PARTITION_32=product
+                PARTITION_64=product
+            fi
+        elif array_contains_element "${P}" "${PRODUCT_LIB64[@]}"; then
+            IS_IN_PRODUCT=64
+            if [ -z "$PARTITION_64" ]; then
+                PARTITION_64=product
+            fi
+        elif array_contains_element "${P}" "${PRODUCT_LIB32[@]}"; then
+            IS_IN_PRODUCT=32
+            if [ -z "$PARTITION_32" ]; then
+                PARTITION_32=product
+            fi
+        else
+            IS_IN_PRODUCT=none
+        fi
+
+        if array_contains_element "${P}" "${SYSTEM_EXT_MULTILIBS[@]}"; then
+            IS_IN_SYSTEM_EXT=both
+            if [ -z "$PARTITION_32" ] || [ -z "$PARTITION_64" ] || [ "$PARTITION_32" != "$PARTITION_64" ]; then
+                PARTITION_32=system_ext
+                PARTITION_64=system_ext
+            fi
+        elif array_contains_element "${P}" "${SYSTEM_EXT_LIB64[@]}"; then
+            IS_IN_SYSTEM_EXT=64
+            if [ -z "$PARTITION_64" ]; then
+                PARTITION_64=system_ext
+            fi
+        elif array_contains_element "${P}" "${SYSTEM_EXT_LIB32[@]}"; then
+            IS_IN_SYSTEM_EXT=32
+            if [ -z "$PARTITION_32" ]; then
+                PARTITION_32=system_ext
+            fi
+        else
+            IS_IN_SYSTEM_EXT=none
+        fi
+
+        if array_contains_element "${P}" "${ODM_MULTILIBS[@]}"; then
+            IS_IN_ODM=both
+            if [ -z "$PARTITION_32" ] || [ -z "$PARTITION_64" ] || [ "$PARTITION_32" != "$PARTITION_64" ]; then
+                PARTITION_32=odm
+                PARTITION_64=odm
+            fi
+        elif array_contains_element "${P}" "${ODM_LIB64[@]}"; then
+            IS_IN_ODM=64
+            if [ -z "$PARTITION_64" ]; then
+                PARTITION_64=odm
+            fi
+        elif array_contains_element "${P}" "${ODM_LIB32[@]}"; then
+            IS_IN_ODM=32
+            if [ -z "$PARTITION_32" ]; then
+                PARTITION_32=odm
+            fi
+        else
+            IS_IN_ODM=none
+        fi
+
+        HAS_A_SPECIFIC_PARTITION=
+
+        printf 'cc_prebuilt_library_shared {\n'
+        printf '\tname: "%s",\n' "$PKGNAME"
+        printf '\towner: "%s",\n' "$VENDOR"
+        printf '\tstrip: {\n'
+        printf '\t\tnone: true,\n'
+        printf '\t},\n'
+        if [ ! -z "$STEM" ]; then
+            printf '\tstem: "%s",\n' "$STEM"
+        fi
+
+        printf '\ttarget: {\n'
+
+        SRC_32="proprietary"
+        if [ "$PARTITION_32" != "root" ]; then
+            SRC_32+="/$PARTITION_32"
+        fi
+        SRC_64="proprietary"
+        if [ "$PARTITION_64" != "root" ]; then
+            SRC_64+="/$PARTITION_64"
+        fi
+
+        if [ ! -z "$PARTITION_32" ] && [ ! -z "$PARTITION_64" ]; then
+            EXTRA="both"
+        elif [ ! -z "$PARTITION_64" ]; then
+            EXTRA="64"
+        elif [ ! -z "$PARTITION_32" ]; then
+            EXTRA="32"
+        else
+            continue
+        fi
+
+        if [ "$EXTRA" = "both" ]; then
+            printf '\t\tandroid_arm: {\n'
+            printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC_32" "$FILE"
+            printf '\t\t},\n'
+            printf '\t\tandroid_arm64: {\n'
+            printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC_64" "$FILE"
+            printf '\t\t},\n'
+        elif [ "$EXTRA" = "64" ]; then
+            printf '\t\tandroid_arm64: {\n'
+            printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC_64" "$FILE"
+            printf '\t\t},\n'
+        else
+            printf '\t\tandroid_arm: {\n'
+            printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC_32" "$FILE"
+            printf '\t\t},\n'
+        fi
+        printf '\t},\n'
+        printf '\tcompile_multilib: "%s",\n' "$EXTRA"
+        printf '\tcheck_elf_files: false,\n'
+        if [ "$DIRNAME" != "." ]; then
+            printf '\trelative_install_path: "%s",\n' "$DIRNAME"
+        fi
+        printf '\tprefer: true,\n'
+
+        # A module can't be on both system and system_ext at the same time.
+        if [ "$IS_IN_SYSTEM" != "none" ] && [ "$IS_IN_SYSTEM_EXT" != "none" ]; then
+            echo "Warning: you're trying to copy the same library in both system and system_ext" 1>&2
+            echo "Currently only system_ext variant will be copied" 1>&2
+            echo "Remove system lib from your proprietary files list ($FILE)" 1>&2
+        fi
+
+        if [ "$IS_IN_SYSTEM" != "none" ] || [ "$IS_IN_SYSTEM_EXT" != "none" ]; then
+            HAS_A_SPECIFIC_PARTITION=true
+        fi
+        if [ "$IS_IN_SYSTEM_EXT" != "none" ]; then
+            printf '\tsystem_ext_specific: true,\n'
+        fi
+        if [ "$IS_IN_VENDOR" != "none" ]; then
+            if [ ! -z "$HAS_A_SPECIFIC_PARTITION" ]; then
+                printf '\tvendor_available: true,\n'
+                PACKAGE_LIST+=("${PKGNAME}.vendor")
+            else
+                printf '\tsoc_specific: true,\n'
+                HAS_A_SPECIFIC_PARTITION=true
+            fi
+        fi
+        if [ "$IS_IN_ODM" != "none" ]; then
+            if [ ! -z "$HAS_A_SPECIFIC_PARTITION" ]; then
+                printf '\todm_available: true,\n'
+                PACKAGE_LIST+=("${PKGNAME}.odm")
+            else
+                printf '\tdevice_specific: true,\n'
+                HAS_A_SPECIFIC_PARTITION=true
+            fi
+        fi
+        if [ "$IS_IN_PRODUCT" != "none" ]; then
+            if [ ! -z "$HAS_A_SPECIFIC_PARTITION" ]; then
+                printf '\tproduct_available: true,\n'
+                PACKAGE_LIST+=("${PKGNAME}.product")
+            else
+                printf '\tproduct_specific: true,\n'
+                HAS_A_SPECIFIC_PARTITION=true
+            fi
+        fi
+        if [ ! -z "$HAS_A_SPECIFIC_PARTITION" ]; then
+            PACKAGE_LIST+=("${PKGNAME}")
+        fi
+
         printf '}\n\n'
     done
 }
@@ -565,103 +898,8 @@ function write_product_packages() {
         return 0
     fi
 
-    # Figure out what's 32-bit, what's 64-bit, and what's multilib
-    # I really should not be doing this in bash due to shitty array passing :(
-    local T_LIB32=( $(prefix_match "lib/") )
-    local T_LIB64=( $(prefix_match "lib64/") )
-    local MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_LIB32[@]}") <(printf '%s\n' "${T_LIB64[@]}")) )
-    local LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${T_LIB32[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
-    local LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_LIB64[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
-
-    if [ "${#MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "" "both" "MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "" "32" "LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "" "64" "LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_S_LIB32=( $(prefix_match "system/lib/") )
-    local T_S_LIB64=( $(prefix_match "system/lib64/") )
-    local S_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_S_LIB32[@]}") <(printf '%s\n' "${T_S_LIB64[@]}")) )
-    local S_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${T_S_LIB32[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
-    local S_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_S_LIB64[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
-
-    if [ "${#S_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system" "both" "S_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#S_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system" "32" "S_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#S_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system" "64" "S_LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_V_LIB32=( $(prefix_match "vendor/lib/") )
-    local T_V_LIB64=( $(prefix_match "vendor/lib64/") )
-    local V_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${T_V_LIB64[@]}")) )
-    local V_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
-    local V_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB64[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
-
-    if [ "${#V_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "both" "V_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#V_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "32" "V_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#V_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "64" "V_LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_P_LIB32=( $(prefix_match "product/lib/") )
-    local T_P_LIB64=( $(prefix_match "product/lib64/") )
-    local P_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${T_P_LIB64[@]}")) )
-    local P_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
-    local P_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_P_LIB64[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
-
-    if [ "${#P_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "product" "both" "P_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#P_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "product" "32" "P_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#P_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "product" "64" "P_LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_SE_LIB32=( $(prefix_match "system_ext/lib/") )
-    local T_SE_LIB64=( $(prefix_match "system_ext/lib64/") )
-    local SE_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${T_SE_LIB64[@]}")) )
-    local SE_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
-    local SE_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_SE_LIB64[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
-
-    if [ "${#SE_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "both" "SE_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#SE_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "32" "SE_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#SE_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "64" "SE_LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_O_LIB32=( $(prefix_match "odm/lib/") )
-    local T_O_LIB64=( $(prefix_match "odm/lib64/") )
-    local O_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${T_O_LIB64[@]}")) )
-    local O_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
-    local O_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_O_LIB64[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
-
-    if [ "${#O_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "odm" "both" "O_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#O_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "odm" "32" "O_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#O_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "odm" "64" "O_LIB64" >> "$ANDROIDBP"
-    fi
+    # Shared libraries
+    gen_shared_library_target >> "$ANDROIDBP"
 
     # APEX
     local APEX=( $(prefix_match "apex/") )
