@@ -1693,7 +1693,7 @@ function generate_prop_list_from_image() {
     if [[ $(file -b "$image_file") == Linux* ]]; then
         extract_img_data "$image_file" "$image_dir"
     elif [[ $(file -b "$image_file") == Android* ]]; then
-        "$SIMG2IMG" "$image_file" "$image_dir"/"$(basename "$image_file").raw"
+        simg2img "$image_file" "$image_dir"/"$(basename "$image_file").raw"
         extract_img_data "$image_dir"/"$(basename "$image_file").raw" "$image_dir"
         rm "$image_dir"/"$(basename "$image_file").raw"
     else
