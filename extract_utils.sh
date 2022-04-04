@@ -34,6 +34,39 @@ function cleanup() {
 trap cleanup 0
 
 #
+# setup_vendor_deps
+#
+# $1: Android root directory
+# Sets up common dependencies for extraction
+#
+function setup_vendor_deps() {
+    export ANDROID_ROOT="$1"
+    if [ ! -d "$ANDROID_ROOT" ]; then
+        echo "\$ANDROID_ROOT must be set and valid before including this script!"
+        exit 1
+    fi
+
+    export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
+
+    export SIMG2IMG="$BINARIES_LOCATION"/simg2img
+    export LPUNPACK="$BINARIES_LOCATION"/lpunpack
+    export SIGSCAN="$BINARIES_LOCATION"/SigScan
+
+    for version in 0_8 0_9; do
+        export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
+    done
+
+    if [ -z "$PATCHELF_VERSION" ]; then
+        export PATCHELF_VERSION=0_9
+    fi
+
+    if [ -z "$PATCHELF" ]; then
+        local patchelf_variable="PATCHELF_${PATCHELF_VERSION}"
+        export PATCHELF=${!patchelf_variable}
+    fi
+}
+
+#
 # setup_vendor
 #
 # $1: device name
@@ -94,24 +127,7 @@ function setup_vendor() {
         VENDOR_RADIO_STATE=0
     fi
 
-    export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
-
-    export SIMG2IMG="$BINARIES_LOCATION"/simg2img
-    export LPUNPACK="$BINARIES_LOCATION"/lpunpack
-    export SIGSCAN="$BINARIES_LOCATION"/SigScan
-
-    for version in 0_8 0_9; do
-        export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
-    done
-
-    if [ -z "$PATCHELF_VERSION" ]; then
-        export PATCHELF_VERSION=0_9
-    fi
-
-    if [ -z "$PATCHELF" ]; then
-        local patchelf_variable="PATCHELF_${PATCHELF_VERSION}"
-        export PATCHELF=${!patchelf_variable}
-    fi
+    setup_vendor_deps "$ANDROID_ROOT"
 }
 
 # Helper functions for parsing a spec.
