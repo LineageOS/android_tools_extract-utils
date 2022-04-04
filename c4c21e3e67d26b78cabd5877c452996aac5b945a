@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "936b7080_4570e2dc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2022-04-04T22:03:10Z",
+      "side": 1,
+      "message": "https://review.lineageos.org/q/topic:regen",
+      "revId": "c4c21e3e67d26b78cabd5877c452996aac5b945a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
