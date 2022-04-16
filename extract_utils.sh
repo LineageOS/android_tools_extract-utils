@@ -1248,25 +1248,12 @@ function write_makefiles() {
 #
 # append_firmware_calls_to_makefiles:
 #
-# Appends the calls to all images present in radio folder to Android.mk
-#
-function append_firmware_calls_to_makefiles() {
-    cat << EOF >> "$ANDROIDMK"
-RADIO_FILES := \$(wildcard \$(LOCAL_PATH)/radio/*)
-\$(foreach f, \$(notdir \$(RADIO_FILES)), \\
-    \$(call add-radio-file,radio/\$(f)))
-
-EOF
-}
-
-#
-# append_firmware_ab_ota_to_makefiles:
-#
 # $1: file containing the list of items to extract
 #
-# Appends all images in radio folder to BoardConfigVendor.mk
+# Appends the calls to all images present in radio folder to Android.mk
+# and radio AB_OTA_PARTITIONS to BoardConfigVendor.mk
 #
-function append_firmware_ab_ota_to_makefiles() {
+function append_firmware_calls_to_makefiles() {
     parse_file_list "$1"
 
     local FILELIST=(${PRODUCT_COPY_FILES_LIST[@]})
@@ -1276,7 +1263,7 @@ function append_firmware_ab_ota_to_makefiles() {
     for (( i=1; i<COUNT+1; i++ )); do
         local DST_FILE=$(target_file "${FILELIST[$i-1]}")
         local ARGS=$(target_args "${FILELIST[$i-1]}")
-        DST_FILE=(${DST_FILE//.img/ })
+        DST_FILE_NAME=(${DST_FILE//.img/ })
         ARGS=(${ARGS//;/ })
         LINEEND=" \\"
         if [ "$i" -eq "$COUNT" ]; then
@@ -1285,10 +1272,12 @@ function append_firmware_ab_ota_to_makefiles() {
 
         for ARG in "${ARGS[@]}"; do
             if [[ "$ARG" =~ "AB" ]]; then
-                printf '    %s%s\n' "$DST_FILE" "$LINEEND" >> "$BOARDMK"
+                printf '    %s%s\n' "$DST_FILE_NAME" "$LINEEND" >> "$BOARDMK"
             fi
         done
+        printf '%s\n' "\$(call add-radio-file,radio/$DST_FILE)" >> "$ANDROIDMK"
     done
+    printf '\n' >> "$ANDROIDMK"
 }
 
 #
