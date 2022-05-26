@@ -19,7 +19,8 @@ COMMON=-1
 ARCHES=
 FULLY_DEODEXED=-1
 
-TMPDIR=$(mktemp -d)
+SKIP_CLEANUP=${SKIP_CLEANUP:-0}
+TMPDIR=${TMPDIR:-$(mktemp -d)}
 HOST="$(uname | tr '[:upper:]' '[:lower:]')"
 
 #
@@ -28,7 +29,11 @@ HOST="$(uname | tr '[:upper:]' '[:lower:]')"
 # kill our tmpfiles with fire on exit
 #
 function cleanup() {
-    rm -rf "${TMPDIR:?}"
+    if [ "$SKIP_CLEANUP" == "true" ] || [ "$SKIP_CLEANUP" == "1" ]; then
+        echo "Skipping cleanup of $TMPDIR"
+    else
+        rm -rf "${TMPDIR:?}"
+    fi
 }
 
 trap cleanup 0
