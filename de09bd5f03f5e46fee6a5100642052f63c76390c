@@ -33,6 +33,29 @@
       "message": "any objections / any suggestions? ^^",
       "revId": "de09bd5f03f5e46fee6a5100642052f63c76390c",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2a57c99_bf609204",
+        "filename": "sort-blobs-list.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2022-06-09T15:53:27Z",
+      "side": 1,
+      "message": "This requires python 3.9 which is not part of ubuntu 20.04 based distros",
+      "range": {
+        "startLine": 21,
+        "startChar": 22,
+        "endLine": 21,
+        "endChar": 34
+      },
+      "revId": "de09bd5f03f5e46fee6a5100642052f63c76390c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
