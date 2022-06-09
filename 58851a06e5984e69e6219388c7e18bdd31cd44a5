@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "762757cb_596fb4b8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2022-06-09T16:02:32Z",
+      "side": 1,
+      "message": "How about\n string1 \u003d (string1[1:]\n            if string1.startswith(\u0027-\u0027)\n            else string1)\n\nregex seems overkill",
+      "revId": "58851a06e5984e69e6219388c7e18bdd31cd44a5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
