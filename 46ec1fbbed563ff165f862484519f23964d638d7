@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8c33cdc4_6e5ac581",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 13028
+      },
+      "writtenOn": "2022-08-20T11:24:03Z",
+      "side": 1,
+      "message": "the non-adb case also has system/$1, maybe add that too, for good measure?",
+      "range": {
+        "startLine": 1105,
+        "startChar": 8,
+        "endLine": 1105,
+        "endChar": 64
+      },
+      "revId": "46ec1fbbed563ff165f862484519f23964d638d7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
