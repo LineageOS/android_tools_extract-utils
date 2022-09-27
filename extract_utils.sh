@@ -782,7 +782,7 @@ function write_product_packages() {
         write_blueprint_packages "ETC" "" "" "ETC" >> "$ANDROIDBP"
     fi
     local S_ETC=( $(prefix_match "system/etc/") )
-    if [ "${#ETC[@]}" -gt "0" ]; then
+    if [ "${#S_ETC[@]}" -gt "0" ]; then
         write_blueprint_packages "ETC" "system" "" "S_ETC" >> "$ANDROIDBP"
     fi
     local V_ETC=( $(prefix_match "vendor/etc/") )
@@ -808,7 +808,7 @@ function write_product_packages() {
         write_blueprint_packages "EXECUTABLES" "" "" "BIN" >> "$ANDROIDBP"
     fi
     local S_BIN=( $(prefix_match "system/bin/") )
-    if [ "${#BIN[@]}" -gt "0"  ]; then
+    if [ "${#S_BIN[@]}" -gt "0"  ]; then
         write_blueprint_packages "EXECUTABLES" "system" "" "S_BIN" >> "$ANDROIDBP"
     fi
     local V_BIN=( $(prefix_match "vendor/bin/") )
