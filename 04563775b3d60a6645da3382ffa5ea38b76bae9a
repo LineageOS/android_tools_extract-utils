@@ -16,6 +16,24 @@
       "message": "I believe that this is on purpose.",
       "revId": "04563775b3d60a6645da3382ffa5ea38b76bae9a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7374cdcf_d8437410",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16624
+      },
+      "writtenOn": "2022-09-27T14:56:30Z",
+      "side": 1,
+      "message": "For me it very much looks and feels like a copy-paste error ;)\n\nAnd as mentioned in the commit message without this no cc_prebuilt_binary is made for system/bin/foobar, and no PRODUCT_PACKAGES added even though it\u0027s done for all other binaries and .so files that\u0027s provided in the proprietary-files.txt list",
+      "parentUuid": "5aa04777_ece3ffe1",
+      "revId": "04563775b3d60a6645da3382ffa5ea38b76bae9a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
