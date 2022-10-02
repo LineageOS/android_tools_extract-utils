@@ -519,12 +519,15 @@ function write_blueprint_packages() {
             fi
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
             if [ "$EXTENSION" != "sh" ]; then
+                printf '\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
                 printf '\tcheck_elf_files: false,\n'
                 printf '\tstrip: {\n'
                 printf '\t\tnone: true,\n'
                 printf '\t},\n'
+                printf '\tprefer: true,\n'
+            else
+                printf '\tsrc: "%s/bin/%s",\n' "$SRC" "$FILE"
             fi
             unset EXTENSION
         else
@@ -545,7 +548,7 @@ function write_blueprint_packages() {
                 printf '\tsub_dir: "%s",\n' "$DIRNAME"
             fi
         fi
-        if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] ; then
+        if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf '\tprefer: true,\n'
         fi
         if [ "$EXTRA" = "priv-app" ]; then
