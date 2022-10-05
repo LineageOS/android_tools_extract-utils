@@ -16,6 +16,24 @@
       "message": "...what?",
       "revId": "696ec89d5856fd7a3e68be60d2611231fa6b6732",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3022bbb3_9f94d6dc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19867
+      },
+      "writtenOn": "2022-10-05T14:17:19Z",
+      "side": 1,
+      "message": "This will generate system.mk, vendor.mk, product.mk containing their speified packages and blobs",
+      "parentUuid": "9c555320_bf814c70",
+      "revId": "696ec89d5856fd7a3e68be60d2611231fa6b6732",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
