@@ -13,6 +13,7 @@ PRODUCT_PACKAGES_LIST=()
 PRODUCT_PACKAGES_HASHES=()
 PRODUCT_PACKAGES_FIXUP_HASHES=()
 PACKAGE_LIST=()
+PARTITIONS=()
 VENDOR_STATE=-1
 VENDOR_RADIO_STATE=-1
 COMMON=-1
@@ -293,20 +294,28 @@ function write_product_copy_files() {
     local FILE=
     local LINEEND=
     local TREBLE_COMPAT=$1
-
+    local CHANGED=""
+    local PART=""
     if [ "$COUNT" -eq "0" ]; then
         return 0
     fi
 
-    printf '%s\n' "PRODUCT_COPY_FILES += \\" >> "$PRODUCTMK"
+    for (( i=0; i<${#PARTITIONS[@]}; i++ )); do
+        printf '$(call inherit-product, %s)\n' "$OUTDIR/${PARTITIONS[$i]}.mk" >> "$PRODUCTMK"
+        write_makefile_header "$ANDROID_ROOT/$OUTDIR/${PARTITIONS[$i]}.mk"
+        printf '%s\n' "PRODUCT_COPY_FILES += \\" >> "$ANDROID_ROOT/$OUTDIR/${PARTITIONS[$i]}.mk"
+    done
+
     for (( i=1; i<COUNT+1; i++ )); do
         FILE="${PRODUCT_COPY_FILES_LIST[$i-1]}"
+        TARGET=$(target_file "$FILE")
+        PART=$(echo $TARGET |  cut -d'/' -f1)
+        CHANGED=$(echo $(target_file ${PRODUCT_COPY_FILES_LIST[$i]}) |  cut -d'/' -f1)
         LINEEND=" \\"
-        if [ "$i" -eq "$COUNT" ]; then
+        if [ "$i" -eq "$COUNT" ] || [ "$CHANGED" != "$PART" ]; then
             LINEEND=""
         fi
-
-        TARGET=$(target_file "$FILE")
+        PRODUCTMK=$ANDROID_ROOT/$OUTDIR/$PART.mk
         if prefix_match_file "product/" $TARGET ; then
             local OUTTARGET=$(truncate_file $TARGET)
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_PRODUCT)/%s%s\n' \
@@ -423,7 +432,7 @@ function write_blueprint_packages() {
         done
 
         # Add to final package list
-        PACKAGE_LIST+=("$PKGNAME")
+        PACKAGE_LIST+=("$PKGNAME:$PARTITION")
 
         SRC="proprietary"
         if [ "$PARTITION" = "system" ]; then
@@ -572,6 +581,25 @@ function write_blueprint_packages() {
             printf '\tdevice_specific: true,\n'
         fi
         printf '}\n\n'
+    done
+}
+
+#
+# cleanup_ending_traces:
+#
+# This is a helper function will remove
+# the additional '\' occured at the end
+# of the lit or package names.
+#
+function cleanup_ending_traces() {
+    for PART in ${PARTITIONS[@]}
+    do
+        PRODUCTMK=$ANDROID_ROOT/$OUTDIR/$PART.mk
+        LASTLINE="$(tail -n1 $PRODUCTMK | cut -d'\' -f1 | sed 's/.$//')"
+        head -n -1 $PRODUCTMK > $PRODUCTMK.tmp
+        cat $PRODUCTMK.tmp > $PRODUCTMK
+        rm $PRODUCTMK.tmp
+        echo "$LASTLINE" >> $PRODUCTMK
     done
 }
 
@@ -846,14 +874,19 @@ function write_product_packages() {
         return 0
     fi
 
-    printf '\n%s\n' "PRODUCT_PACKAGES += \\" >> "$PRODUCTMK"
     for (( i=1; i<PACKAGE_COUNT+1; i++ )); do
+        PRODUCTMK=$ANDROID_ROOT/$OUTDIR/$(cut -d':' -f2 <<<${PACKAGE_LIST[$i-1]}).mk
+        if ! grep -q "PRODUCT_PACKAGES" $PRODUCTMK; then
+            printf '\n%s\n' "PRODUCT_PACKAGES += \\" >> "$PRODUCTMK"
+        fi
         local LINEEND=" \\"
         if [ "$i" -eq "$PACKAGE_COUNT" ]; then
             LINEEND=""
         fi
-        printf '    %s%s\n' "${PACKAGE_LIST[$i-1]}" "$LINEEND" >> "$PRODUCTMK"
+        printf '    %s%s\n' "$(cut -d':' -f1 <<<${PACKAGE_LIST[$i-1]})" "$LINEEND" >> "$PRODUCTMK"
     done
+
+    cleanup_ending_traces
 }
 
 #
@@ -989,6 +1022,7 @@ function _adb_connected {
 #
 # $1: input file
 # $2: blob section in file - optional
+# $3: true to sort final packages list - optional - default false
 #
 # Sets PRODUCT_PACKAGES and PRODUCT_COPY_FILES while parsing the input file
 #
@@ -1032,6 +1066,7 @@ function parse_file_list() {
         local SPEC=${SPLIT[0]}
         local HASH="x"
         local FIXUP_HASH="x"
+        local PARTS=()
         if [ "$COUNT" -gt "1" ]; then
             HASH=${SPLIT[1]}
         fi
@@ -1054,11 +1089,16 @@ function parse_file_list() {
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
         else
             PRODUCT_COPY_FILES_LIST+=("$SPEC")
+            PARTS+=($(cut -d':' -f2 <<<"$SPEC"))
             PRODUCT_COPY_FILES_HASHES+=("$HASH")
             PRODUCT_COPY_FILES_FIXUP_HASHES+=("$FIXUP_HASH")
         fi
 
     done < <(egrep -v '(^#|^[[:space:]]*$)' "$LIST" | LC_ALL=C sort | uniq)
+    if [ -n "$3" ] && [ "$3" == "true" ]; then
+        IFS=$'\n' PRODUCT_COPY_FILES_LIST=($(LC_ALL=C sort <<< "${PARTS[*]}")); unset IFS
+    fi
+    PARTITIONS=($(echo "${PARTS[@]}" | sed 's: :\n:g' | cut -d'/' -f1 | sort | uniq | awk '{printf("%s ", $0)}'))
 }
 
 #
@@ -1072,7 +1112,7 @@ function parse_file_list() {
 # the product makefile.
 #
 function write_makefiles() {
-    parse_file_list "$1"
+    parse_file_list "$1" "" "true"
     write_product_copy_files "$2"
     write_product_packages
 }
