@@ -6,13 +6,14 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+PACKAGE_BOOTJAR_LIST=()
+PACKAGE_LIST=()
 PRODUCT_COPY_FILES_LIST=()
 PRODUCT_COPY_FILES_HASHES=()
 PRODUCT_COPY_FILES_FIXUP_HASHES=()
 PRODUCT_PACKAGES_LIST=()
 PRODUCT_PACKAGES_HASHES=()
 PRODUCT_PACKAGES_FIXUP_HASHES=()
-PACKAGE_LIST=()
 VENDOR_STATE=-1
 VENDOR_RADIO_STATE=-1
 COMMON=-1
@@ -420,6 +421,9 @@ function write_blueprint_packages() {
                 STEM="$PKGNAME"
                 PKGNAME=${ARG#*=}
             fi
+            if [ "$ARG" = "BOOTJAR" ] && [ "$EXTENSION" = "jar" ]; then
+                PACKAGE_BOOTJAR_LIST+=("$PKGNAME")
+            fi
         done
 
         # Add to final package list
@@ -496,7 +500,7 @@ function write_blueprint_packages() {
                     OVERRIDEPKG=${ARG#*=}
                     OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
                     printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
-                elif [ ! -z "$ARG" ]; then
+                elif [ ! -z "$ARG" ] && [ "$ARG" != "BOOTJAR" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
                     printf '\tcertificate: "%s",\n' "$ARG"
                 fi
@@ -844,6 +848,17 @@ function write_product_packages() {
 
     if [ "$PACKAGE_COUNT" -eq "0" ]; then
         return 0
+    fi
+
+    if [ ! "${#PACKAGE_BOOTJAR_LIST[@]}" -eq "0" ]; then
+        printf '\n%s\n' "PRODUCT_BOOT_JARS += \\" >> "$PRODUCTMK"
+        for (( i=1; i<${#PACKAGE_BOOTJAR_LIST[@]}+1; i++ )); do
+            local LINEEND=" \\"
+            if [ "$i" -eq "${#PACKAGE_BOOTJAR_LIST[@]}" ]; then
+                LINEEND=""
+            fi
+            printf '    %s%s\n' "${PACKAGE_BOOTJAR_LIST[$i-1]}" "$LINEEND" >> "$PRODUCTMK"
+        done
     fi
 
     printf '\n%s\n' "PRODUCT_PACKAGES += \\" >> "$PRODUCTMK"
