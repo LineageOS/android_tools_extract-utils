@@ -20,7 +20,7 @@ ARCHES=
 FULLY_DEODEXED=-1
 
 SKIP_CLEANUP=${SKIP_CLEANUP:-0}
-TMPDIR=${TMPDIR:-$(mktemp -d)}
+EXTRACT_TMP_DIR=$(mktemp -d)
 HOST="$(uname | tr '[:upper:]' '[:lower:]')"
 
 #
@@ -30,9 +30,9 @@ HOST="$(uname | tr '[:upper:]' '[:lower:]')"
 #
 function cleanup() {
     if [ "$SKIP_CLEANUP" == "true" ] || [ "$SKIP_CLEANUP" == "1" ]; then
-        echo "Skipping cleanup of $TMPDIR"
+        echo "Skipping cleanup of $EXTRACT_TMP_DIR"
     else
-        rm -rf "${TMPDIR:?}"
+        rm -rf "${EXTRACT_TMP_DIR:?}"
     fi
 }
 
@@ -992,7 +992,7 @@ function parse_file_list() {
 
     if [ -n "$2" ]; then
         echo "Using section \"$2\""
-        LIST=$TMPDIR/files.txt
+        LIST=$EXTRACT_TMP_DIR/files.txt
         # Match all lines starting with first line found to start* with '#'
         # comment and contain** $2, and ending with first line to be empty*.
         # *whitespaces (tabs, spaces) at the beginning of lines are discarded
@@ -1147,11 +1147,11 @@ function oat2dex() {
     if [ -z "$ARCHES" ]; then
         echo "Checking if system is odexed and locating boot.oats..."
         for ARCH in "arm64" "arm" "x86_64" "x86"; do
-            mkdir -p "$TMPDIR/system/framework/$ARCH"
-            if get_file "/system/framework/$ARCH" "$TMPDIR/system/framework/" "$SRC"; then
+            mkdir -p "$EXTRACT_TMP_DIR/system/framework/$ARCH"
+            if get_file "/system/framework/$ARCH" "$EXTRACT_TMP_DIR/system/framework/" "$SRC"; then
                 ARCHES+="$ARCH "
             else
-                rmdir "$TMPDIR/system/framework/$ARCH"
+                rmdir "$EXTRACT_TMP_DIR/system/framework/$ARCH"
             fi
         done
     fi
@@ -1169,53 +1169,53 @@ function oat2dex() {
     fi
 
     for ARCH in $ARCHES; do
-        BOOTOAT="$TMPDIR/system/framework/$ARCH/boot.oat"
+        BOOTOAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot.oat"
 
         local OAT="$(dirname "$OEM_TARGET")/oat/$ARCH/$(basename "$OEM_TARGET" ."${OEM_TARGET##*.}").odex"
         local VDEX="$(dirname "$OEM_TARGET")/oat/$ARCH/$(basename "$OEM_TARGET" ."${OEM_TARGET##*.}").vdex"
 
-        if get_file "$OAT" "$TMPDIR" "$SRC"; then
-            if get_file "$VDEX" "$TMPDIR" "$SRC"; then
-                "$VDEXEXTRACTOR" -o "$TMPDIR/" -i "$TMPDIR/$(basename "$VDEX")" > /dev/null
-                CLASSES=$(ls "$TMPDIR/$(basename "${OEM_TARGET%.*}")_classes"*)
+        if get_file "$OAT" "$EXTRACT_TMP_DIR" "$SRC"; then
+            if get_file "$VDEX" "$EXTRACT_TMP_DIR" "$SRC"; then
+                "$VDEXEXTRACTOR" -o "$EXTRACT_TMP_DIR/" -i "$EXTRACT_TMP_DIR/$(basename "$VDEX")" > /dev/null
+                CLASSES=$(ls "$EXTRACT_TMP_DIR/$(basename "${OEM_TARGET%.*}")_classes"*)
                 for CLASS in $CLASSES; do
                     NEWCLASS=$(echo "$CLASS" | sed 's/.*_//;s/cdex/dex/')
                     # Check if we have to deal with CompactDex
                     if [[ "$CLASS" == *.cdex ]]; then
                         "$CDEXCONVERTER" "$CLASS" &>/dev/null
-                        mv "$CLASS.new" "$TMPDIR/$NEWCLASS"
+                        mv "$CLASS.new" "$EXTRACT_TMP_DIR/$NEWCLASS"
                     else
-                        mv "$CLASS" "$TMPDIR/$NEWCLASS"
+                        mv "$CLASS" "$EXTRACT_TMP_DIR/$NEWCLASS"
                     fi
                 done
             else
-                java -jar "$BAKSMALIJAR" deodex -o "$TMPDIR/dexout" -b "$BOOTOAT" -d "$TMPDIR" "$TMPDIR/$(basename "$OAT")"
-                java -jar "$SMALIJAR" assemble "$TMPDIR/dexout" -o "$TMPDIR/classes.dex"
+                java -jar "$BAKSMALIJAR" deodex -o "$EXTRACT_TMP_DIR/dexout" -b "$BOOTOAT" -d "$EXTRACT_TMP_DIR" "$EXTRACT_TMP_DIR/$(basename "$OAT")"
+                java -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
             fi
         elif [[ "$CUSTOM_TARGET" =~ .jar$ ]]; then
-            JAROAT="$TMPDIR/system/framework/$ARCH/boot-$(basename ${OEM_TARGET%.*}).oat"
+            JAROAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot-$(basename ${OEM_TARGET%.*}).oat"
             JARVDEX="/system/framework/boot-$(basename ${OEM_TARGET%.*}).vdex"
             if [ ! -f "$JAROAT" ]; then
                 JAROAT=$BOOTOAT
             fi
             # try to extract classes.dex from boot.vdex for frameworks jars
             # fallback to boot.oat if vdex is not available
-            if get_file "$JARVDEX" "$TMPDIR" "$SRC"; then
-                "$VDEXEXTRACTOR" -o "$TMPDIR/" -i "$TMPDIR/$(basename "$JARVDEX")" > /dev/null
-                CLASSES=$(ls "$TMPDIR/$(basename "${JARVDEX%.*}")_classes"*)
+            if get_file "$JARVDEX" "$EXTRACT_TMP_DIR" "$SRC"; then
+                "$VDEXEXTRACTOR" -o "$EXTRACT_TMP_DIR/" -i "$EXTRACT_TMP_DIR/$(basename "$JARVDEX")" > /dev/null
+                CLASSES=$(ls "$EXTRACT_TMP_DIR/$(basename "${JARVDEX%.*}")_classes"*)
                 for CLASS in $CLASSES; do
                     NEWCLASS=$(echo "$CLASS" | sed 's/.*_//;s/cdex/dex/')
                     # Check if we have to deal with CompactDex
                     if [[ "$CLASS" == *.cdex ]]; then
                         "$CDEXCONVERTER" "$CLASS" &>/dev/null
-                        mv "$CLASS.new" "$TMPDIR/$NEWCLASS"
+                        mv "$CLASS.new" "$EXTRACT_TMP_DIR/$NEWCLASS"
                     else
-                        mv "$CLASS" "$TMPDIR/$NEWCLASS"
+                        mv "$CLASS" "$EXTRACT_TMP_DIR/$NEWCLASS"
                     fi
                 done
             else
-                java -jar "$BAKSMALIJAR" deodex -o "$TMPDIR/dexout" -b "$BOOTOAT" -d "$TMPDIR" "$JAROAT/$OEM_TARGET"
-                java -jar "$SMALIJAR" assemble "$TMPDIR/dexout" -o "$TMPDIR/classes.dex"
+                java -jar "$BAKSMALIJAR" deodex -o "$EXTRACT_TMP_DIR/dexout" -b "$BOOTOAT" -d "$EXTRACT_TMP_DIR" "$JAROAT/$OEM_TARGET"
+                java -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
             fi
         else
             continue
@@ -1223,7 +1223,7 @@ function oat2dex() {
 
     done
 
-    rm -rf "$TMPDIR/dexout"
+    rm -rf "$EXTRACT_TMP_DIR/dexout"
 }
 
 #
@@ -1263,7 +1263,7 @@ function init_adb_connection() {
 #
 function fix_xml() {
     local XML="$1"
-    local TEMP_XML="$TMPDIR/`basename "$XML"`.temp"
+    local TEMP_XML="$EXTRACT_TMP_DIR/`basename "$XML"`.temp"
 
     grep -a '^<?xml version' "$XML" > "$TEMP_XML"
     grep -av '^<?xml version' "$XML" >> "$TEMP_XML"
@@ -1388,14 +1388,14 @@ function extract() {
     local PRODUCT_COPY_FILES_COUNT=${#PRODUCT_COPY_FILES_LIST[@]}
     local COUNT=${#FILELIST[@]}
     local OUTPUT_ROOT="$ANDROID_ROOT"/"$OUTDIR"/proprietary
-    local OUTPUT_TMP="$TMPDIR"/"$OUTDIR"/proprietary
+    local OUTPUT_TMP="$EXTRACT_TMP_DIR"/"$OUTDIR"/proprietary
 
     if [ "$SRC" = "adb" ]; then
         init_adb_connection
     fi
 
     if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
-        DUMPDIR="$TMPDIR"/system_dump
+        DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
 
         # Check if we're working with the same zip that was passed last time.
         # If so, let's just use what's already extracted.
@@ -1439,7 +1439,7 @@ function extract() {
     fi
 
     if [ -d "$SRC" ] && [ -f "$SRC"/super.img ]; then
-        DUMPDIR="$TMPDIR"/super_dump
+        DUMPDIR="$EXTRACT_TMP_DIR"/super_dump
         mkdir -p "$DUMPDIR"
 
         echo "Unpacking super.img"
@@ -1459,7 +1459,7 @@ function extract() {
     fi
 
     if [ -d "$SRC" ] && [ -f "$SRC"/system.img ]; then
-        DUMPDIR="$TMPDIR"/system_dump
+        DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
         mkdir -p "$DUMPDIR"
 
         for PARTITION in "system" "odm" "product" "system_ext" "vendor"
@@ -1575,10 +1575,10 @@ function extract() {
             # Deodex apk|jar if that's the case
             if [[ "$FULLY_DEODEXED" -ne "1" && "${VENDOR_REPO_FILE}" =~ .(apk|jar)$ ]]; then
                 oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$SRC"
-                if [ -f "$TMPDIR/classes.dex" ]; then
-                    touch -t 200901010000 "$TMPDIR/classes"*
-                    zip -gjq "${VENDOR_REPO_FILE}" "$TMPDIR/classes"*
-                    rm "$TMPDIR/classes"*
+                if [ -f "$EXTRACT_TMP_DIR/classes.dex" ]; then
+                    touch -t 200901010000 "$EXTRACT_TMP_DIR/classes"*
+                    zip -gjq "${VENDOR_REPO_FILE}" "$EXTRACT_TMP_DIR/classes"*
+                    rm "$EXTRACT_TMP_DIR/classes"*
                     printf '    (updated %s from odex files)\n' "${SRC_FILE}"
                 fi
             elif [[ "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
@@ -1666,7 +1666,7 @@ function extract_firmware() {
 function extract_img_data() {
     local image_file="$1"
     local out_dir="$2"
-    local logFile="$TMPDIR/debugfs.log"
+    local logFile="$EXTRACT_TMP_DIR/debugfs.log"
 
     if [ ! -d "$out_dir" ]; then
         mkdir -p "$out_dir"
@@ -1703,9 +1703,9 @@ function array_contains() {
 
 function generate_prop_list_from_image() {
     local image_file="$1"
-    local image_dir="$TMPDIR/image-temp"
+    local image_dir="$EXTRACT_TMP_DIR/image-temp"
     local output_list="$2"
-    local output_list_tmp="$TMPDIR/_proprietary-blobs.txt"
+    local output_list_tmp="$EXTRACT_TMP_DIR/_proprietary-blobs.txt"
     local -n skipped_files="$3"
     local partition="$4"
 
