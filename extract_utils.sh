@@ -973,6 +973,12 @@ PRODUCT_SOONG_NAMESPACES += \\
     vendor/$VENDOR/$DEVICE
 
 EOF
+
+    cat << EOF >> "$BOARDMK"
+# Prebuilts
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+EOF
+
 }
 
 #
