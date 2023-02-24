@@ -29,5 +29,6 @@ set -e
 export DEVICE=**** FILL IN DEVICE NAME ****
 export DEVICE_COMMON=**** FILL IN COMMON NAME ****
 export VENDOR=**** FILL IN VENDOR NAME ****
+export VENDOR_COMMON=${VENDOR}
 
-"./../../${VENDOR}/${DEVICE_COMMON}/extract-files.sh" "$@"
+"./../../${VENDOR_COMMON}/${DEVICE_COMMON}/extract-files.sh" "$@"
