@@ -91,7 +91,10 @@ function setup_vendor() {
         exit 1
     fi
 
-    export VENDOR="$2"
+    if [ -z "$VENDOR_COMMON" ]; then
+        export VENDOR="$2"
+    fi
+
     if [ -z "$VENDOR" ]; then
         echo "\$VENDOR must be set before including this script!"
         exit 1
@@ -103,7 +106,12 @@ function setup_vendor() {
         exit 1
     fi
 
-    export OUTDIR=vendor/"$VENDOR"/"$DEVICE"
+    if { [ "$4" == "true" ] || [ "$4" == "1" ]; } && [ -n "$VENDOR_COMMON" ]; then
+        export OUTDIR=vendor/"$VENDOR_COMMON"/"$DEVICE_COMMON"
+    else
+        export OUTDIR=vendor/"$VENDOR"/"$DEVICE"
+    fi
+
     if [ ! -d "$ANDROID_ROOT/$OUTDIR" ]; then
         mkdir -p "$ANDROID_ROOT/$OUTDIR"
     fi
@@ -438,6 +446,7 @@ function write_blueprint_packages() {
             SRC+="/odm"
         fi
 
+        [ "$COMMON" -eq 1 ] && [ -n "$VENDOR_COMMON" ] && local VENDOR="$VENDOR_COMMON"
         if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf 'cc_prebuilt_library_shared {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
@@ -871,6 +880,7 @@ function write_blueprint_header() {
     fi
 
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
+    [ "$COMMON" -eq 1 ] && [ -n "$VENDOR_COMMON" ] && local VENDOR="$VENDOR_COMMON"
 
     cat << EOF >> $1
 // Automatically generated file. DO NOT MODIFY
@@ -895,7 +905,7 @@ function write_makefile_header() {
     fi
 
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
-
+    [ "$COMMON" -eq 1 ] && [ -n "$VENDOR_COMMON" ] && local VENDOR="$VENDOR_COMMON"
     cat << EOF >> $1
 # Automatically generated file. DO NOT MODIFY
 #
@@ -953,6 +963,7 @@ soong_namespace {
 EOF
 
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
+    [ "$COMMON" -eq 1 ] && [ -n "$VENDOR_COMMON" ] && local VENDOR="$VENDOR_COMMON"
     cat << EOF >> "$PRODUCTMK"
 PRODUCT_SOONG_NAMESPACES += \\
     vendor/$VENDOR/$DEVICE
