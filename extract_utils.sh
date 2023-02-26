@@ -60,7 +60,7 @@ function setup_vendor_deps() {
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
 
-    for version in 0_8 0_9; do
+    for version in 0_8 0_9 0_17_2; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
     done
 
