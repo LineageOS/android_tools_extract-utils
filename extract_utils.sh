@@ -6,6 +6,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+#set -x
+
 PRODUCT_COPY_FILES_LIST=()
 PRODUCT_COPY_FILES_HASHES=()
 PRODUCT_COPY_FILES_FIXUP_HASHES=()
@@ -1451,12 +1453,20 @@ function extract() {
         SRC="$DUMPDIR"
     fi
 
+    local SUPERIMG=""
+
     if [ -d "$SRC" ] && [ -f "$SRC"/super.img ]; then
+        SUPERIMG="$SRC"/super.img
+    elif [ -d "$SRC" ] && [ -f "$SRC"/super.img_sparsechunk.0 ]; then
+        SUPERIMG="$(find $SRC -name 'super.img_sparsechunk.*' | sort -V | xargs)"
+    fi
+
+    if [ -n "$SUPERIMG" ]; then
         DUMPDIR="$TMPDIR"/super_dump
         mkdir -p "$DUMPDIR"
 
         echo "Unpacking super.img"
-        "$SIMG2IMG" "$SRC"/super.img "$DUMPDIR"/super.raw
+        "$SIMG2IMG" "$SUPERIMG" "$DUMPDIR"/super.raw
 
         for PARTITION in "system" "odm" "product" "system_ext" "vendor"
         do
