@@ -859,6 +859,48 @@ function write_product_packages() {
 }
 
 #
+# write_single_product_copy_files:
+#
+# $1: the file to be copied
+#
+# Creates a PRODUCT_COPY_FILES section in the product makefile for the
+# item provided in $1.
+#
+function write_single_product_copy_files() {
+    local FILE="$1"
+    if [ -z "$FILE" ]; then
+        echo "A file must be provided to write_single_product_copy_files()!"
+        exit 1
+    fi
+
+    local TARGET=$(target_file "$FILE")
+    local OUTTARGET=$(truncate_file $TARGET)
+
+    printf '%s\n' "PRODUCT_COPY_FILES += \\" >> "$PRODUCTMK"
+    printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_PRODUCT)/%s\n' \
+        "$OUTDIR" "$TARGET" "$OUTTARGET" >> "$PRODUCTMK"
+}
+
+#
+# write_single_product_packages:
+#
+# $1: the package to be built
+#
+# Creates a PRODUCT_PACKAGES section in the product makefile for the
+# item provided in $1.
+#
+function write_single_product_packages() {
+    local PACKAGE="$1"
+    if [ -z "$PACKAGE" ]; then
+        echo "A package must be provided to write_single_product_packages()!"
+        exit 1
+    fi
+
+    printf '\n%s\n' "PRODUCT_PACKAGES += \\" >> "$PRODUCTMK"
+    printf '    %s%s\n' "$PACKAGE" >> "$PRODUCTMK"
+}
+
+#
 # write_blueprint_header:
 #
 # $1: file which will be written to
