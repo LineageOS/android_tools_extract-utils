@@ -1808,6 +1808,23 @@ function extract() {
 }
 
 #
+# extract_carriersettings:
+#
+# Convert prebuilt protobuf CarrierSettings files to apns-conf.xml
+# and CarrierConfig vendor.xml
+#
+function extract_carriersettings() {
+    local CARRIERSETTINGS_EXTRACTOR="$ANDROID_ROOT"/calyx/scripts/carriersettings-extractor/carriersettings_extractor.py
+    local SRC="$ANDROID_ROOT"/"$OUTDIR"/proprietary/product/etc/CarrierSettings
+    local APNS_OUTPUT_DIR="$ANDROID_ROOT"/"$OUTDIR"/proprietary/product/etc
+    local CARRIERSETTINGS_OUTPUT_DIR="$ANDROID_ROOT"/"$OUTDIR"/rro_overlays/CarrierConfigOverlay/res/xml
+
+    mkdir -p "$APNS_OUTPUT_DIR"
+    mkdir -p "$CARRIERSETTINGS_OUTPUT_DIR"
+    python3 "$CARRIERSETTINGS_EXTRACTOR" -i "$SRC" -a "$APNS_OUTPUT_DIR" -v "$CARRIERSETTINGS_OUTPUT_DIR"
+}
+
+#
 # extract_firmware:
 #
 # $1: file containing the list of items to extract
