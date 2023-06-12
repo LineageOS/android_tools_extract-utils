@@ -1591,6 +1591,7 @@ function prepare_images() {
                 "$LPUNPACK" -p "$PARTITION" "$DUMPDIR"/super.raw "$DUMPDIR"
             fi
         done
+        rm "$DUMPDIR"/super.raw
 
         if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
             cp -a "$DUMPDIR" "$KEEP_DUMP_DIR"/super_dump
