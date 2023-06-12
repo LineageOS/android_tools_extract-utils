@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (C) 2016 The CyanogenMod Project
-# Copyright (C) 2017-2020 The LineageOS Project
+# Copyright (C) 2017-2023 The LineageOS Project
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -13,6 +13,8 @@ PRODUCT_PACKAGES_LIST=()
 PRODUCT_PACKAGES_HASHES=()
 PRODUCT_PACKAGES_FIXUP_HASHES=()
 PACKAGE_LIST=()
+EXTRACT_SRC=
+EXTRACT_STATE=-1
 VENDOR_STATE=-1
 VENDOR_RADIO_STATE=-1
 COMMON=-1
@@ -1507,72 +1509,15 @@ function blob_fixup() {
 }
 
 #
-# extract:
+# prepare_images:
 #
 # Positional parameters:
-# $1: file containing the list of items to extract (aka proprietary-files.txt)
-# $2: path to extracted system folder, an ota zip file, or "adb" to extract from device
-# $3: section in list file to extract - optional. Setting section via $3 is deprecated.
+# $1: path to extracted system folder or an ota zip file
 #
-# Non-positional parameters (coming after $2):
-# --section: preferred way of selecting the portion to parse and extract from
-#            proprietary-files.txt
-# --kang: if present, this option will activate the printing of hashes for the
-#         extracted blobs. Useful with --section for subsequent pinning of
-#         blobs taken from other origins.
-#
-function extract() {
+function prepare_images() {
     # Consume positional parameters
-    local PROPRIETARY_FILES_TXT="$1"; shift
     local SRC="$1"; shift
-    local SECTION=""
-    local KANG=false
-
-    # Consume optional, non-positional parameters
-    while [ "$#" -gt 0 ]; do
-        case "$1" in
-        -s|--section)
-            SECTION="$2"; shift
-            ;;
-        -k|--kang)
-            KANG=true
-            DISABLE_PINNING=1
-            ;;
-        *)
-            # Backwards-compatibility with the old behavior, where $3, if
-            # present, denoted an optional positional ${SECTION} argument.
-            # Users of ${SECTION} are encouraged to migrate from setting it as
-            # positional $3, to non-positional --section ${SECTION}, the
-            # reason being that it doesn't scale to have more than 1 optional
-            # positional argument.
-            SECTION="$1"
-            ;;
-        esac
-        shift
-    done
-
-    if [ -z "$OUTDIR" ]; then
-        echo "Output dir not set!"
-        exit 1
-    fi
-
-    parse_file_list "${PROPRIETARY_FILES_TXT}" "${SECTION}"
-
-    # Allow failing, so we can try $DEST and/or $FILE
-    set +e
-
-    local FILELIST=( ${PRODUCT_COPY_FILES_LIST[@]} ${PRODUCT_PACKAGES_LIST[@]} )
-    local HASHLIST=( ${PRODUCT_COPY_FILES_HASHES[@]} ${PRODUCT_PACKAGES_HASHES[@]} )
-    local FIXUP_HASHLIST=( ${PRODUCT_COPY_FILES_FIXUP_HASHES[@]} ${PRODUCT_PACKAGES_FIXUP_HASHES[@]} )
-    local PRODUCT_COPY_FILES_COUNT=${#PRODUCT_COPY_FILES_LIST[@]}
-    local COUNT=${#FILELIST[@]}
-    local OUTPUT_ROOT="$ANDROID_ROOT"/"$OUTDIR"/proprietary
-    local OUTPUT_TMP="$EXTRACT_TMP_DIR"/"$OUTDIR"/proprietary
     local KEEP_DUMP_DIR="$SRC"
-
-    if [ "$SRC" = "adb" ]; then
-        init_adb_connection
-    fi
 
     if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
         DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
@@ -1681,6 +1626,81 @@ function extract() {
         SRC="$DUMPDIR"
     fi
 
+    EXTRACT_SRC="$SRC"
+    EXTRACT_STATE=1
+}
+
+#
+# extract:
+#
+# Positional parameters:
+# $1: file containing the list of items to extract (aka proprietary-files.txt)
+# $2: path to extracted system folder, an ota zip file, or "adb" to extract from device
+# $3: section in list file to extract - optional. Setting section via $3 is deprecated.
+#
+# Non-positional parameters (coming after $2):
+# --section: preferred way of selecting the portion to parse and extract from
+#            proprietary-files.txt
+# --kang: if present, this option will activate the printing of hashes for the
+#         extracted blobs. Useful with --section for subsequent pinning of
+#         blobs taken from other origins.
+#
+function extract() {
+    # Consume positional parameters
+    local PROPRIETARY_FILES_TXT="$1"; shift
+    local SRC="$1"; shift
+    local SECTION=""
+    local KANG=false
+
+    # Consume optional, non-positional parameters
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+        -s|--section)
+            SECTION="$2"; shift
+            ;;
+        -k|--kang)
+            KANG=true
+            DISABLE_PINNING=1
+            ;;
+        *)
+            # Backwards-compatibility with the old behavior, where $3, if
+            # present, denoted an optional positional ${SECTION} argument.
+            # Users of ${SECTION} are encouraged to migrate from setting it as
+            # positional $3, to non-positional --section ${SECTION}, the
+            # reason being that it doesn't scale to have more than 1 optional
+            # positional argument.
+            SECTION="$1"
+            ;;
+        esac
+        shift
+    done
+
+    if [ -z "$OUTDIR" ]; then
+        echo "Output dir not set!"
+        exit 1
+    fi
+
+    parse_file_list "${PROPRIETARY_FILES_TXT}" "${SECTION}"
+
+    # Allow failing, so we can try $DEST and/or $FILE
+    set +e
+
+    local FILELIST=( ${PRODUCT_COPY_FILES_LIST[@]} ${PRODUCT_PACKAGES_LIST[@]} )
+    local HASHLIST=( ${PRODUCT_COPY_FILES_HASHES[@]} ${PRODUCT_PACKAGES_HASHES[@]} )
+    local FIXUP_HASHLIST=( ${PRODUCT_COPY_FILES_FIXUP_HASHES[@]} ${PRODUCT_PACKAGES_FIXUP_HASHES[@]} )
+    local PRODUCT_COPY_FILES_COUNT=${#PRODUCT_COPY_FILES_LIST[@]}
+    local COUNT=${#FILELIST[@]}
+    local OUTPUT_ROOT="$ANDROID_ROOT"/"$OUTDIR"/proprietary
+    local OUTPUT_TMP="$EXTRACT_TMP_DIR"/"$OUTDIR"/proprietary
+
+    if [ "$SRC" = "adb" ]; then
+        init_adb_connection
+    fi
+
+    if [ "$EXTRACT_STATE" -ne "1" ]; then
+        prepare_images "$SRC"
+    fi
+
     if [ "$VENDOR_STATE" -eq "0" ]; then
         echo "Cleaning output directory ($OUTPUT_ROOT).."
         rm -rf "${OUTPUT_TMP:?}"
@@ -1691,7 +1711,7 @@ function extract() {
         VENDOR_STATE=1
     fi
 
-    echo "Extracting ${COUNT} files in ${PROPRIETARY_FILES_TXT} from ${SRC}:"
+    echo "Extracting ${COUNT} files in ${PROPRIETARY_FILES_TXT} from ${EXTRACT_SRC}:"
 
     for (( i=1; i<COUNT+1; i++ )); do
 
@@ -1758,7 +1778,7 @@ function extract() {
             # the "/system" prefix, if we're actually extracting
             # from a system image.
             for CANDIDATE in "${DST_FILE}" "${SRC_FILE}"; do
-                get_file ${CANDIDATE} ${VENDOR_REPO_FILE} ${SRC} && {
+                get_file ${CANDIDATE} ${VENDOR_REPO_FILE} ${EXTRACT_SRC} && {
                     FOUND=true
                     break
                 }
@@ -1774,7 +1794,7 @@ function extract() {
             local PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
             # Deodex apk|jar if that's the case
             if [[ "$FULLY_DEODEXED" -ne "1" && "${VENDOR_REPO_FILE}" =~ .(apk|jar)$ ]]; then
-                oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$SRC"
+                oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$EXTRACT_SRC"
                 if [ -f "$EXTRACT_TMP_DIR/classes.dex" ]; then
                     touch -t 200901010000 "$EXTRACT_TMP_DIR/classes"*
                     zip -gjq "${VENDOR_REPO_FILE}" "$EXTRACT_TMP_DIR/classes"*
