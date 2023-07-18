@@ -1910,6 +1910,7 @@ function extract_firmware() {
     for (( i=1; i<COUNT+1; i++ )); do
         local SRC_FILE=$(src_file "${FILELIST[$i-1]}")
         local DST_FILE=$(target_file "${FILELIST[$i-1]}")
+        local COPY_FILE=
 
         printf '  - %s \n' "radio/$DST_FILE"
 
@@ -1920,16 +1921,24 @@ function extract_firmware() {
             # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
                 python3 "$ANDROID_ROOT"/tools/extract-utils/extract_ota.py "$DUMPDIR"/payload.bin -o "$DUMPDIR" -p $(basename "${DST_FILE%.*}") 2>&1
-                cp "$DUMPDIR/$(basename $DST_FILE)" "$OUTPUT_DIR/$DST_FILE"
+                if [ -f "$DUMPDIR/$(basename $DST_FILE)" ]; then
+                    COPY_FILE="$DUMPDIR/$(basename $DST_FILE)"
+                fi
             fi
         else
             if [ -f "$SRC/$SRC_FILE" ]; then
-                cp "$SRC/$SRC_FILE" "$OUTPUT_DIR/$DST_FILE"
-            else
-                cp "$SRC/$DST_FILE" "$OUTPUT_DIR/$DST_FILE"
+                COPY_FILE="$SRC/$SRC_FILE"
+            elif [ -f "$SRC/$DST_FILE" ]; then
+                COPY_FILE="$SRC/$DST_FILE"
             fi
         fi
-        chmod 644 "$OUTPUT_DIR/$DST_FILE"
+
+        if [ -f "$COPY_FILE" ]; then
+            cp "$COPY_FILE" "$OUTPUT_DIR/$DST_FILE"
+            chmod 644 "$OUTPUT_DIR/$DST_FILE"
+        else
+            colored_echo yellow "${DST_FILE} not found, skipping copy"
+        fi
     done
 }
 
