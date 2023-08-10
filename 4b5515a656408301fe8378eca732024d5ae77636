@@ -16,6 +16,23 @@
       "message": "I don\u0027t know if this makes any sense, but currently there\u0027s an issue when extracting Huawei IMS libs https://nekobin.com/coyonupixe\n\nApparently `/system/framework/arm/` vdex works, unlike the one in `/system/framework/`\n\nJust kept this fix as a fallback to not break current logic",
       "revId": "4b5515a656408301fe8378eca732024d5ae77636",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "60f65344_57b1ded2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2023-08-10T14:21:41Z",
+      "side": 1,
+      "message": "I guess this is fine, the way vdex works always felt like magic to me, as long as we don\u0027t change current behaviour I\u0027m fine",
+      "revId": "4b5515a656408301fe8378eca732024d5ae77636",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
