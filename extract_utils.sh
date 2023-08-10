@@ -1379,11 +1379,14 @@ function oat2dex() {
             if [ ! -f "$JAROAT" ]; then
                 JAROAT=$BOOTOAT
             fi
+            if [ ! -f "$JARVDEX" ]; then
+                JARVDEX="/system/framework/$ARCH/boot-$(basename ${OEM_TARGET%.*}).vdex"
+            fi
             # try to extract classes.dex from boot.vdex for frameworks jars
             # fallback to boot.oat if vdex is not available
             if get_file "$JARVDEX" "$EXTRACT_TMP_DIR" "$SRC"; then
                 "$VDEXEXTRACTOR" -o "$EXTRACT_TMP_DIR/" -i "$EXTRACT_TMP_DIR/$(basename "$JARVDEX")" > /dev/null
-                CLASSES=$(ls "$EXTRACT_TMP_DIR/$(basename "${JARVDEX%.*}")_classes"*)
+                CLASSES=$(ls "$EXTRACT_TMP_DIR/$(basename "${JARVDEX%.*}")_classes"* 2> /dev/null)
                 for CLASS in $CLASSES; do
                     NEWCLASS=$(echo "$CLASS" | sed 's/.*_//;s/cdex/dex/')
                     # Check if we have to deal with CompactDex
