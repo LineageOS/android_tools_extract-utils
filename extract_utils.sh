@@ -1882,6 +1882,7 @@ function extract_carriersettings() {
 #
 # $1: file containing the list of items to extract
 # $2: path to extracted radio folder
+# $3: device vendor name - optional
 #
 function extract_firmware() {
     if [ -z "$OUTDIR" ]; then
@@ -1897,7 +1898,9 @@ function extract_firmware() {
     local FILELIST=( ${PRODUCT_COPY_FILES_LIST[@]} )
     local COUNT=${#FILELIST[@]}
     local SRC="$2"
+    local VENDOR="$3"
     local OUTPUT_DIR="$ANDROID_ROOT"/"$OUTDIR"/radio
+    local STAR="$ANDROID_ROOT"/tools/extract-utils/star.sh
 
     if [ "$VENDOR_RADIO_STATE" -eq "0" ]; then
         echo "Cleaning firmware output directory ($OUTPUT_DIR).."
@@ -1906,6 +1909,13 @@ function extract_firmware() {
     fi
 
     echo "Extracting $COUNT files in $1 from $SRC:"
+
+    for IMAGE in bootloader radio; do
+        if [ -f "$SRC/$IMAGE.img" ] && [ "$VENDOR" = "motorola" ]; then
+            echo "Extracting Motorola star image $SRC/$IMAGE.img"
+            sh "$STAR" "$SRC/$IMAGE.img" "$SRC"
+        fi
+    done
 
     for (( i=1; i<COUNT+1; i++ )); do
         local SRC_FILE=$(src_file "${FILELIST[$i-1]}")
