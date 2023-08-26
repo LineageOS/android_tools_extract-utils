@@ -55,10 +55,12 @@ function setup_vendor_deps() {
     fi
 
     export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
+    export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
+    export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
 
     for version in 0_8 0_9; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
@@ -457,24 +459,27 @@ function write_blueprint_packages() {
             if [ "$EXTRA" = "both" ]; then
                 printf '\t\tandroid_arm: {\n'
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
+                printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
                 printf '\t\t},\n'
                 printf '\t\tandroid_arm64: {\n'
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
+                printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib64/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
                 printf '\t\t},\n'
             elif [ "$EXTRA" = "64" ]; then
                 printf '\t\tandroid_arm64: {\n'
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
+                printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib64/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
                 printf '\t\t},\n'
             else
                 printf '\t\tandroid_arm: {\n'
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
+                printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
                 printf '\t\t},\n'
             fi
             printf '\t},\n'
             if [ "$EXTRA" != "none" ]; then
                 printf '\tcompile_multilib: "%s",\n' "$EXTRA"
             fi
-            printf '\tcheck_elf_files: false,\n'
         elif [ "$CLASS" = "APEX" ]; then
             printf 'prebuilt_apex {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
@@ -534,7 +539,7 @@ function write_blueprint_packages() {
             printf '\towner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
                 printf '\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
-                printf '\tcheck_elf_files: false,\n'
+                printf '\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
                 printf '\tstrip: {\n'
                 printf '\t\tnone: true,\n'
                 printf '\t},\n'
