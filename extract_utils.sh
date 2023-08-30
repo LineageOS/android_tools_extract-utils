@@ -571,6 +571,7 @@ function write_blueprint_packages() {
                 printf '\tprefer: true,\n'
             else
                 printf '\tsrc: "%s/bin/%s",\n' "$SRC" "$FILE"
+                printf '\tfilename: "%s",\n' "$BASENAME"
             fi
             unset EXTENSION
         else
