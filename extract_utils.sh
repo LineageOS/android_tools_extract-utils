@@ -495,6 +495,12 @@ function write_blueprint_packages() {
             if [ ! -z "$DISABLE_CHECKELF" ]; then
                 printf '\tcheck_elf_files: false,\n'
             fi
+        elif [ "$CLASS" = "RFSA" ]; then
+            printf 'prebuilt_rfsa {\n'
+            printf '\tname: "%s",\n' "$PKGNAME"
+            printf '\tfilename: "%s",\n' "$BASENAME"
+            printf '\towner: "%s",\n' "$VENDOR"
+            printf '\tsrc: "%s/lib/rfsa/%s",\n' "$SRC" "$FILE"
         elif [ "$CLASS" = "APEX" ]; then
             printf 'prebuilt_apex {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
@@ -575,7 +581,7 @@ function write_blueprint_packages() {
             printf '\t\tenabled: false,\n'
             printf '\t},\n'
         fi
-        if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] ; then
+        if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] || [ "$CLASS" = "RFSA" ] ; then
             if [ "$DIRNAME" != "." ]; then
                 printf '\trelative_install_path: "%s",\n' "$DIRNAME"
             fi
@@ -660,8 +666,10 @@ function write_product_packages() {
 
     local T_V_LIB32=( $(prefix_match "vendor/lib/") )
     local T_V_LIB64=( $(prefix_match "vendor/lib64/") )
+    local V_RFSA=( $(prefix_match "vendor/lib/rfsa/") )
     local V_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${T_V_LIB64[@]}")) )
     local V_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
+    local V_LIB32=( $(LC_ALL=C grep -v 'rfsa/' <(printf '%s\n' "${V_LIB32[@]}")) )
     local V_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB64[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
 
     if [ "${#V_MULTILIBS[@]}" -gt "0" ]; then
@@ -672,6 +680,9 @@ function write_product_packages() {
     fi
     if [ "${#V_LIB64[@]}" -gt "0" ]; then
         write_blueprint_packages "SHARED_LIBRARIES" "vendor" "64" "V_LIB64" >> "$ANDROIDBP"
+    fi
+    if [ "${#V_RFSA[@]}" -gt "0" ]; then
+        write_blueprint_packages "RFSA" "vendor" "" "V_RFSA" >> "$ANDROIDBP"
     fi
 
     local T_P_LIB32=( $(prefix_match "product/lib/") )
@@ -1254,6 +1265,7 @@ function parse_file_list() {
              suffix_match_file ".jar" "$(src_file "$SPEC")" || \
              suffix_match_file ".so" "$(src_file "$SPEC")" || \
              [[ "$SPEC" == *"bin/"* ]] || \
+             [[ "$SPEC" == *"lib/rfsa"* ]] || \
              [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
             PRODUCT_PACKAGES_LIST+=("$SPEC")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
