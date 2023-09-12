@@ -567,10 +567,24 @@ function write_blueprint_packages() {
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
-                printf '\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                printf '\ttarget: {\n'
+                if objdump -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
+                    printf '\t\tandroid_arm64: {\n'
                 else
+                    printf '\t\tandroid_arm: {\n'
+                fi
+                printf '\t\t\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
+                if [ -z "$DISABLE_CHECKELF" ]; then
+                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                fi
+                printf '\t\t},\n'
+                printf '\t},\n'
+                if objdump -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
+                    printf '\tcompile_multilib: "%s",\n' "64"
+                else
+                    printf '\tcompile_multilib: "%s",\n' "32"
+                fi
+                if [ ! -z "$DISABLE_CHECKELF" ]; then
                     printf '\tcheck_elf_files: false,\n'
                 fi
                 printf '\tstrip: {\n'
