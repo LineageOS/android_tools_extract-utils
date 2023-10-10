@@ -594,7 +594,6 @@ function write_blueprint_packages() {
                 printf '\tsrc: "%s/bin/%s",\n' "$SRC" "$FILE"
                 printf '\tfilename: "%s",\n' "$BASENAME"
             fi
-            unset EXTENSION
         else
             printf '\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
         fi
@@ -605,7 +604,11 @@ function write_blueprint_packages() {
         fi
         if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] || [ "$CLASS" = "RFSA" ] ; then
             if [ "$DIRNAME" != "." ]; then
-                printf '\trelative_install_path: "%s",\n' "$DIRNAME"
+                if [ "$EXTENSION" = "sh" ]; then
+                    printf '\tsub_dir: "%s",\n' "$DIRNAME"
+                else
+                    printf '\trelative_install_path: "%s",\n' "$DIRNAME"
+                fi
             fi
         fi
         if [ "$CLASS" = "ETC" ] ; then
