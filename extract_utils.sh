@@ -426,7 +426,11 @@ function write_blueprint_packages() {
 
         # Allow overriding module name
         STEM=
-        DISABLE_CHECKELF=
+        if [ "$TARGET_ENABLE_CHECKELF" == "true" ]; then
+            DISABLE_CHECKELF=
+        else
+            DISABLE_CHECKELF="true"
+        fi
         for ARG in "${ARGS[@]}"; do
             if [[ "$ARG" =~ "MODULE" ]]; then
                 STEM="$PKGNAME"
@@ -1289,9 +1293,10 @@ function parse_file_list() {
         elif suffix_match_file ".apex" "$(src_file "$SPEC")" || \
              suffix_match_file ".apk" "$(src_file "$SPEC")" || \
              suffix_match_file ".jar" "$(src_file "$SPEC")" || \
-             suffix_match_file ".so" "$(src_file "$SPEC")" || \
-             [[ "$SPEC" == *"bin/"* ]] || \
-             [[ "$SPEC" == *"lib/rfsa"* ]] || \
+             [[ "$TARGET_ENABLE_CHECKELF" == "true" && \
+                ( "${SPEC%%;*}" == *".so" || \
+                  "$SPEC" == *"bin/"* || \
+                  "$SPEC" == *"lib/rfsa"* ) ]] || \
              [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
             PRODUCT_PACKAGES_LIST+=("$SPEC")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
