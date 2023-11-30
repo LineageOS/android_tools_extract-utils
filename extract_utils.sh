@@ -1629,7 +1629,9 @@ function prepare_images() {
             echo "Extracting "$PARTITION""
             local IMAGE="$SRC"/"$PARTITION".img
             if [ -f "$IMAGE" ]; then
-                if [[ $(file -b "$IMAGE") == Linux* ]]; then
+                if [[ $(file -b "$IMAGE") == EROFS* ]]; then
+                    fsck.erofs --extract="$DUMPDIR"/"$PARTITION" "$IMAGE"
+                elif [[ $(file -b "$IMAGE") == Linux* ]]; then
                     extract_img_data "$IMAGE" "$DUMPDIR"/"$PARTITION"
                 elif [[ $(file -b "$IMAGE") == Android* ]]; then
                     "$SIMG2IMG" "$IMAGE" "$DUMPDIR"/"$PARTITION".raw
@@ -2016,7 +2018,9 @@ function generate_prop_list_from_image() {
 
     mkdir -p "$image_dir"
 
-    if [[ $(file -b "$image_file") == Linux* ]]; then
+    if [[ $(file -b "$image_file") == EROFS* ]]; then
+        fsck.erofs --extract="$image_dir" "$image_file"
+    elif [[ $(file -b "$image_file") == Linux* ]]; then
         extract_img_data "$image_file" "$image_dir"
     elif [[ $(file -b "$image_file") == Android* ]]; then
         "$SIMG2IMG" "$image_file" "$image_dir"/"$(basename "$image_file").raw"
