@@ -1917,6 +1917,22 @@ function extract_firmware() {
         if [ ! -d "$OUTPUT_DIR" ]; then
             mkdir -p "$OUTPUT_DIR"
         fi
+        if [ "$SRC" = "adb" ]; then
+            local PARTITION="${DST_FILE%.*}"
+
+            if [[ "${FILELIST[$i-1]}" == *\;AB ]]; then
+                local SLOT=$(adb shell getprop ro.boot.slot_suffix | rev | cut -c1)
+                PARTITION="${PARTITION}_${SLOT}"
+            fi
+
+            if adb pull "/dev/block/by-name/${PARTITION}" "$OUTPUT_DIR/$DST_FILE"; then
+                chmod 644 "$OUTPUT_DIR/$DST_FILE"
+            else
+                colored_echo yellow "${DST_FILE} not found, skipping copy"
+            fi
+
+            continue
+        fi
         if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
             # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
