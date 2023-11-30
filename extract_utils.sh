@@ -1878,6 +1878,13 @@ function extract_carriersettings() {
 }
 
 #
+# To be overridden by device-level extract-files.sh
+#
+function prepare_firmware() {
+    :
+}
+
+#
 # extract_firmware:
 #
 # $1: file containing the list of items to extract
@@ -1906,6 +1913,8 @@ function extract_firmware() {
     fi
 
     echo "Extracting $COUNT files in $1 from $SRC:"
+
+    prepare_firmware
 
     for (( i=1; i<COUNT+1; i++ )); do
         local SRC_FILE=$(src_file "${FILELIST[$i-1]}")
