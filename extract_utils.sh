@@ -1306,6 +1306,9 @@ function get_file() {
         cp -r "$SRC/${1#/system}" "$2" 2>/dev/null && return 0
         cp -r "$SRC/system/$1"    "$2" 2>/dev/null && return 0
 
+        # try /vendor/odm for devices without /odm partition
+        [[ "$1" == /system/odm/* ]] && cp -r "$SRC/vendor/${1#/system}" "$2" 2>/dev/null && return 0
+
         return 1
     fi
 };
