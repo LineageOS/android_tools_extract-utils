@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5670d4fd_156a24b0",
+        "filename": "templates/multi-device/common/extract-files.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2023-12-04T17:17:49Z",
+      "side": 1,
+      "message": "`if [ -z \"${SECTION}\" ] \u0026\u0026 [ -f \"${MY_DIR}/../../${VENDOR}/${DEVICE}/proprietary-firmware.txt\" ]; then` and same for single-device?",
+      "revId": "436f0b04f7cd4015b85b94c41aa151adb69ba461",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
