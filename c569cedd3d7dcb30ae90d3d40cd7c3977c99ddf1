@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6889e7df_4b74a6dc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2023-12-05T15:11:24Z",
+      "side": 1,
+      "message": "Should we skip firmware extraction when `--only-target` is passed as argument?",
+      "revId": "c569cedd3d7dcb30ae90d3d40cd7c3977c99ddf1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
