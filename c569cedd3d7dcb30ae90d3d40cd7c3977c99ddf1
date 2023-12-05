@@ -33,6 +33,23 @@
       "message": "Sorry, I meant --only-common, yea.",
       "revId": "c569cedd3d7dcb30ae90d3d40cd7c3977c99ddf1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "473479ea_e7d0f812",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2023-12-05T15:17:42Z",
+      "side": 1,
+      "message": "It works (only validated device+common device usecase).",
+      "revId": "c569cedd3d7dcb30ae90d3d40cd7c3977c99ddf1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
