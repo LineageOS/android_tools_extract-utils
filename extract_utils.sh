@@ -1263,6 +1263,7 @@ function append_firmware_calls_to_makefiles() {
     for (( i=1; i<COUNT+1; i++ )); do
         local DST_FILE=$(target_file "${FILELIST[$i-1]}")
         local ARGS=$(target_args "${FILELIST[$i-1]}")
+        local SIZE=$(stat -c "%s" "$ANDROID_ROOT"/"$OUTDIR"/radio/"$DST_FILE")
         DST_FILE_NAME=(${DST_FILE//.img/ })
         ARGS=(${ARGS//;/ })
         LINEEND=" \\"
@@ -1275,7 +1276,7 @@ function append_firmware_calls_to_makefiles() {
                 printf '    %s%s\n' "$DST_FILE_NAME" "$LINEEND" >> "$BOARDMK"
             fi
         done
-        printf '%s\n' "\$(call add-radio-file,radio/$DST_FILE)" >> "$ANDROIDMK"
+        printf '%s\n' "\$(call add-radio-file-size-checked,radio/$DST_FILE,$SIZE)" >> "$ANDROIDMK"
     done
     printf '\n' >> "$ANDROIDMK"
 }
