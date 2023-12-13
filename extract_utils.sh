@@ -1543,7 +1543,14 @@ function prepare_images() {
     local KEEP_DUMP_DIR="$SRC"
 
     if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
+        local BASENAME=$(basename "$SRC")
+        local DIRNAME=$(dirname "$SRC")
         DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
+        KEEP_DUMP_DIR="$DIRNAME"/"${BASENAME%.zip}"
+        if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
+            rm -rf "$KEEP_DUMP_DIR"
+            mkdir "$KEEP_DUMP_DIR"
+        fi
 
         # Check if we're working with the same zip that was passed last time.
         # If so, let's just use what's already extracted.
@@ -1581,11 +1588,6 @@ function prepare_images() {
                     extract_img_data "$DUMPDIR"/"$PARTITION".img "$DUMPDIR"/"$PARTITION"/
                 fi
             done
-        fi
-
-        if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
-            rm -rf "$KEEP_DUMP_DIR"/system_dump
-            cp -a "$DUMPDIR" "$KEEP_DUMP_DIR"/system_dump
         fi
 
         SRC="$DUMPDIR"
