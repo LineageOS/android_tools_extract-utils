@@ -58,6 +58,7 @@ function setup_vendor_deps() {
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
+    export OTA_EXTRACTOR="$BINARIES_LOCATION"/ota_extractor
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
 
     for version in 0_8 0_9 0_17_2; do
@@ -1557,7 +1558,7 @@ function prepare_images() {
 
             # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
-                python3 "$ANDROID_ROOT"/tools/extract-utils/extract_ota.py "$DUMPDIR"/payload.bin -o "$DUMPDIR" -p "system" "odm" "product" "system_ext" "vendor" 2>&1
+                "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions "system","odm","product","system_ext","vendor" 2>&1
             fi
 
             for PARTITION in "system" "odm" "product" "system_ext" "vendor"
@@ -1951,7 +1952,7 @@ function extract_firmware() {
         if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
             # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
-                python3 "$ANDROID_ROOT"/tools/extract-utils/extract_ota.py "$DUMPDIR"/payload.bin -o "$DUMPDIR" -p $(basename "${DST_FILE%.*}") 2>&1
+                "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions $(basename "${DST_FILE%.*}") 2>&1
                 if [ -f "$DUMPDIR/$(basename $DST_FILE)" ]; then
                     COPY_FILE="$DUMPDIR/$(basename $DST_FILE)"
                 fi
