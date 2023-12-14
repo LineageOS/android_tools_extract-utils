@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a81d94c2_3b251f16",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2023-12-14T23:22:50Z",
+      "side": 1,
+      "message": "Verified on moto sm8475. Default outputs with elf-checks as expected and with the flag set, output matches pre-elfchecks-topic output.",
+      "revId": "ffb8107ec0c51dd44c3f9269b1b788bdb58fd68a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
