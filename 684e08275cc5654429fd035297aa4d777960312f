@@ -1,4 +1,39 @@
 {
-  "comments": [],
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e7ee8e46_f67b9c2d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19252
+      },
+      "writtenOn": "2023-12-26T06:07:43Z",
+      "side": 1,
+      "message": "While this does work for extracting the star images (just need to see my other comment) we probably should do a separate commit to change the extracted firmware to .img to work with firmware extraction too\n\nExtracting Motorola star image /media/themard/SSHD/blobs/DUBAI_RETAIL_13_T1RD33.116-33-13_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml/bootloader.img\nName: index.xml, Offset: 512, Size: 120, Padding: 3976\nName: pkg.xml, Offset: 4864, Size: 80, Padding: 4016\nName: default.xml, Offset: 9216, Size: 817, Padding: 3279\nName: abl.elf, Offset: 13568, Size: 339968, Padding: 0\nName: xbl.elf, Offset: 353792, Size: 5241984, Padding: 896\nName: xbl_config.elf, Offset: 5596928, Size: 261248, Padding: 896\nName: qupfw.elf, Offset: 5859328, Size: 81024, Padding: 896\nName: aop.mbn, Offset: 5941504, Size: 523392, Padding: 896\nName: tz.mbn, Offset: 6466048, Size: 4193408, Padding: 896\nName: hyp.mbn, Offset: 10660608, Size: 8387712, Padding: 896\nName: devcfg.mbn, Offset: 19049472, Size: 130176, Padding: 896\nName: keymaster.mbn, Offset: 19180800, Size: 523392, Padding: 896\nName: storsec.mbn, Offset: 19705344, Size: 130176, Padding: 896\nName: uefi_sec.mbn, Offset: 19836672, Size: 2096256, Padding: 896\nName: prov64.mbn, Offset: 21934080, Size: 261248, Padding: 896\nName: cpucp.elf, Offset: 22196480, Size: 1047680, Padding: 896\nName: shrm.elf, Offset: 23245312, Size: 130176, Padding: 896\nExtracting Motorola star image /media/themard/SSHD/blobs/DUBAI_RETAIL_13_T1RD33.116-33-13_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml/radio.img\nName: index.xml, Offset: 512, Size: 126, Padding: 3970\nName: radio.pkg.xml, Offset: 4864, Size: 86, Padding: 4010\nName: radio.default.xml, Offset: 9216, Size: 214, Padding: 3882\nName: NON-HLOS.bin, Offset: 13568, Size: 136294572, Padding: 3924\nName: fsg.mbn, Offset: 136312320, Size: 19927040, Padding: 0\n  - radio/abl.img \nabl.img not found, skipping copy\n  - radio/aop.img \naop.img not found, skipping copy\n  - radio/bluetooth.img \nbluetooth.img not found, skipping copy\n  - radio/cpucp.img \ncpucp.img not found, skipping copy\n  - radio/devcfg.img \ndevcfg.img not found, skipping copy\n  - radio/dsp.img \ndsp.img not found, skipping copy\n  - radio/hyp.img \nhyp.img not found, skipping copy\n  - radio/keymaster.img \nkeymaster.img not found, skipping copy\n  - radio/logo.img \nlogo.img not found, skipping copy\n  - radio/modem.img \nmodem.img not found, skipping copy\n  - radio/prov.img \nprov.img not found, skipping copy\n  - radio/qupfw.img \nqupfw.img not found, skipping copy\n  - radio/shrm.img \nshrm.img not found, skipping copy\n  - radio/storsec.img \nstorsec.img not found, skipping copy\n  - radio/tz.img \ntz.img not found, skipping copy\n  - radio/uefisecapp.img \nuefisecapp.img not found, skipping copy\n  - radio/xbl.img \nxbl.img not found, skipping copy\n  - radio/xbl_config.img \nxbl_config.img not found, skipping copy",
+      "revId": "684e08275cc5654429fd035297aa4d777960312f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0585cdc0_3c7216f8",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1901,
+      "author": {
+        "id": 19252
+      },
+      "writtenOn": "2023-12-26T06:07:43Z",
+      "side": 1,
+      "message": "sorry it took me so long to try it, but for extracting Motorola star images on your gerrit commit, would we need to also include renaming some of those extracted files?\n\nalso, sanity check, am I supposed to include motorola in my arg? because if I do, it tries to extract from motorola instead of the file source and it fails hard\n\nIE:\n./extract-files.sh /media/themard/SSHD/blobs/DUBAI_RETAIL_13_T1RD33.116-33-13_subsidy-DEFAULT_regulatory-DEFAULT_cid50_CFC.xml.zip motorola\n\nresults in:\nExtracting 1117 files in ./../../motorola/sm7325-common/proprietary-files.txt from motorola\n\nand then all files not found as it doesn\u0027t extract the zip and so none of the files exist...\n\nremoving this line fixes the issue though as it\u0027ll use $VENDOR from above.",
+      "revId": "684e08275cc5654429fd035297aa4d777960312f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ],
   "submitRequirementResults": []
 }
