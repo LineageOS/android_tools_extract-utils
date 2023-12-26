@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcada44b_b01feb46",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2023-12-26T07:27:24Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e7ee8e46_f67b9c2d",
+      "revId": "684e08275cc5654429fd035297aa4d777960312f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0585cdc0_3c7216f8",
@@ -49,6 +67,24 @@
       "side": 1,
       "message": "lol fml, I didn\u0027t see it got moved into templates",
       "parentUuid": "0585cdc0_3c7216f8",
+      "revId": "684e08275cc5654429fd035297aa4d777960312f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ebf5c51_3392c73b",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1901,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2023-12-26T07:27:24Z",
+      "side": 1,
+      "message": "Yeah you can see the example here:\nhttps://review.lineageos.org/c/LineageOS/android_device_motorola_sm6225-common/+/375976\nhttps://review.lineageos.org/c/LineageOS/android_device_motorola_devon/+/375974",
+      "parentUuid": "eb3135e5_f72dd698",
       "revId": "684e08275cc5654429fd035297aa4d777960312f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
