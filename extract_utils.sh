@@ -1640,7 +1640,8 @@ function prepare_images() {
             echo "Extracting "$PARTITION""
             local IMAGE="$SRC"/"$PARTITION".img
             if [ -f "$IMAGE" ]; then
-                if [[ $(file -b "$IMAGE") == EROFS* ]]; then
+                fsck.erofs $IMAGE
+                if [[ $? -eq 0 ]]; then
                     fsck.erofs --extract="$DUMPDIR"/"$PARTITION" "$IMAGE"
                 elif [[ $(file -b "$IMAGE") == Linux* ]]; then
                     extract_img_data "$IMAGE" "$DUMPDIR"/"$PARTITION"
