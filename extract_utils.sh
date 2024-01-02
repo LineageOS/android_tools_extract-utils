@@ -1969,6 +1969,10 @@ function extract_firmware() {
             elif [ -f "$SRC/$DST_FILE" ]; then
                 COPY_FILE="$SRC/$DST_FILE"
             fi
+            if [[ $(file -b "$COPY_FILE") == Android* ]]; then
+                "$SIMG2IMG" "$COPY_FILE" "$SRC"/"$(basename "$COPY_FILE").raw"
+                COPY_FILE="$SRC"/"$(basename "$COPY_FILE").raw"
+            fi
         fi
 
         if [ -f "$COPY_FILE" ]; then
