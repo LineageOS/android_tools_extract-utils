@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "debb54c1_6618c4e7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2024-01-13T18:46:31Z",
+      "side": 1,
+      "message": "Some nits inline, not a blocker.",
+      "revId": "3f80055833dc3674f5b95c928f8e82eaeb93712e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "75a65022_02909049",
+        "filename": "extract_utils.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2024-01-13T18:46:31Z",
+      "side": 1,
+      "message": "Notes for future improvements of extract in general\n\nGiven this is a for loop, and I assume `objdump` takes some time - it\u0027d benefit from being run in parallel.\n\nMay take some refactoring to split this out into it\u0027s own function (or have the caller do it per-package instead, but it\u0027ll be worth it in the long run.",
+      "revId": "3f80055833dc3674f5b95c928f8e82eaeb93712e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "895abdd7_34706538",
+        "filename": "extract_utils.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2024-01-13T18:46:31Z",
+      "side": 1,
+      "message": "Could you somehow run objdump once, and cache output to avoid having to run it on the same file multiple times.",
+      "revId": "3f80055833dc3674f5b95c928f8e82eaeb93712e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
