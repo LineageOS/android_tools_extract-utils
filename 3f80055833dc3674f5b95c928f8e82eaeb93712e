@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ac209332_47c91c00",
+        "filename": "extract_utils.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-01-13T19:35:44Z",
+      "side": 1,
+      "message": "There\u0027s potential yes, but parallelization in bash scripts is not something I have experience with.",
+      "parentUuid": "75a65022_02909049",
+      "revId": "3f80055833dc3674f5b95c928f8e82eaeb93712e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "895abdd7_34706538",
         "filename": "extract_utils.sh",
         "patchSetId": 4
@@ -48,6 +66,24 @@
       "writtenOn": "2024-01-13T18:46:31Z",
       "side": 1,
       "message": "Could you somehow run objdump once, and cache output to avoid having to run it on the same file multiple times.",
+      "revId": "3f80055833dc3674f5b95c928f8e82eaeb93712e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b24d1d9b_e96f5e9f",
+        "filename": "extract_utils.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-01-13T19:35:44Z",
+      "side": 1,
+      "message": "It\u0027s never calling objdump multiple times on the same target. For example, the multi-lib path your comment is in calls it once for the 32-bit copy and once for the 64-bit copy. It\u0027s not guaranteed that the deps will be the same. I have had differences in practice on tegra. Now, things could be cleaned up to make it more readable, perhaps split the objdump call into a function, one where the sed list can be more robust too.",
+      "parentUuid": "895abdd7_34706538",
       "revId": "3f80055833dc3674f5b95c928f8e82eaeb93712e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
