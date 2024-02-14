@@ -663,6 +663,9 @@ function write_blueprint_packages() {
                 printf 'cc_prebuilt_binary {\n'
             fi
             printf '\tname: "%s",\n' "$PKGNAME"
+            if [ -n "$STEM" ]; then
+                printf '\tstem: "%s",\n' "$STEM"
+            fi
             printf '\towner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
                 printf '\ttarget: {\n'
