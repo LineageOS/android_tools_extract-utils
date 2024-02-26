@@ -534,6 +534,10 @@ function write_blueprint_packages() {
                     OVERRIDEPKG=${ARG#*=}
                     OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
                     printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
+                elif [[ "$ARG" =~ "REQUIRED" ]]; then
+                    REQUIREDPKG=${ARG#*=}
+                    REQUIREDPKGS+="$REQUIREDPKG,"
+                    printf '\trequired: ["%s"],\n' "${REQUIREDPKG//,/\", \"}"
                 elif [ ! -z "$ARG" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
                     printf '\tcertificate: "%s",\n' "$ARG"
@@ -918,11 +922,21 @@ function write_product_packages() {
 
     printf '\n%s\n' "PRODUCT_PACKAGES += \\" >> "$PRODUCTMK"
     for (( i=1; i<PACKAGE_COUNT+1; i++ )); do
+        local SKIP=false
         local LINEEND=" \\"
         if [ "$i" -eq "$PACKAGE_COUNT" ]; then
             LINEEND=""
         fi
-        printf '    %s%s\n' "${PACKAGE_LIST[$i-1]}" "$LINEEND" >> "$PRODUCTMK"
+        for pkg in $(tr "," "\n" <<< "$REQUIREDPKGS"); do
+            if [[ $pkg == "${PACKAGE_LIST[$i - 1]}" ]]; then
+                SKIP=true
+                break
+            fi
+        done
+        # Skip adding of the package to product makefile if it's in the required list
+        if [[ $SKIP == false ]]; then
+            printf '    %s%s\n' "${PACKAGE_LIST[$i - 1]}" "$LINEEND" >> "$PRODUCTMK"
+        fi
     done
 }
 
