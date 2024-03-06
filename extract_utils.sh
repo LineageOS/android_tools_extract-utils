@@ -529,6 +529,7 @@ function write_blueprint_packages() {
             for ARG in "${ARGS[@]}"; do
                 if [ "$ARG" = "PRESIGNED" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
+                    printf '\tpreprocessed: true,\n'
                     printf '\tpresigned: true,\n'
                 elif [[ "$ARG" =~ "OVERRIDES" ]]; then
                     OVERRIDEPKG=${ARG#*=}
