@@ -1341,7 +1341,10 @@ function append_firmware_calls_to_makefiles() {
     local FILELIST=(${PRODUCT_COPY_FILES_LIST[@]})
     local COUNT=${#FILELIST[@]}
 
-    printf '%s\n' "AB_OTA_PARTITIONS += \\" >> "$BOARDMK"
+    if [[ ${FILELIST[*]} =~ ";AB" ]]; then
+        printf '%s\n' "AB_OTA_PARTITIONS += \\" >> "$BOARDMK"
+    fi
+
     for (( i=1; i<COUNT+1; i++ )); do
         local DST_FILE=$(target_file "${FILELIST[$i-1]}")
         local ARGS=$(target_args "${FILELIST[$i-1]}")
