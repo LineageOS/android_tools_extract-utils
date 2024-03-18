@@ -1896,6 +1896,11 @@ function extract() {
                 printf '    + keeping pinned file with hash %s\n' "${HASH}"
             fi
         else
+            if [ "$SPEC_ARGS" == "SYMLINK" ]; then
+                # Just create the desired symlink and continue extraction of remaining files
+                ln -sf "${SRC_FILE#/system}" "${VENDOR_REPO_FILE}" && continue
+            fi
+
             FOUND=false
             # Try custom target first.
             # Also try to search for files stripped of
