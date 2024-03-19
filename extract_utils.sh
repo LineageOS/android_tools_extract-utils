@@ -12,6 +12,7 @@ PRODUCT_COPY_FILES_FIXUP_HASHES=()
 PRODUCT_PACKAGES_LIST=()
 PRODUCT_PACKAGES_HASHES=()
 PRODUCT_PACKAGES_FIXUP_HASHES=()
+PRODUCT_SYMLINKS_LIST=()
 PACKAGE_LIST=()
 EXTRACT_SRC=
 EXTRACT_STATE=-1
@@ -222,7 +223,7 @@ function prefix_match() {
         local FILE=$(target_file "$LINE")
         if [[ "$FILE" =~ ^"$PREFIX" ]]; then
             local ARGS=$(target_args "$LINE")
-            if [ -z "${ARGS}" ]; then
+            if [[ -z "${ARGS}" || "${ARGS}" =~ 'SYMLINK' ]]; then
                 NEW_ARRAY+=("${FILE#$PREFIX}")
             else
                 NEW_ARRAY+=("${FILE#$PREFIX};${ARGS}")
@@ -535,6 +536,8 @@ function write_blueprint_packages() {
                     OVERRIDEPKG=${ARG#*=}
                     OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
                     printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
+                elif [[ "$ARG" =~ "SYMLINK" ]]; then
+                    continue
                 elif [ ! -z "$ARG" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
                     printf '\tcertificate: "%s",\n' "$ARG"
@@ -910,21 +913,82 @@ function write_product_packages() {
         write_blueprint_packages "EXECUTABLES" "odm" "" "O_BIN" >> "$ANDROIDBP"
     fi
 
-    # Actually write out the final PRODUCT_PACKAGES list
-    local PACKAGE_COUNT=${#PACKAGE_LIST[@]}
+    write_package_definition "${PACKAGE_LIST[@]}" >> "$PRODUCTMK"
+}
 
-    if [ "$PACKAGE_COUNT" -eq "0" ]; then
+
+#
+# write_symlink_packages:
+#
+# Creates symlink entries in the Android.bp and related PRODUCT_PACKAGES
+# list in the product makefile for all files in the blob list which has
+# SYMLINK argument.
+#
+function write_symlink_packages() {
+    local FILE=
+    local ARGS=
+    local ARCH=
+    local BASENAME=
+    local PKGNAME=
+    local PREFIX=
+    local SYMLINK_BASENAME=
+    local SYMLINK_PACKAGES=()
+
+    # Sort the package list for comm
+    PRODUCT_SYMLINKS_LIST=($( printf '%s\n' "${PRODUCT_SYMLINKS_LIST[@]}" | LC_ALL=C sort))
+
+    local COUNT=${#PRODUCT_SYMLINKS_LIST[@]}
+
+    if [ "$COUNT" = "0" ]; then
         return 0
     fi
 
-    printf '\n%s\n' "PRODUCT_PACKAGES += \\" >> "$PRODUCTMK"
-    for (( i=1; i<PACKAGE_COUNT+1; i++ )); do
-        local LINEEND=" \\"
-        if [ "$i" -eq "$PACKAGE_COUNT" ]; then
-            LINEEND=""
+    for LINE in "${PRODUCT_SYMLINKS_LIST[@]}"; do
+        FILE=$(src_file "$LINE")
+        if [[ "$LINE" =~ '/lib/' ]]; then
+            ARCH="32"
+        elif [[ "$LINE" =~ '/lib64/' ]]; then
+            ARCH="64"
         fi
-        printf '    %s%s\n' "${PACKAGE_LIST[$i-1]}" "$LINEEND" >> "$PRODUCTMK"
+        BASENAME=$(basename "$FILE")
+        ARGS=$(target_args "$LINE")
+        ARGS=(${ARGS//;/ })
+        for ARG in "${ARGS[@]}"; do
+            if [[ "$ARG" =~ "SYMLINK" ]]; then
+                SYMLINKS=${ARG#*=}
+                SYMLINKS=(${SYMLINKS//,/ })
+                for SYMLINK in "${SYMLINKS[@]}"; do
+                    SYMLINK_BASENAME=$(basename "$SYMLINK")
+                    PKGNAME=${BASENAME%.*}_${SYMLINK_BASENAME%.*}_symlink${ARCH}
+                    {
+                        printf 'install_symlink {\n'
+                        printf '\tname: "%s",\n' "$PKGNAME"
+                        if prefix_match_file "vendor/" "$FILE"; then
+                            PREFIX='vendor/'
+                            printf '\tsoc_specific: true\n'
+                        elif prefix_match_file "product/" "$FILE"; then
+                            PREFIX='product/'
+                            printf '\tproduct_specific: true\n'
+                        elif prefix_match_file "system_ext/" "$FILE"; then
+                            PREFIX='system_ext/'
+                            printf '\tsystem_ext_specific: true\n'
+                        elif prefix_match_file "odm/" "$FILE"; then
+                            PREFIX='odm/'
+                            printf '\tdevice_specific: true\n'
+                        fi
+                        printf '\tinstalled_location: "%s",\n' "${SYMLINK#"$PREFIX"}"
+                        printf '\tsymlink_target: "/%s",\n' "$FILE"
+                        printf '}\n\n'
+                    } >> "$ANDROIDBP"
+                    SYMLINK_PACKAGES+=("$PKGNAME")
+                done
+            fi
+        done
     done
+
+    PRODUCT_SYMLINKS_LIST=($( printf '%s\n' "${PRODUCT_SYMLINKS_LIST[@]//"$LINE"}"))
+
+    write_package_definition "${SYMLINK_PACKAGES[@]}" >> "$PRODUCTMK"
 }
 
 #
@@ -1138,6 +1202,31 @@ function write_rro_package() {
 }
 
 #
+# write_package_definition:
+#
+# $@: list of packages
+#
+# writes out the final PRODUCT_PACKAGES list
+#
+function write_package_definition() {
+    local PACKAGE_LIST=("${@}")
+    local PACKAGE_COUNT=${#PACKAGE_LIST[@]}
+
+    if [ "$PACKAGE_COUNT" -eq "0" ]; then
+        return 0
+    fi
+
+    printf '\n%s\n' "PRODUCT_PACKAGES += \\"
+    for (( i=1; i<PACKAGE_COUNT+1; i++ )); do
+        local LINEEND=" \\"
+        if [ "$i" -eq "$PACKAGE_COUNT" ]; then
+            LINEEND=""
+        fi
+        printf '    %s%s\n' "${PACKAGE_LIST[$i-1]}" "$LINEEND"
+    done
+}
+
+#
 # write_headers:
 #
 # $1: devices falling under common to be added to guard - optional
@@ -1284,7 +1373,9 @@ function parse_file_list() {
         if [ "$COUNT" -gt "2" ]; then
             FIXUP_HASH=${SPLIT[2]}
         fi
-
+        if [[ "$SPEC" =~ 'SYMLINK=' ]]; then
+            PRODUCT_SYMLINKS_LIST+=("${SPEC#-}")
+        fi
         # if line starts with a dash, it needs to be packaged
         if [[ "$SPEC" =~ ^- ]]; then
             PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
@@ -1317,14 +1408,15 @@ function parse_file_list() {
 # $1: file containing the list of items to extract
 # $2: make treble compatible makefile - optional
 #
-# Calls write_product_copy_files and write_product_packages on
-# the given file and appends to the Android.bp as well as
-# the product makefile.
+# Calls write_product_copy_files, write_product_packages and
+# lastly write_symlink_packages on the given file and appends
+# to the Android.bp as well as the product makefile.
 #
 function write_makefiles() {
     parse_file_list "$1"
     write_product_copy_files "$2"
     write_product_packages
+    write_symlink_packages
 }
 
 #
