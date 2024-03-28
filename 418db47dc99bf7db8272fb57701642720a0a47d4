@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ed1f81ed_fb0dadb9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-03-28T15:13:39Z",
+      "side": 1,
+      "message": "Build system doesn\u0027t like installing jni libs like this.",
+      "revId": "418db47dc99bf7db8272fb57701642720a0a47d4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
