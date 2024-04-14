@@ -2042,7 +2042,7 @@ function extract() {
         # Check pinned files
         local HASH="${HASHLIST[$i - 1]}"
         local FIXUP_HASH="${FIXUP_HASHLIST[$i - 1]}"
-        local KEEP=""
+        local USE_PINNED="no"
         if [ "$DISABLE_PINNING" != "1" ] && [ -n "$HASH" ]; then
             if [ -f "${VENDOR_REPO_FILE}" ]; then
                 local PINNED="${VENDOR_REPO_FILE}"
@@ -2052,9 +2052,13 @@ function extract() {
             if [ -f "$PINNED" ]; then
                 local TMP_HASH=$(get_hash "${PINNED}")
                 if [ "${TMP_HASH}" = "${HASH}" ] || [ "${TMP_HASH}" = "${FIXUP_HASH}" ]; then
-                    KEEP="1"
                     if [ ! -f "${VENDOR_REPO_FILE}" ]; then
                         cp -p "$PINNED" "${VENDOR_REPO_FILE}"
+                    fi
+                    if [ -n "${FIXUP_HASH}" ] || [ "${TMP_HASH}" = "${FIXUP_HASH}" ]; then
+                        USE_PINNED="yes"
+                    else
+                        USE_PINNED="fixup"
                     fi
                 fi
             fi
@@ -2064,13 +2068,19 @@ function extract() {
             printf '  - %s\n' "${BLOB_DISPLAY_NAME}"
         fi
 
-        if [ "$KEEP" = "1" ]; then
+        case "$USE_PINNED" in
+        yes)
             if [ -n "${FIXUP_HASH}" ]; then
                 printf '    + Keeping pinned file with hash %s\n' "${FIXUP_HASH}"
             else
                 printf '    + Keeping pinned file with hash %s\n' "${HASH}"
             fi
-        else
+            continue
+            ;;
+        fixup)
+            printf '    + Fixing up pinned file with hash %s\n' "${HASH}"
+            ;;
+        *)
             local FOUND=false
             local FIRST_CANDIDATE=
             local SECOND_CANDIDATE=
@@ -2093,57 +2103,59 @@ function extract() {
                 colored_echo red "    !! ${BLOB_DISPLAY_NAME}: file not found in source"
                 continue
             fi
+            ;;
+        esac
 
-            # Blob fixup pipeline has 2 parts: one that is fixed and
-            # one that is user-configurable
-            local PRE_FIXUP_HASH=
-            local POST_FIXUP_HASH=
+        # Blob fixup pipeline has 2 parts: one that is fixed and
+        # one that is user-configurable
+        local PRE_FIXUP_HASH=
+        local POST_FIXUP_HASH=
 
-            # Deodex apk|jar if that's the case
-            if [[ "$FULLY_DEODEXED" -ne "1" && "${VENDOR_REPO_FILE}" =~ .(apk|jar)$ ]]; then
+        # Deodex apk|jar if that's the case
+        if [[ "$FULLY_DEODEXED" -ne "1" && "${VENDOR_REPO_FILE}" =~ .(apk|jar)$ ]]; then
+            PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+            oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$EXTRACT_SRC"
+            if [ -f "$EXTRACT_TMP_DIR/classes.dex" ]; then
+                touch -t 200901010000 "$EXTRACT_TMP_DIR/classes"*
+                zip -gjq "${VENDOR_REPO_FILE}" "$EXTRACT_TMP_DIR/classes"*
+                rm "$EXTRACT_TMP_DIR/classes"*
+                printf '    (updated %s from odex files)\n' "${SRC_FILE}"
+            fi
+        elif [[ "$TARGET_DISABLE_XML_FIXING" != true && "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
+            PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+            fix_xml "${VENDOR_REPO_FILE}"
+        elif [ "$KANG" = true ]; then
+            PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+        fi
+
+        blob_fixup_dry "$BLOB_DISPLAY_NAME"
+        if [ $? -ne 1 ]; then
+            if [ -z "$PRE_FIXUP_HASH" ]; then
                 PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
-                oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$EXTRACT_SRC"
-                if [ -f "$EXTRACT_TMP_DIR/classes.dex" ]; then
-                    touch -t 200901010000 "$EXTRACT_TMP_DIR/classes"*
-                    zip -gjq "${VENDOR_REPO_FILE}" "$EXTRACT_TMP_DIR/classes"*
-                    rm "$EXTRACT_TMP_DIR/classes"*
-                    printf '    (updated %s from odex files)\n' "${SRC_FILE}"
-                fi
-            elif [[ "$TARGET_DISABLE_XML_FIXING" != true && "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
-                PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
-                fix_xml "${VENDOR_REPO_FILE}"
-            elif [ "$KANG" = true ]; then
-                PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
             fi
 
-            blob_fixup_dry "$BLOB_DISPLAY_NAME"
-            if [ $? -ne 1 ]; then
-                if [ -z "$PRE_FIXUP_HASH" ]; then
-                    PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
-                fi
-
-                # Now run user-supplied fixup function
-                blob_fixup "$BLOB_DISPLAY_NAME" "$VENDOR_REPO_FILE"
+            # Now run user-supplied fixup function
+            blob_fixup "$BLOB_DISPLAY_NAME" "$VENDOR_REPO_FILE"
             fi
+        fi
 
-            if [ -n "$PRE_FIXUP_HASH" ]; then
-                POST_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
-            fi
+        if [ -n "$PRE_FIXUP_HASH" ]; then
+            POST_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+        fi
 
-            if [ "${KANG}" = true ]; then
-                print_spec "${IS_PRODUCT_PACKAGE}" "${SPEC_SRC_FILE}" "${SPEC_DST_FILE}" "${SPEC_ARGS}" "${PRE_FIXUP_HASH}" "${POST_FIXUP_HASH}"
-            fi
+        if [ "${KANG}" = true ]; then
+            print_spec "${IS_PRODUCT_PACKAGE}" "${SPEC_SRC_FILE}" "${SPEC_DST_FILE}" "${SPEC_ARGS}" "${PRE_FIXUP_HASH}" "${POST_FIXUP_HASH}"
+        fi
 
-            # Check and print whether the fixup pipeline actually did anything.
-            # This isn't done right after the fixup pipeline because we want this print
-            # to come after print_spec above, when in kang mode.
-            if [ "${PRE_FIXUP_HASH}" != "${POST_FIXUP_HASH}" ]; then
-                printf "    + Fixed up %s\n" "${BLOB_DISPLAY_NAME}"
-                # Now sanity-check the spec for this blob.
-                if [ "${KANG}" = false ] && [ -z "${FIXUP_HASH}" ] && [ -n "${HASH}" ]; then
-                    colored_echo yellow "WARNING: The ${BLOB_DISPLAY_NAME} file was fixed up, but it is pinned."
-                    colored_echo yellow "This is a mistake and you want to either remove the hash completely, or add an extra one."
-                fi
+        # Check and print whether the fixup pipeline actually did anything.
+        # This isn't done right after the fixup pipeline because we want this print
+        # to come after print_spec above, when in kang mode.
+        if [ "${PRE_FIXUP_HASH}" != "${POST_FIXUP_HASH}" ]; then
+            printf "    + Fixed up %s\n" "${BLOB_DISPLAY_NAME}"
+            # Now sanity-check the spec for this blob.
+            if [ "${KANG}" = false ] && [ -z "${FIXUP_HASH}" ] && [ -n "${HASH}" ]; then
+                colored_echo yellow "WARNING: The ${BLOB_DISPLAY_NAME} file was fixed up, but it is pinned."
+                colored_echo yellow "This is a mistake and you want to either remove the hash completely, or add an extra one."
             fi
         fi
 
