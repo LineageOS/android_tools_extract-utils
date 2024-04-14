@@ -16,6 +16,24 @@
       "message": "Can you provide an example of broken pins?",
       "revId": "5f7ffdfece81e2a27c160ed8beeff5cd5765f3a9",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4a94417b_eb0fdb88",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 20587
+      },
+      "writtenOn": "2024-04-14T13:37:52Z",
+      "side": 1,
+      "message": "I have a library from another device in my vendor repo and\n`system_ext/lib64/lib-imsvideocodec.so|47512183b3330ad566d241149c4e16f33122dab1|d6546e445b23e75cb3020084edb1d62174bd7479`\nin the proprietary.txt.\nIn `extract-files.sh` I have a custom `blob_fixup` which uses `patchelf`\n\nThat isn\u0027t/wasn\u0027t run: Either one of the hashes match and the file is copied with or without the required editing or the file is searched for in the source where it doesn\u0027t exist",
+      "parentUuid": "a33c5ecc_82ed9ae4",
+      "revId": "5f7ffdfece81e2a27c160ed8beeff5cd5765f3a9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
