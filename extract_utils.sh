@@ -2158,6 +2158,16 @@ function extract() {
             fi
         fi
 
+        if [ "${KANG}" = false ]; then
+            if [ -n "${FIXUP_HASH}" ]; then
+                if [ "${FIXUP_HASH}" != "${POST_FIXUP_HASH}" ]; then
+                    colored_echo red "    !! ${BLOB_DISPLAY_NAME}: Fixup hash ${FIXUP_HASH} does not match ${POST_FIXUP_HASH}"
+                fi
+            elif [ -n "${HASH}" ] && [ "${HASH}" != "${POST_FIXUP_HASH}" ]; then
+                colored_echo red "    !! ${BLOB_DISPLAY_NAME}: Hash ${HASH} does not match ${POST_FIXUP_HASH}"
+            fi
+        fi
+
     done
 
     # Don't allow failing
