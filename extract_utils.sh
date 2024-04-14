@@ -1774,18 +1774,15 @@ function extract() {
 
         if [ "$KEEP" = "1" ]; then
             if [ "${FIXUP_HASH}" != "x" ]; then
-                printf '    + keeping pinned file with hash %s\n' "${FIXUP_HASH}"
+                printf '    + Keeping pinned file with hash %s\n' "${FIXUP_HASH}"
             else
-                printf '    + keeping pinned file with hash %s\n' "${HASH}"
+                printf '    + Keeping pinned file with hash %s\n' "${HASH}"
             fi
         else
-            FOUND=false
+            local FOUND=false
             # Try custom target first.
-            # Also try to search for files stripped of
-            # the "/system" prefix, if we're actually extracting
-            # from a system image.
             for CANDIDATE in "${DST_FILE}" "${SRC_FILE}"; do
-                get_file ${CANDIDATE} ${VENDOR_REPO_FILE} ${EXTRACT_SRC} && {
+                get_file "${CANDIDATE}" "${VENDOR_REPO_FILE}" "${EXTRACT_SRC}" && {
                     FOUND=true
                     break
                 }
