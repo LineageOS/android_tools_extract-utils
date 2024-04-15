@@ -34,6 +34,23 @@
       "parentUuid": "a33c5ecc_82ed9ae4",
       "revId": "5f7ffdfece81e2a27c160ed8beeff5cd5765f3a9",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0035652b_f90bf314",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 20587
+      },
+      "writtenOn": "2024-04-15T13:45:23Z",
+      "side": 1,
+      "message": "Copying my analysis of the current algo from Discord in addition to the commit description:\nhttps://github.com/LineageOS/android_tools_extract-utils/blob/bd1fbd3b465e347ae4670a2ff012468a96dcc9dc/extract_utils.sh#L1988-L1989 checks if either hash matches (i.e. doesn\u0027t distinguish between already fixed up blobs or original ones)\n\nThat makes it enter this block which just prints out something and doesn\u0027t do anything else: https://github.com/LineageOS/android_tools_extract-utils/blob/bd1fbd3b465e347ae4670a2ff012468a96dcc9dc/extract_utils.sh#L2002-L2006\n\nEspecially this skips the `blob_fixup` call in the else branch of the above: https://github.com/LineageOS/android_tools_extract-utils/blob/bd1fbd3b465e347ae4670a2ff012468a96dcc9dc/extract_utils.sh#L2041",
+      "revId": "5f7ffdfece81e2a27c160ed8beeff5cd5765f3a9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
