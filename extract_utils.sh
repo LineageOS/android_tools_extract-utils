@@ -969,16 +969,16 @@ function write_symlink_packages() {
                     {
                         printf 'install_symlink {\n'
                         printf '\tname: "%s",\n' "$PKGNAME"
-                        if prefix_match_file "vendor/" "$FILE"; then
+                        if prefix_match_file "vendor/" "$SYMLINK"; then
                             PREFIX='vendor/'
                             printf '\tsoc_specific: true,\n'
-                        elif prefix_match_file "product/" "$FILE"; then
+                        elif prefix_match_file "product/" "$SYMLINK"; then
                             PREFIX='product/'
                             printf '\tproduct_specific: true,\n'
-                        elif prefix_match_file "system_ext/" "$FILE"; then
+                        elif prefix_match_file "system_ext/" "$SYMLINK"; then
                             PREFIX='system_ext/'
                             printf '\tsystem_ext_specific: true,\n'
-                        elif prefix_match_file "odm/" "$FILE"; then
+                        elif prefix_match_file "odm/" "$SYMLINK"; then
                             PREFIX='odm/'
                             printf '\tdevice_specific: true,\n'
                         fi
