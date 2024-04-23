@@ -939,6 +939,7 @@ function write_symlink_packages() {
     local PREFIX=
     local SYMLINK_BASENAME=
     local SYMLINK_PACKAGES=()
+    local COUNTER=0
 
     # Sort the symlinks list for comm
     PRODUCT_SYMLINKS_LIST=($( printf '%s\n' "${PRODUCT_SYMLINKS_LIST[@]}" | LC_ALL=C sort))
@@ -965,7 +966,9 @@ function write_symlink_packages() {
                 SYMLINKS=(${SYMLINKS//,/ })
                 for SYMLINK in "${SYMLINKS[@]}"; do
                     SYMLINK_BASENAME=$(basename "$SYMLINK")
-                    PKGNAME=${BASENAME%.*}_${SYMLINK_BASENAME%.*}_symlink${ARCH}
+                    PKGNAME="${BASENAME%.*}_${SYMLINK_BASENAME%.*}_symlink${ARCH}"
+                    # Add a unique identifier based on a counter
+                    PKGNAME+="_$((COUNTER++))"
                     {
                         printf 'install_symlink {\n'
                         printf '\tname: "%s",\n' "$PKGNAME"
