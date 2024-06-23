@@ -950,7 +950,7 @@ function write_symlink_packages() {
     fi
 
     for LINE in "${PRODUCT_SYMLINKS_LIST[@]}"; do
-        FILE=$(src_file "$LINE")
+        FILE=$(target_file "$LINE")
         if [[ "$LINE" =~ '/lib/' ]]; then
             ARCH="32"
         elif [[ "$LINE" =~ '/lib64/' ]]; then
