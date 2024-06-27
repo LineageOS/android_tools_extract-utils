@@ -965,7 +965,10 @@ function write_symlink_packages() {
                 SYMLINKS=(${SYMLINKS//,/ })
                 for SYMLINK in "${SYMLINKS[@]}"; do
                     SYMLINK_BASENAME=$(basename "$SYMLINK")
-                    PKGNAME=${BASENAME%.*}_${SYMLINK_BASENAME%.*}_symlink${ARCH}
+                    PKGNAME="${BASENAME%.*}_${SYMLINK_BASENAME%.*}_symlink${ARCH}"
+                    if [[ "${SYMLINK_PACKAGES[@]}" =~ "$PKGNAME" ]]; then
+                        PKGNAME+="_$(grep -o "$PKGNAME" <<< ${SYMLINK_PACKAGES[*]} | wc -l)"
+                    fi
                     {
                         printf 'install_symlink {\n'
                         printf '\tname: "%s",\n' "$PKGNAME"
