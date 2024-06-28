@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8d8acaf_7e72ed3f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-06-28T00:00:12Z",
+      "side": 1,
+      "message": "Better alternative: https://review.lineageos.org/c/LineageOS/android_tools_extract-utils/+/396155",
+      "revId": "6283570911a7e7a779aacabf55f7f1ca9525694c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
