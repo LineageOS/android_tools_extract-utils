@@ -59,6 +59,7 @@ function setup_vendor_deps() {
     export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
     export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
     export JDK_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/jdk/jdk21/${HOST}-x86/bin
+    export COMMON_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/common
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
@@ -66,6 +67,7 @@ function setup_vendor_deps() {
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
     export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
     export JAVA="$JDK_BINARIES_LOCATION"/java
+    export APKTOOL="$COMMON_BINARIES_LOCATION"/apktool/apktool.jar
 
     for version in 0_8 0_9 0_17_2; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
@@ -1714,6 +1716,34 @@ function print_spec() {
     fi
     printf '%s%s%s%s%s%s\n' "${PRODUCT_PACKAGE}" "${SRC}" "${DST}" "${ARGS}" "${HASH}" "${FIXUP_HASH}"
 }
+
+# Helper function to be used by device-level extract-files.sh
+# to patch a jar
+#   $1: path to blob file.
+#   $2: path to directory with patches.
+#   ...: arguments to be passed to apktool
+#
+function apktool_patch() {
+    local APK_PATH="$1"
+    shift
+    local PATCHES_PATH="$2"
+    shift
+
+    local PATCHES_PATHS=$(find "$PATCHES_PATH" -name "*.patch" | sort)
+
+    local TEMP_DIR=$(mktemp -d)
+    "$JAVA" -jar "$APKTOOL" d "$APK_PATH" -o "$TEMP_DIR" -f "$@"
+
+    pushd "$TEMP_DIR" > /dev/null
+    while IFS= read -r "$PATCH_PATH"; do
+        patch -s -p0 < "$PATCH_PATH"
+    done <<< "$PATCHES_PATHS"
+
+    apktool b -o "$APK_PATH"
+
+    popd > /dev/null
+}
+
 
 # To be overridden by device-level extract-files.sh
 # Parameters:
