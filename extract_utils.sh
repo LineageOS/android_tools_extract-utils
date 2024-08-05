@@ -59,13 +59,16 @@ function setup_vendor_deps() {
     export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
     export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
     export JDK_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/jdk/jdk21/${HOST}-x86/bin
+    export COMMON_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/common
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
     export OTA_EXTRACTOR="$BINARIES_LOCATION"/ota_extractor
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
+    export STRIPZIP="$BINARIES_LOCATION"/stripzip
     export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
     export JAVA="$JDK_BINARIES_LOCATION"/java
+    export APKTOOL="$COMMON_BINARIES_LOCATION"/apktool/apktool.jar
 
     for version in 0_8 0_9 0_17_2; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
@@ -1713,6 +1716,36 @@ function print_spec() {
         FIXUP_HASH="|${SPEC_FIXUP_HASH}"
     fi
     printf '%s%s%s%s%s%s\n' "${PRODUCT_PACKAGE}" "${SRC}" "${DST}" "${ARGS}" "${HASH}" "${FIXUP_HASH}"
+}
+
+# Helper function to be used by device-level extract-files.sh
+# to patch a jar
+#   $1: path to blob file.
+#   $2: path to patch file or directory with patches.
+#   ...: arguments to be passed to apktool
+#
+function apktool_patch() {
+    local APK_PATH="$1"
+    shift
+
+    local PATCHES_PATH="$1"
+    shift
+
+    local PATCHES_PATHS=$(find "$PATCHES_PATH" -name "*.patch" | sort)
+
+    local TEMP_DIR=$(mktemp -dp "$EXTRACT_TMP_DIR")
+    "$JAVA" -jar "$APKTOOL" d "$APK_PATH" -o "$TEMP_DIR" -f "$@"
+
+    while IFS= read -r PATCH_PATH; do
+        echo "Applying patch $PATCH_PATH"
+        patch -p1 -d "$TEMP_DIR" < "$PATCH_PATH"
+    done <<< "$PATCHES_PATHS"
+
+    # apktool modifies timestamps, we cannot use its output.
+    # To get reproductible builds, use stripzip to strip the timestamps.
+    "$JAVA" -jar "$APKTOOL" b "$TEMP_DIR" -o "$APK_PATH"
+
+    "$STRIPZIP" "$APK_PATH"
 }
 
 # To be overridden by device-level extract-files.sh
