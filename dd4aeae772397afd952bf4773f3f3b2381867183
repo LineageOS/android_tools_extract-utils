@@ -16,6 +16,24 @@
       "message": "remove /java at the end?",
       "revId": "dd4aeae772397afd952bf4773f3f3b2381867183",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d04bf352_4252b536",
+        "filename": "extract_utils.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-08-05T20:04:39Z",
+      "side": 1,
+      "message": "done",
+      "parentUuid": "405d9774_f65c0daa",
+      "revId": "dd4aeae772397afd952bf4773f3f3b2381867183",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
