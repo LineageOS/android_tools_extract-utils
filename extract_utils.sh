@@ -58,12 +58,14 @@ function setup_vendor_deps() {
 
     export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
     export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
+    export JDK_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/jdk/jdk21/${HOST}-x86/bin
 
     export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
     export OTA_EXTRACTOR="$BINARIES_LOCATION"/ota_extractor
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
     export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
+    export JAVA="$JDK_BINARIES_LOCATION"/java
 
     for version in 0_8 0_9 0_17_2; do
         export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
@@ -1583,8 +1585,8 @@ function oat2dex() {
                     fi
                 done
             else
-                java -jar "$BAKSMALIJAR" deodex -o "$EXTRACT_TMP_DIR/dexout" -b "$BOOTOAT" -d "$EXTRACT_TMP_DIR" "$EXTRACT_TMP_DIR/$(basename "$OAT")"
-                java -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
+                "$JAVA" -jar "$BAKSMALIJAR" deodex -o "$EXTRACT_TMP_DIR/dexout" -b "$BOOTOAT" -d "$EXTRACT_TMP_DIR" "$EXTRACT_TMP_DIR/$(basename "$OAT")"
+                "$JAVA" -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
             fi
         elif [[ "$CUSTOM_TARGET" =~ .jar$ ]]; then
             JAROAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot-$(basename ${OEM_TARGET%.*}).oat"
@@ -1611,8 +1613,8 @@ function oat2dex() {
                     fi
                 done
             else
-                java -jar "$BAKSMALIJAR" deodex -o "$EXTRACT_TMP_DIR/dexout" -b "$BOOTOAT" -d "$EXTRACT_TMP_DIR" "$JAROAT/$OEM_TARGET"
-                java -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
+                "$JAVA" -jar "$BAKSMALIJAR" deodex -o "$EXTRACT_TMP_DIR/dexout" -b "$BOOTOAT" -d "$EXTRACT_TMP_DIR" "$JAROAT/$OEM_TARGET"
+                "$JAVA" -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
             fi
         else
             continue
