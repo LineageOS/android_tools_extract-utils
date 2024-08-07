@@ -1801,14 +1801,14 @@ function prepare_images() {
 
             # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
-                for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+                for PARTITION in "system" "odm" "product" "system_ext" "vendor" "vendor_dlkm"
                 do
                     "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions "$PARTITION" &2>&1
                 done
                 wait
             fi
 
-            for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+            for PARTITION in "system" "odm" "product" "system_ext" "vendor" "vendor_dlkm"
             do
                 # If OTA is block based, extract it.
                 if [ -a "$DUMPDIR"/"$PARTITION".new.dat.br ]; then
@@ -1848,7 +1848,7 @@ function prepare_images() {
         echo "Unpacking super.img"
         "$SIMG2IMG" $SUPERIMG "$DUMPDIR"/super.raw
 
-        for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+        for PARTITION in "system" "odm" "product" "system_ext" "vendor" "vendor_dlkm"
         do
             echo "Preparing "$PARTITION""
             if "$LPUNPACK" -p "$PARTITION"_a "$DUMPDIR"/super.raw "$DUMPDIR" ; then
@@ -1871,7 +1871,7 @@ function prepare_images() {
         DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
         mkdir -p "$DUMPDIR"
 
-        for PARTITION in "system" "odm" "product" "system_ext" "vendor"
+        for PARTITION in "system" "odm" "product" "system_ext" "vendor" "vendor_dlkm"
         do
             echo "Extracting "$PARTITION""
             local IMAGE="$SRC"/"$PARTITION".img
