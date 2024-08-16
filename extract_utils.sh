@@ -382,6 +382,56 @@ function write_product_copy_files() {
     return 0
 }
 
+function lib_to_package_fixup_proto_3_9_1() {
+    case "$1" in
+        libprotobuf-cpp-lite-3.9.1)
+            echo "libprotobuf-cpp-lite"
+            ;;
+        libprotobuf-cpp-full-3.9.1)
+            echo "libprotobuf-cpp-full"
+            ;;
+        *)
+            return 1
+    esac
+}
+
+#
+# lib_to_package_fixup
+#
+# $1: library name without the .so suffix
+# $2: partition of the file for which we are generating shared libs
+# $3: name of the file for which we are generating shared libs
+#
+#
+# Can be overridden by device-level extract-files.sh
+#
+function lib_to_package_fixup() {
+    lib_to_package_fixup_proto_3_9_1 "$1"
+}
+
+#
+# write_package_shared_libs:
+#
+# $1: File name inside target list
+#
+function write_package_shared_libs() {
+    local SRC="$1"
+    local LOCATION="$2"
+    local FILE="$3"
+    local PARTITION="$4"
+
+    local FILE_PATH="$ANDROID_ROOT/$OUTDIR/$SRC/$LOCATION/$FILE"
+    local LIBS=$("$OBJDUMP" -x "$FILE_PATH" 2> /dev/null | sed -n 's/^\s*NEEDED\s*\(.*\).so$/\1/p')
+    local PACKAGES=$(
+        while IFS= read -r LIB; do
+            lib_to_package_fixup "$LIB" "$PARTITION" "$FILE" || echo "$LIB"
+        done <<< "$LIBS"
+    )
+    local PACKAGES_LIST=$(echo "$PACKAGES" | sed 's/\(.\+\)/"\1",/g' | tr '\n' ' ')
+
+    printf '\t\t\tshared_libs: [%s],\n' "$PACKAGES_LIST"
+}
+
 #
 # write_blueprint_packages:
 #
@@ -475,31 +525,20 @@ function write_blueprint_packages() {
             printf '\t\tnone: true,\n'
             printf '\t},\n'
             printf '\ttarget: {\n'
-            if [ "$EXTRA" = "both" ]; then
+            if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "32"  ]; then
                 printf '\t\tandroid_arm: {\n'
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
                 if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                    write_package_shared_libs "$SRC" "lib" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
+            fi
+
+            if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "64" ]; then
                 printf '\t\tandroid_arm64: {\n'
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
                 if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib64/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
-                fi
-                printf '\t\t},\n'
-            elif [ "$EXTRA" = "64" ]; then
-                printf '\t\tandroid_arm64: {\n'
-                printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib64/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
-                fi
-                printf '\t\t},\n'
-            else
-                printf '\t\tandroid_arm: {\n'
-                printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                    write_package_shared_libs "$SRC" "lib64" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
             fi
@@ -594,7 +633,7 @@ function write_blueprint_packages() {
                 fi
                 printf '\t\t\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
                 if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                    write_package_shared_libs "$SRC" "bin" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
                 printf '\t},\n'
