@@ -384,11 +384,9 @@ function write_product_copy_files() {
 
 function lib_to_package_fixup_proto_3_9_1() {
     case "$1" in
-        libprotobuf-cpp-lite-3.9.1)
-            echo "libprotobuf-cpp-lite"
-            ;;
+        libprotobuf-cpp-lite-3.9.1| \
         libprotobuf-cpp-full-3.9.1)
-            echo "libprotobuf-cpp-full"
+            echo "$1-vendorcompat"
             ;;
         *)
             return 1
