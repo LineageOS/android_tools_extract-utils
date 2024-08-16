@@ -382,6 +382,30 @@ function write_product_copy_files() {
     return 0
 }
 
+function lib_to_package_fixup_proto_3_9_1() {
+    case "$1" in
+        libprotobuf-cpp-lite-3.9.1)
+            echo "libprotobuf-cpp-lite"
+            ;;
+        libprotobuf-cpp-full-3.9.1)
+            echo "libprotobuf-cpp-full"
+            ;;
+        *)
+            return 1
+    esac
+}
+
+#
+# lib_to_package_fixup
+#
+# $1: library name without the .so suffix
+#
+# Can be overridden by device-level extract-files.sh
+#
+function lib_to_package_fixup() {
+    lib_to_package_fixup_proto_3_9_1 "$1"
+}
+
 #
 # write_package_shared_libs:
 #
@@ -390,7 +414,15 @@ function write_product_copy_files() {
 function write_package_shared_libs() {
     local FILE="$1"
 
-    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+    local LIBS=$("$OBJDUMP" -x "$FILE" 2> /dev/null | sed -n 's/^\s*NEEDED\s*\(.*\).so$/\1/p')
+    local PACKAGES=$(
+        while IFS= read -r lib; do
+            lib_to_package_fixup "$lib" || echo "$lib"
+        done <<< "$LIBS"
+    )
+    local PACKAGES_LIST=$(echo "$PACKAGES" | sed 's/\(.+\)/"\1",/g' | tr '\n' ' ')
+
+    printf '\t\t\tshared_libs: [%s],\n' "$PACKAGES_LIST"
 }
 
 #
