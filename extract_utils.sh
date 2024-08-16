@@ -383,6 +383,17 @@ function write_product_copy_files() {
 }
 
 #
+# write_package_shared_libs:
+#
+# $1: File name inside target list
+#
+function write_package_shared_libs() {
+    local FILE="$1"
+
+    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+}
+
+#
 # write_blueprint_packages:
 #
 # $1: The LOCAL_MODULE_CLASS for the given module list
@@ -475,31 +486,20 @@ function write_blueprint_packages() {
             printf '\t\tnone: true,\n'
             printf '\t},\n'
             printf '\ttarget: {\n'
-            if [ "$EXTRA" = "both" ]; then
+            if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "32"  ]; then
                 printf '\t\tandroid_arm: {\n'
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
                 if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                    write_package_shared_libs "$ANDROID_ROOT/$OUTDIR/$SRC/lib/$FILE"
                 fi
                 printf '\t\t},\n'
+            fi
+
+            if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "64" ]; then
                 printf '\t\tandroid_arm64: {\n'
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
                 if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib64/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
-                fi
-                printf '\t\t},\n'
-            elif [ "$EXTRA" = "64" ]; then
-                printf '\t\tandroid_arm64: {\n'
-                printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib64/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
-                fi
-                printf '\t\t},\n'
-            else
-                printf '\t\tandroid_arm: {\n'
-                printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/lib/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                    write_package_shared_libs "$ANDROID_ROOT/$OUTDIR/$SRC/lib64/$FILE"
                 fi
                 printf '\t\t},\n'
             fi
@@ -594,7 +594,7 @@ function write_blueprint_packages() {
                 fi
                 printf '\t\t\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
                 if [ -z "$DISABLE_CHECKELF" ]; then
-                    printf '\t\t\tshared_libs: [%s],\n' "$(basename -s .so $(${OBJDUMP} -x "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep NEEDED) 2>/dev/null |grep -v ^NEEDED$ |sed 's/-3.9.1//g' |sed 's/\(.*\)/"\1",/g' |tr '\n' ' ')"
+                    write_package_shared_libs "$ANDROID_ROOT/$OUTDIR/$SRC/bin/$FILE"
                 fi
                 printf '\t\t},\n'
                 printf '\t},\n'
