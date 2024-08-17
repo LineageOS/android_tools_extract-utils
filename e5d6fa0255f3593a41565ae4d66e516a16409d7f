@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aff6baf8_9ac4514b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-08-17T01:09:35Z",
+      "side": 1,
+      "message": "Example usage to handle situations like this:\n\nsystem_ext/lib64/vendor.qti.hardware.qccsyshal@1.0.so\nsystem_ext/lib64/vendor.qti.hardware.qccsyshal@1.1.so\nsystem_ext/lib64/vendor.qti.hardware.qccsyshal@1.2.so\nvendor/lib64/vendor.qti.hardware.qccsyshal@1.0.so;MODULE\u003dvendor.qti.hardware.qccsyshal@1.0-vendor\nvendor/lib64/vendor.qti.hardware.qccsyshal@1.1.so;MODULE\u003dvendor.qti.hardware.qccsys\nhal@1.1-vendor\n\nWhere both a system_ext and a vendor variant exist, and vendor modules can only link against vendor variants.\n\nhttps://github.com/eqs-development/android_device_motorola_sm8475-common/blob/lineage-21/setup-makefiles.sh#L34",
+      "revId": "e5d6fa0255f3593a41565ae4d66e516a16409d7f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
