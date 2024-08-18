@@ -462,6 +462,7 @@ function write_blueprint_packages() {
     local OVERRIDEPKG=
     local REQUIREDPKG=
     local DISABLE_CHECKELF=
+    local GENERATE_DEPS=
 
     [ "$COMMON" -eq 1 ] && local VENDOR="${VENDOR_COMMON:-$VENDOR}"
 
@@ -484,6 +485,7 @@ function write_blueprint_packages() {
         STEM=
         if [ "$TARGET_ENABLE_CHECKELF" == "true" ]; then
             DISABLE_CHECKELF=
+            GENERATE_DEPS="true"
         else
             DISABLE_CHECKELF="true"
         fi
@@ -526,7 +528,7 @@ function write_blueprint_packages() {
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "32"  ]; then
                 printf '\t\tandroid_arm: {\n'
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
+                if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "lib" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
@@ -535,7 +537,7 @@ function write_blueprint_packages() {
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "64" ]; then
                 printf '\t\tandroid_arm64: {\n'
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
+                if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "lib64" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
@@ -630,7 +632,7 @@ function write_blueprint_packages() {
                     printf '\t\tandroid_arm: {\n'
                 fi
                 printf '\t\t\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
+                if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "bin" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
