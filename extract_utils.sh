@@ -526,18 +526,14 @@ function write_blueprint_packages() {
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "32"  ]; then
                 printf '\t\tandroid_arm: {\n'
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    write_package_shared_libs "$SRC" "lib" "$FILE" "$PARTITION"
-                fi
+                write_package_shared_libs "$SRC" "lib" "$FILE" "$PARTITION"
                 printf '\t\t},\n'
             fi
 
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "64" ]; then
                 printf '\t\tandroid_arm64: {\n'
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    write_package_shared_libs "$SRC" "lib64" "$FILE" "$PARTITION"
-                fi
+                write_package_shared_libs "$SRC" "lib64" "$FILE" "$PARTITION"
                 printf '\t\t},\n'
             fi
             printf '\t},\n'
@@ -630,9 +626,7 @@ function write_blueprint_packages() {
                     printf '\t\tandroid_arm: {\n'
                 fi
                 printf '\t\t\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
-                if [ -z "$DISABLE_CHECKELF" ]; then
-                    write_package_shared_libs "$SRC" "bin" "$FILE" "$PARTITION"
-                fi
+                write_package_shared_libs "$SRC" "bin" "$FILE" "$PARTITION"
                 printf '\t\t},\n'
                 printf '\t},\n'
                 if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
