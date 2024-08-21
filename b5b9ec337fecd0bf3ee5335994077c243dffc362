@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c61bf1f9_c97b33be",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-08-21T07:05:30Z",
+      "side": 1,
+      "message": "This generates the shared_libs lines even when elfchecks are fully disabled.",
+      "revId": "b5b9ec337fecd0bf3ee5335994077c243dffc362",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
