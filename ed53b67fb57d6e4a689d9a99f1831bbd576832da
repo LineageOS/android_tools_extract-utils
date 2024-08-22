@@ -52,6 +52,23 @@
       "parentUuid": "b1e74b7f_ac75a815",
       "revId": "ed53b67fb57d6e4a689d9a99f1831bbd576832da",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66dcabf8_4f940e0a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-08-22T07:40:52Z",
+      "side": 1,
+      "message": "fine, could use strcmp instead of strcoll, the latter uses locale afaik",
+      "revId": "ed53b67fb57d6e4a689d9a99f1831bbd576832da",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
