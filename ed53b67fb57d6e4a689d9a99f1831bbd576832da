@@ -16,6 +16,24 @@
       "message": "what\u0027s the sort difference?\nif the blob name is the same it\u0027ll be sorted depending on the ;... stuff, don\u0027t think that\u0027ll cause differences?\nIf not the same it\u0027ll be sorted regardless",
       "revId": "ed53b67fb57d6e4a689d9a99f1831bbd576832da",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1e74b7f_ac75a815",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-08-22T07:38:21Z",
+      "side": 1,
+      "message": "```diff\ndiff --git a/proprietary-files.txt b/proprietary-files.txt\nindex 348167b..0f0194b 100644\n--- a/proprietary-files.txt\n+++ b/proprietary-files.txt\n@@ -587,11 +587,11 @@ vendor/etc/init/android.hardware.gatekeeper@1.0-service-qti.rc\n vendor/lib64/hw/android.hardware.gatekeeper@1.0-impl-qti.so\n \n # Graphics (Adreno)\n-vendor/lib/egl/eglSubDriverAndroid.so\n vendor/lib/egl/libEGL_adreno.so;SYMLINK\u003dvendor/lib/libEGL_adreno.so\n-vendor/lib/egl/libGLESv1_CM_adreno.so\n vendor/lib/egl/libGLESv2_adreno.so;SYMLINK\u003dvendor/lib/libGLESv2_adreno.so\n vendor/lib/egl/libq3dtools_adreno.so;SYMLINK\u003dvendor/lib/libq3dtools_adreno.so\n+vendor/lib/egl/eglSubDriverAndroid.so\n+vendor/lib/egl/libGLESv1_CM_adreno.so\n vendor/lib/egl/libq3dtools_esx.so\n vendor/lib/libC2D2.so\n vendor/lib/libCB.so\n@@ -603,11 +603,11 @@ vendor/lib/libgpudataproducer.so\n vendor/lib/libgsl.so\n vendor/lib/libllvm-glnext.so\n vendor/lib/libllvm-qcom.so\n-vendor/lib64/egl/eglSubDriverAndroid.so\n vendor/lib64/egl/libEGL_adreno.so;SYMLINK\u003dvendor/lib64/libEGL_adreno.so\n-vendor/lib64/egl/libGLESv1_CM_adreno.so\n vendor/lib64/egl/libGLESv2_adreno.so;SYMLINK\u003dvendor/lib64/libGLESv2_adreno.so\n vendor/lib64/egl/libq3dtools_adreno.so;SYMLINK\u003dvendor/lib64/libq3dtools_adreno.so\n+vendor/lib64/egl/eglSubDriverAndroid.so\n+vendor/lib64/egl/libGLESv1_CM_adreno.so\n vendor/lib64/egl/libq3dtools_esx.so\n vendor/lib64/libC2D2.so\n vendor/lib64/libCB.so\n@@ -712,13 +712,13 @@ system_ext/etc/sysconfig/qti_telephony_system_packages_config.xml\n system_ext/etc/sysconfig/qti_whitelist_system_ext.xml\n system_ext/framework/oplus-ims-ext.jar\n system_ext/framework/vendor.qti.ims.factory-V2.0-java.jar\n+system_ext/lib64/libimscamera_jni.so;SYMLINK\u003dsystem_ext/priv-app/ims/lib/arm64/libimscamera_jni.so\n+system_ext/lib64/libimsmedia_jni.so;SYMLINK\u003dsystem_ext/priv-app/ims/lib/arm64/libimsmedia_jni.so\n system_ext/lib64/lib-imsvideocodec.so\n system_ext/lib64/lib-imsvt.so\n system_ext/lib64/lib-imsvtextutils.so\n system_ext/lib64/lib-imsvtutils.so\n system_ext/lib64/libdiag_system.so\n-system_ext/lib64/libimscamera_jni.so;SYMLINK\u003dsystem_ext/priv-app/ims/lib/arm64/libimscamera_jni.so\n-system_ext/lib64/libimsmedia_jni.so;SYMLINK\u003dsystem_ext/priv-app/ims/lib/arm64/libimsmedia_jni.so\n system_ext/lib64/vendor.qti.imsrtpservice@3.0.so\n system_ext/priv-app/ims/ims.apk\n vendor/bin/ims_rtp_daemon\n```",
+      "parentUuid": "853386d9_dffafb34",
+      "revId": "ed53b67fb57d6e4a689d9a99f1831bbd576832da",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
