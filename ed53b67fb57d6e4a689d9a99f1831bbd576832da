@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "853386d9_dffafb34",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-08-22T07:36:03Z",
+      "side": 1,
+      "message": "what\u0027s the sort difference?\nif the blob name is the same it\u0027ll be sorted depending on the ;... stuff, don\u0027t think that\u0027ll cause differences?\nIf not the same it\u0027ll be sorted regardless",
+      "revId": "ed53b67fb57d6e4a689d9a99f1831bbd576832da",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
