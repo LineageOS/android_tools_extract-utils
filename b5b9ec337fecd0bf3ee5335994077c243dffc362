@@ -16,6 +16,24 @@
       "message": "This generates the shared_libs lines even when elfchecks are fully disabled.",
       "revId": "b5b9ec337fecd0bf3ee5335994077c243dffc362",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "590566be_0f8410cd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-08-22T06:10:32Z",
+      "side": 1,
+      "message": "Fixed",
+      "parentUuid": "c61bf1f9_c97b33be",
+      "revId": "b5b9ec337fecd0bf3ee5335994077c243dffc362",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
