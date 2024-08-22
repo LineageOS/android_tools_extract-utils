@@ -21,6 +21,10 @@ def strcoll_extract_utils(string1: str, string2: str) -> int:
     string1 = re.sub("^-", "", string1)
     string2 = re.sub("^-", "", string2)
 
+    # Remove ';*' from strings if there
+    string1 = re.sub(";.*", "", string1)
+    string2 = re.sub(";.*", "", string2)
+
     # Compare normally
     return strcoll(string1, string2)
 
