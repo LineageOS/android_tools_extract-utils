@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf283934_3f282f3d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-08-24T13:04:15Z",
+      "side": 1,
+      "message": "I don\u0027t want to be asked whether I want to revert patch for already patched blob.",
+      "revId": "b80852cebdea6ccb148ea3cec5723d6b7cdb72fb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
