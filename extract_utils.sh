@@ -1718,6 +1718,16 @@ function blob_fixup() {
 
 # To be overridden by device-level extract-files.sh
 # Parameters:
+#   $1: spec name of a blob. Can be used for filtering.
+#       If the spec is "src:dest", then $1 is "dest".
+#       If the spec is "src", then $1 is "src".
+#
+function blob_fixup_dry() {
+    return 0
+}
+
+# To be overridden by device-level extract-files.sh
+# Parameters:
 #   $1: Path to vendor Android.bp
 #
 function vendor_imports() {
@@ -2022,9 +2032,12 @@ function extract() {
 
             # Blob fixup pipeline has 2 parts: one that is fixed and
             # one that is user-configurable
-            local PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+            local PRE_FIXUP_HASH=
+            local POST_FIXUP_HASH=
+
             # Deodex apk|jar if that's the case
             if [[ "$FULLY_DEODEXED" -ne "1" && "${VENDOR_REPO_FILE}" =~ .(apk|jar)$ ]]; then
+                PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
                 oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$EXTRACT_SRC"
                 if [ -f "$EXTRACT_TMP_DIR/classes.dex" ]; then
                     touch -t 200901010000 "$EXTRACT_TMP_DIR/classes"*
@@ -2033,11 +2046,25 @@ function extract() {
                     printf '    (updated %s from odex files)\n' "${SRC_FILE}"
                 fi
             elif [[ "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
+                PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
                 fix_xml "${VENDOR_REPO_FILE}"
+            elif [ "$KANG" = true ]; then
+                PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
             fi
-            # Now run user-supplied fixup function
-            blob_fixup "${BLOB_DISPLAY_NAME}" "${VENDOR_REPO_FILE}"
-            local POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+
+            blob_fixup_dry "${BLOB_DISPLAY_NAME}"
+            if [ $? -ne 1 ]; then
+                if [ "$PRE_FIXUP_HASH" = "" ]; then
+                    PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+                fi
+
+                # Now run user-supplied fixup function
+                blob_fixup "${BLOB_DISPLAY_NAME}" "${VENDOR_REPO_FILE}"
+            fi
+
+            if [ "$PRE_FIXUP_HASH" != "" ]; then
+                POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+            fi
 
             if [ -f "${VENDOR_REPO_FILE}" ]; then
                 local TYPE="${DIR##*/}"
