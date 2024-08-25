@@ -1786,7 +1786,7 @@ function apktool_patch() {
 #   $2: path to blob file. Can be used for fixups.
 #
 function blob_fixup() {
-    :
+    return 1
 }
 
 # To be overridden by device-level extract-files.sh
@@ -2093,8 +2093,11 @@ function extract() {
             # Blob fixup pipeline has 2 parts: one that is fixed and
             # one that is user-configurable
             local PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+            local DO_POST_FIXUP_HASH=
+
             # Deodex apk|jar if that's the case
             if [[ "$FULLY_DEODEXED" -ne "1" && "${VENDOR_REPO_FILE}" =~ .(apk|jar)$ ]]; then
+                DO_POST_FIXUP_HASH=true
                 oat2dex "${VENDOR_REPO_FILE}" "${SRC_FILE}" "$EXTRACT_SRC"
                 if [ -f "$EXTRACT_TMP_DIR/classes.dex" ]; then
                     touch -t 200901010000 "$EXTRACT_TMP_DIR/classes"*
@@ -2103,11 +2106,23 @@ function extract() {
                     printf '    (updated %s from odex files)\n' "${SRC_FILE}"
                 fi
             elif [[ "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
+                DO_POST_FIXUP_HASH=true
                 fix_xml "${VENDOR_REPO_FILE}"
             fi
             # Now run user-supplied fixup function
             blob_fixup "${BLOB_DISPLAY_NAME}" "${VENDOR_REPO_FILE}"
-            local POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+            if [ $? -ne 1 ]; then
+                DO_POST_FIXUP_HASH=true
+            fi
+
+            if [ "${KANG}" = true ]; then
+                DO_POST_FIXUP_HASH=true
+            fi
+
+            local POST_FIXUP_HASH=
+            if [ "$DO_POST_FIXUP_HASH" = true ]; then
+                POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
+            fi
 
             if [ -f "${VENDOR_REPO_FILE}" ]; then
                 local DIR=$(dirname "${VENDOR_REPO_FILE}")
@@ -2126,7 +2141,7 @@ function extract() {
             # Check and print whether the fixup pipeline actually did anything.
             # This isn't done right after the fixup pipeline because we want this print
             # to come after print_spec above, when in kang mode.
-            if [ "${PRE_FIXUP_HASH}" != "${POST_FIXUP_HASH}" ]; then
+            if [ "${DO_POST_FIXUP_HASH}" = true ] && [ "${PRE_FIXUP_HASH}" != "${POST_FIXUP_HASH}" ]; then
                 printf "    + Fixed up %s\n" "${BLOB_DISPLAY_NAME}"
                 # Now sanity-check the spec for this blob.
                 if [ "${KANG}" = false ] && [ "${FIXUP_HASH}" = "x" ] && [ "${HASH}" != "x" ]; then
