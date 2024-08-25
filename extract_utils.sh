@@ -156,17 +156,23 @@ function setup_vendor() {
 
 #
 # input: spec in the form of "src[:dst][;args]"
+# output: "src[:dst]"
+#
+function spec() {
+    # Remove the args by removing the longest trailing substring starting with ;
+    echo "${1%%;*}"
+}
+
+#
+# input: spec in the form of "src[:dst][;args]"
 # output: "src"
 #
 function src_file() {
-    local SPEC="$1"
-    local SPLIT=(${SPEC//:/ })
-    local ARGS="$(target_args ${SPEC})"
-    # Regardless of there being a ":" delimiter or not in the spec,
-    # the source file is always either the first, or the only entry.
-    local SRC="${SPLIT[0]}"
-    # Remove target_args suffix, if present
-    echo "${SRC%;${ARGS}}"
+    local SPEC="$(spec "$1")"
+    # Remove the shortest trailing substring starting with :
+    # If there's no : to match against, src will be kept,
+    # otherwise, :dst will be removed
+    echo "${SPEC%%:*}"
 }
 
 #
@@ -174,22 +180,11 @@ function src_file() {
 # output: "dst" if present, "src" otherwise.
 #
 function target_file() {
-    local SPEC="${1%%;*}"
-    local SPLIT=(${SPEC//:/ })
-    local ARGS="$(target_args ${SPEC})"
-    local DST=
-    case ${#SPLIT[@]} in
-    1)
-        # The spec doesn't have a : delimiter
-        DST="${SPLIT[0]}"
-        ;;
-    *)
-        # The spec actually has a src:dst format
-        DST="${SPLIT[1]}"
-        ;;
-    esac
-    # Remove target_args suffix, if present
-    echo "${DST%;${ARGS}}"
+    local SPEC="$(spec "$1")"
+    # Remove the shortest beginning substring ending in :
+    # If there's no : to match against, src will be kept,
+    # otherwise, src: will be removed
+    echo "${SPEC##*:}"
 }
 
 #
@@ -197,20 +192,16 @@ function target_file() {
 # output: "args" if present, "" otherwise.
 #
 function target_args() {
-    local SPEC="$1"
-    local SPLIT=(${SPEC//;/ })
-    local ARGS=
-    case ${#SPLIT[@]} in
-    1)
-        # No ";" delimiter in the spec.
-        ;;
-    *)
-        # The "args" are whatever comes after the ";" character.
-        # Basically the spec stripped of whatever is to the left of ";".
-        ARGS="${SPEC#${SPLIT[0]};}"
-        ;;
-    esac
-    echo "${ARGS}"
+    local SPEC="$(spec "$1")"
+    # Remove the shortest beginning substring ending in ;
+    # If there isn't one, the entire string will be kept, so check
+    # against that
+    local ARGS="${1#*;}"
+    if [ "$SPEC" = "$ARGS" ]; then
+        echo ""
+    else
+        echo "$ARGS"
+    fi
 }
 
 #
