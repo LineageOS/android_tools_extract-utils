@@ -393,6 +393,17 @@ function lib_to_package_fixup_proto_3_9_1() {
     esac
 }
 
+function lib_to_package_fixup_clang_rt_ubsan_standalone() {
+    case "$1" in
+        libclang_rt.ubsan_standalone-arm-android| \
+        libclang_rt.ubsan_standalone-aarch64-android)
+            echo "libclang_rt.ubsan_standalone"
+            ;;
+        *)
+            return 1
+    esac
+}
+
 #
 # lib_to_package_fixup
 #
