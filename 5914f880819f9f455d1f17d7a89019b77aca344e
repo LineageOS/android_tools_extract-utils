@@ -16,6 +16,23 @@
       "message": "hep",
       "revId": "5914f880819f9f455d1f17d7a89019b77aca344e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8da9f736_7dfee899",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34067
+      },
+      "writtenOn": "2024-08-25T15:53:18Z",
+      "side": 1,
+      "message": "extract_utils: Allow setting allow_undefined_symbols flag\n\nIf a blob depends on the system version of a library,\nit trips this check. One example is libnativewindow.\n\nChange-Id: Iad5e9ce2d8a83a23449b3bdf9b8cd3cb48f529fa | AOSP",
+      "revId": "5914f880819f9f455d1f17d7a89019b77aca344e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
