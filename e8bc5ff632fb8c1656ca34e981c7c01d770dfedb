@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a55568dd_32edf4f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-08-25T19:39:08Z",
+      "side": 1,
+      "message": "Do you want to just add the function or should the common fixup be calling it like the protobuf version is?",
+      "revId": "e8bc5ff632fb8c1656ca34e981c7c01d770dfedb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
