@@ -60,19 +60,31 @@ fi
 function blob_fixup() {
     case "${1}" in
         vendor/lib/libsample1.so)
+            [ "$2" = "" ] && return 0
             sed -i 's|/data/misc/sample1|/data/misc/sample2|g' "${2}"
             ;;
         vendor/lib64/libsample2.so)
+            [ "$2" = "" ] && return 0
             "${PATCHELF}" --remove-needed "libsample3.so" "${2}"
             "${PATCHELF}" --add-needed "libsample4.so" "${2}"
             ;;
         vendor/lib/libsample5.so)
+            [ "$2" = "" ] && return 0
             "${PATCHELF}" --replace-needed "libsample6.so" "libsample7.so" "${2}"
             ;;
         vendor/lib/libsample7.so)
+            [ "$2" = "" ] && return 0
             "${PATCHELF}" --set-soname "libsample7.so" "${2}"
             ;;
+        *)
+            return 1
     esac
+
+    return 0
+}
+
+function blob_fixup_dry() {
+    blob_fixup "$1" ""
 }
 
 function prepare_firmware() {
