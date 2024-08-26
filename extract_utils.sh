@@ -612,7 +612,9 @@ function write_blueprint_packages() {
             printf '\tsrc: "%s/etc/%s",\n' "$SRC" "$FILE"
             printf '\tfilename_from_src: true,\n'
         elif [ "$CLASS" = "EXECUTABLES" ]; then
-            if ! "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep -c 'file format elf' > /dev/null; then
+            local FILE_PATH="$ANDROID_ROOT/$OUTDIR/$SRC/bin/$FILE"
+            local ELF_FORMAT=$("$OBJDUMP" -a "$FILE_PATH" 2>/dev/null | sed -nE "s|^.+file format elf(..).+$|\1|p")
+            if [ "$ELF_FORMAT" = "" ]; then
                 # This is not an elf file, assume it's a shell script that doesn't have an extension
                 # Setting extension here does not change the target extension, only the module type
                 EXTENSION="sh"
@@ -626,7 +628,7 @@ function write_blueprint_packages() {
             printf '\towner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
                 printf '\ttarget: {\n'
-                if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
+                if [ "$ELF_FORMAT" = "64" ]; then
                     printf '\t\tandroid_arm64: {\n'
                 else
                     printf '\t\tandroid_arm: {\n'
@@ -637,7 +639,7 @@ function write_blueprint_packages() {
                 fi
                 printf '\t\t},\n'
                 printf '\t},\n'
-                if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
+                if [ "$ELF_FORMAT" = "64" ]; then
                     printf '\tcompile_multilib: "%s",\n' "64"
                 else
                     printf '\tcompile_multilib: "%s",\n' "32"
