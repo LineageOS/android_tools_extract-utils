@@ -1430,14 +1430,15 @@ function parse_file_list() {
         fi
 
         local IS_PRODUCT_PACKAGE=
+        local SRC_FILE="$(src_file "$SPEC")"
         # if line starts with a dash, it needs to be packaged
         if [[ "$SPEC" =~ ^- ]]; then
             IS_PRODUCT_PACKAGE=true
             SPEC="${SPEC#-}"
         # if line contains apex, apk, jar or vintf fragment, it needs to be packaged
-        elif suffix_match_file ".apex" "$(src_file "$SPEC")" || \
-             suffix_match_file ".apk" "$(src_file "$SPEC")" || \
-             suffix_match_file ".jar" "$(src_file "$SPEC")" || \
+        elif suffix_match_file ".apex" "$SRC_FILE" || \
+             suffix_match_file ".apk" "$SRC_FILE" || \
+             suffix_match_file ".jar" "$SRC_FILE" || \
              [[ "$TARGET_ENABLE_CHECKELF" == "true" && \
                 ( "${SPEC%%;*}" == *".so" || \
                   "$SPEC" == *"bin/"* || \
