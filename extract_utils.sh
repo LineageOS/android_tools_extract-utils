@@ -1429,10 +1429,10 @@ function parse_file_list() {
         local HASH="x"
         local FIXUP_HASH="x"
         if [ "$COUNT" -gt "1" ]; then
-            HASH=${SPLIT[1]}
+            HASH="${SPLIT[1],,}"
         fi
         if [ "$COUNT" -gt "2" ]; then
-            FIXUP_HASH=${SPLIT[2]}
+            FIXUP_HASH="${SPLIT[2],,}"
         fi
         if [[ "$SPEC" =~ 'SYMLINK=' ]]; then
             PRODUCT_SYMLINKS_LIST+=("${SPEC#-}")
@@ -2058,8 +2058,8 @@ function extract() {
         mkdir -p $(dirname "${VENDOR_REPO_FILE}")
 
         # Check pinned files
-        local HASH="$(echo ${HASHLIST[$i-1]} | awk '{ print tolower($0); }')"
-        local FIXUP_HASH="$(echo ${FIXUP_HASHLIST[$i-1]} | awk '{ print tolower($0); }')"
+        local HASH="${HASHLIST[$i-1]}"
+        local FIXUP_HASH="${FIXUP_HASHLIST[$i-1]}"
         local KEEP=""
         if [ "$DISABLE_PINNING" != "1" ] && [ "$HASH" != "x" ]; then
             if [ -f "${VENDOR_REPO_FILE}" ]; then
