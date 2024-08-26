@@ -16,6 +16,24 @@
       "message": "Do you want to just add the function or should the common fixup be calling it like the protobuf version is?",
       "revId": "e8bc5ff632fb8c1656ca34e981c7c01d770dfedb",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2ff4c9f_a5c5b074",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2024-08-26T00:11:53Z",
+      "side": 1,
+      "message": "I wasn\u0027t sure but I guess we can do it for everyone, device overrides will have to be updated to include this if needed",
+      "parentUuid": "a55568dd_32edf4f1",
+      "revId": "e8bc5ff632fb8c1656ca34e981c7c01d770dfedb",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
