@@ -16,6 +16,24 @@
       "message": "Or cache uname result? Or save the sha1sum executable name in a variable and make it a one time check",
       "revId": "1b25601f7070df3a1f33353d21ee42ab5fb185ae",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1ee7470b_4df3e88f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-08-26T13:34:55Z",
+      "side": 1,
+      "message": "Luca suggested it. I can modify it to cache the sha1sum executable name",
+      "parentUuid": "df4bf746_1f54e9c8",
+      "revId": "1b25601f7070df3a1f33353d21ee42ab5fb185ae",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
