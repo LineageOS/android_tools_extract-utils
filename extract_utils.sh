@@ -1559,19 +1559,20 @@ function append_firmware_calls_to_makefiles() {
 #
 function get_file() {
     local SRC="$3"
+    local SOURCES=( "$1" "${1#/system}" "system/$1" )
 
     if [ "$SRC" = "adb" ]; then
-        # try to pull
-        adb pull "$1"           "$2" >/dev/null 2>&1 && return 0
-        adb pull "${1#/system}" "$2" >/dev/null 2>&1 && return 0
-        adb pull "system/$1"    "$2" >/dev/null 2>&1 && return 0
+        for SOURCE in "${SOURCES[@]}"; do
+            adb pull "$SOURCE" "$2" >/dev/null 2>&1 && return 0
+        done
 
         return 1
     else
-        # try to copy
-        cp -Lr "$SRC/$1"           "$2" 2>/dev/null && return 0
-        cp -Lr "$SRC/${1#/system}" "$2" 2>/dev/null && return 0
-        cp -Lr "$SRC/system/$1"    "$2" 2>/dev/null && return 0
+        for SOURCE in "${SOURCES[@]}"; do
+            if [ -f "$SRC/$SOURCE" ]; then
+                cp -Lr "$SRC/$SOURCE" "$2" 2>/dev/null && return 0
+            fi
+        done
 
         # try /vendor/odm for devices without /odm partition
         [[ "$1" == /system/odm/* ]] && cp -Lr "$SRC/vendor/${1#/system}" "$2" 2>/dev/null && return 0
