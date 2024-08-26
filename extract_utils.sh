@@ -6,12 +6,16 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-PRODUCT_COPY_FILES_LIST=()
 PRODUCT_COPY_FILES_HASHES=()
 PRODUCT_COPY_FILES_FIXUP_HASHES=()
-PRODUCT_PACKAGES_LIST=()
+PRODUCT_COPY_FILES_SRC=()
+PRODUCT_COPY_FILES_DEST=()
+PRODUCT_COPY_FILES_ARGS=()
 PRODUCT_PACKAGES_HASHES=()
 PRODUCT_PACKAGES_FIXUP_HASHES=()
+PRODUCT_PACKAGES_SRC=()
+PRODUCT_PACKAGES_DEST=()
+PRODUCT_PACKAGES_ARGS=()
 PRODUCT_SYMLINKS_LIST=()
 PACKAGE_LIST=()
 REQUIRED_PACKAGES_LIST=
@@ -209,17 +213,22 @@ function target_args() {
 #
 # input:
 #   - $1: prefix
-#   - (global variable) PRODUCT_PACKAGES_LIST: array of [src:]dst[;args] specs.
+#   - (global variable) PRODUCT_PACKAGES_DEST: array of dst
+#   - (global variable) PRODUCT_PACKAGES_ARGS: array of args
 # output:
 #   - new array consisting of dst[;args] entries where $1 is a prefix of ${dst}.
 #
 function prefix_match() {
     local PREFIX="$1"
     local NEW_ARRAY=()
-    for LINE in "${PRODUCT_PACKAGES_LIST[@]}"; do
-        local FILE=$(target_file "$LINE")
+    local DEST_LIST=( "${PRODUCT_PACKAGES_DEST[@]}" )
+    local ARGS_LIST=( "${PRODUCT_PACKAGES_ARGS[@]}" )
+    local COUNT=${#DEST_LIST[@]}
+
+    for (( i=1; i<COUNT+1; i++ )); do
+        local FILE="${DEST_LIST[$i-1]}"
         if [[ "$FILE" =~ ^"$PREFIX" ]]; then
-            local ARGS=$(target_args "$LINE")
+            local ARGS="${ARGS_LIST[$i-1]}"
             if [[ -z "${ARGS}" || "${ARGS}" =~ 'SYMLINK' ]]; then
                 NEW_ARRAY+=("${FILE#$PREFIX}")
             else
@@ -294,7 +303,7 @@ function truncate_file() {
 # items in the list which do not start with a dash (-).
 #
 function write_product_copy_files() {
-    local COUNT=${#PRODUCT_COPY_FILES_LIST[@]}
+    local COUNT=${#PRODUCT_COPY_FILES_DEST[@]}
     local TARGET=
     local FILE=
     local LINEEND=
@@ -306,13 +315,12 @@ function write_product_copy_files() {
 
     printf '%s\n' "PRODUCT_COPY_FILES += \\" >> "$PRODUCTMK"
     for (( i=1; i<COUNT+1; i++ )); do
-        FILE="${PRODUCT_COPY_FILES_LIST[$i-1]}"
+        TARGET="${PRODUCT_COPY_FILES_DEST[$i-1]}"
         LINEEND=" \\"
         if [ "$i" -eq "$COUNT" ]; then
             LINEEND=""
         fi
 
-        TARGET=$(target_file "$FILE")
         if prefix_match_file "product/" $TARGET ; then
             local OUTTARGET=$(truncate_file $TARGET)
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_PRODUCT)/%s%s\n' \
@@ -696,10 +704,7 @@ function write_blueprint_packages() {
 function write_product_packages() {
     PACKAGE_LIST=()
 
-    # Sort the package list for comm
-    PRODUCT_PACKAGES_LIST=($( printf '%s\n' "${PRODUCT_PACKAGES_LIST[@]}" | LC_ALL=C sort))
-
-    local COUNT=${#PRODUCT_PACKAGES_LIST[@]}
+    local COUNT=${#PRODUCT_PACKAGES_DEST[@]}
 
     if [ "$COUNT" = "0" ]; then
         return 0
@@ -1400,13 +1405,17 @@ function parse_file_list() {
         LIST=$1
     fi
 
-    PRODUCT_PACKAGES_LIST=()
     PRODUCT_PACKAGES_HASHES=()
     PRODUCT_PACKAGES_FIXUP_HASHES=()
+    PRODUCT_PACKAGES_SRC=()
+    PRODUCT_PACKAGES_DEST=()
+    PRODUCT_PACKAGES_ARGS=()
     PRODUCT_SYMLINKS_LIST=()
-    PRODUCT_COPY_FILES_LIST=()
     PRODUCT_COPY_FILES_HASHES=()
     PRODUCT_COPY_FILES_FIXUP_HASHES=()
+    PRODUCT_COPY_FILES_SRC=()
+    PRODUCT_COPY_FILES_DEST=()
+    PRODUCT_COPY_FILES_ARGS=()
 
     while read -r line; do
         if [ -z "$line" ]; then continue; fi
@@ -1448,13 +1457,17 @@ function parse_file_list() {
         fi
 
         if [ "$IS_PRODUCT_PACKAGE" = true ]; then
-            PRODUCT_PACKAGES_LIST+=("$SPEC")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
+            PRODUCT_PACKAGES_SRC+=("$SRC_FILE")
+            PRODUCT_PACKAGES_DEST+=("$(target_file "$SPEC")")
+            PRODUCT_PACKAGES_ARGS+=("$(target_args "$SPEC")")
         else
-            PRODUCT_COPY_FILES_LIST+=("$SPEC")
             PRODUCT_COPY_FILES_HASHES+=("$HASH")
             PRODUCT_COPY_FILES_FIXUP_HASHES+=("$FIXUP_HASH")
+            PRODUCT_COPY_FILES_SRC+=("$SRC_FILE")
+            PRODUCT_COPY_FILES_DEST+=("$(target_file "$SPEC")")
+            PRODUCT_COPY_FILES_ARGS+=("$(target_args "$SPEC")")
         fi
 
     done < <(grep -v -E '(^#|^[[:space:]]*$)' "$LIST" | LC_ALL=C sort | uniq)
@@ -1488,16 +1501,17 @@ function write_makefiles() {
 function append_firmware_calls_to_makefiles() {
     parse_file_list "$1"
 
-    local FILELIST=(${PRODUCT_COPY_FILES_LIST[@]})
-    local COUNT=${#FILELIST[@]}
+    local DEST_LIST=( "${PRODUCT_COPY_FILES_DEST[@]}" )
+    local ARGS_LIST=( "${PRODUCT_COPY_FILES_ARGS[@]}" )
+    local COUNT=${#DEST_LIST[@]}
 
-    if [[ ${FILELIST[*]} =~ ";AB" ]]; then
+    if [[ ${ARGS_LIST[*]} =~ ";AB" ]]; then
         printf '%s\n' "AB_OTA_PARTITIONS += \\" >> "$BOARDMK"
     fi
 
     for (( i=1; i<COUNT+1; i++ )); do
-        local DST_FILE=$(target_file "${FILELIST[$i-1]}")
-        local ARGS=$(target_args "${FILELIST[$i-1]}")
+        local DST_FILE="${DEST_LIST[$i-1]}"
+        local ARGS="${ARGS_LIST[$i-1]}"
         local SHA1=$(get_hash "$ANDROID_ROOT"/"$OUTDIR"/radio/"$DST_FILE")
         DST_FILE_NAME=(${DST_FILE//.img/ })
         ARGS=(${ARGS//;/ })
@@ -1992,11 +2006,13 @@ function extract() {
     # Allow failing, so we can try $DEST and/or $FILE
     set +e
 
-    local FILELIST=( ${PRODUCT_COPY_FILES_LIST[@]} ${PRODUCT_PACKAGES_LIST[@]} )
     local HASHLIST=( ${PRODUCT_COPY_FILES_HASHES[@]} ${PRODUCT_PACKAGES_HASHES[@]} )
+    local SRC_LIST=( "${PRODUCT_COPY_FILES_SRC[@]}" "${PRODUCT_PACKAGES_SRC[@]}" )
+    local DEST_LIST=( "${PRODUCT_COPY_FILES_DEST[@]}" "${PRODUCT_PACKAGES_DEST[@]}" )
+    local ARGS_LIST=( "${PRODUCT_COPY_FILES_ARGS[@]}" "${PRODUCT_PACKAGES_ARGS[@]}" )
     local FIXUP_HASHLIST=( ${PRODUCT_COPY_FILES_FIXUP_HASHES[@]} ${PRODUCT_PACKAGES_FIXUP_HASHES[@]} )
-    local PRODUCT_COPY_FILES_COUNT=${#PRODUCT_COPY_FILES_LIST[@]}
-    local COUNT=${#FILELIST[@]}
+    local PRODUCT_COPY_FILES_COUNT=${#PRODUCT_COPY_FILES_SRC[@]}
+    local COUNT=${#SRC_LIST[@]}
     local OUTPUT_ROOT="$ANDROID_ROOT"/"$OUTDIR"/proprietary
     local OUTPUT_TMP="$EXTRACT_TMP_DIR"/"$OUTDIR"/proprietary
 
@@ -2021,18 +2037,17 @@ function extract() {
     echo "Extracting ${COUNT} files in ${PROPRIETARY_FILES_TXT} from ${EXTRACT_SRC}:"
 
     for (( i=1; i<COUNT+1; i++ )); do
-
-        local SPEC_SRC_FILE=$(src_file "${FILELIST[$i-1]}")
-        local SPEC_DST_FILE=$(target_file "${FILELIST[$i-1]}")
-        local SPEC_ARGS=$(target_args "${FILELIST[$i-1]}")
+        local SPEC_SRC_FILE="${SRC_LIST[$i-1]}"
+        local SPEC_DST_FILE="${DEST_LIST[$i-1]}"
+        local SPEC_ARGS="${ARGS_LIST[$i-1]}"
         local OUTPUT_DIR=
         local TMP_DIR=
         local SRC_FILE=
         local DST_FILE=
         local IS_PRODUCT_PACKAGE=false
 
-        # Note: this relies on the fact that the ${FILELIST[@]} array
-        # contains first ${PRODUCT_COPY_FILES_LIST[@]}, then ${PRODUCT_PACKAGES_LIST[@]}.
+        # Note: this relies on the fact that the ${SRC_LIST[@]} array
+        # contains first ${PRODUCT_COPY_FILES_SRC[@]}, then ${PRODUCT_PACKAGES_SRC[@]}.
         if [ "${i}" -gt "${PRODUCT_COPY_FILES_COUNT}" ]; then
             IS_PRODUCT_PACKAGE=true
         fi
@@ -2201,8 +2216,10 @@ function extract_firmware() {
     # Don't allow failing
     set -e
 
-    local FILELIST=( ${PRODUCT_COPY_FILES_LIST[@]} )
-    local COUNT=${#FILELIST[@]}
+    local SRC_LIST=( "${PRODUCT_COPY_FILES_SRC[@]}" )
+    local DEST_LIST=( "${PRODUCT_COPY_FILES_DEST[@]}" )
+    local ARGS_LIST=( "${PRODUCT_COPY_FILES_ARGS[@]}" )
+    local COUNT=${#SRC_LIST[@]}
     local SRC="$2"
     local OUTPUT_DIR="$ANDROID_ROOT"/"$OUTDIR"/radio
 
@@ -2217,8 +2234,8 @@ function extract_firmware() {
     prepare_firmware
 
     for (( i=1; i<COUNT+1; i++ )); do
-        local SRC_FILE=$(src_file "${FILELIST[$i-1]}")
-        local DST_FILE=$(target_file "${FILELIST[$i-1]}")
+        local SRC_FILE="${SRC_LIST[$i-1]}"
+        local DST_FILE="${DEST_LIST[$i-1]}"
         local COPY_FILE=
 
         printf '  - %s \n' "radio/$DST_FILE"
@@ -2229,7 +2246,7 @@ function extract_firmware() {
         if [ "$SRC" = "adb" ]; then
             local PARTITION="${DST_FILE%.*}"
 
-            if [[ "${FILELIST[$i-1]}" == *\;AB ]]; then
+            if [[ "${ARGS_LIST[$i-1]}" == *\;AB ]]; then
                 local SLOT=$(adb shell getprop ro.boot.slot_suffix | rev | cut -c1)
                 PARTITION="${PARTITION}_${SLOT}"
             fi
