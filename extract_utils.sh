@@ -2060,7 +2060,8 @@ function extract() {
         # Strip the file path in the vendor repo of "system", if present
         local BLOB_DISPLAY_NAME="${DST_FILE#/system/}"
         local VENDOR_REPO_FILE="$OUTPUT_DIR/${BLOB_DISPLAY_NAME}"
-        mkdir -p $(dirname "${VENDOR_REPO_FILE}")
+        local DIR=$(dirname "${VENDOR_REPO_FILE}")
+        mkdir -p "$DIR"
 
         # Check pinned files
         local HASH="${HASHLIST[$i-1]}"
@@ -2131,7 +2132,6 @@ function extract() {
             local POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
 
             if [ -f "${VENDOR_REPO_FILE}" ]; then
-                local DIR=$(dirname "${VENDOR_REPO_FILE}")
                 local TYPE="${DIR##*/}"
                 if [ "$TYPE" = "bin" ]; then
                     chmod 755 "${VENDOR_REPO_FILE}"
