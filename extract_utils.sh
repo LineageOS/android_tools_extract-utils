@@ -1434,15 +1434,17 @@ function parse_file_list() {
         if [[ "$SPEC" =~ ^- ]]; then
             IS_PRODUCT_PACKAGE=true
             SPEC="${SPEC#-}"
+        fi
+        local SRC_FILE="$(src_file "$SPEC")"
         # if line contains apex, apk, jar or vintf fragment, it needs to be packaged
-        elif suffix_match_file ".apex" "$(src_file "$SPEC")" || \
-             suffix_match_file ".apk" "$(src_file "$SPEC")" || \
-             suffix_match_file ".jar" "$(src_file "$SPEC")" || \
+        if suffix_match_file ".apex" "$SRC_FILE" || \
+             suffix_match_file ".apk" "$SRC_FILE" || \
+             suffix_match_file ".jar" "$SRC_FILE" || \
              [[ "$TARGET_ENABLE_CHECKELF" == "true" && \
-                ( "${SPEC%%;*}" == *".so" || \
-                  "$SPEC" == *"bin/"* || \
-                  "$SPEC" == *"lib/rfsa"* ) ]] || \
-             [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
+                ( "$SRC_FILE" == *".so" || \
+                  "$SRC_FILE" == *"bin/"* || \
+                  "$SRC_FILE" == *"lib/rfsa"* ) ]] || \
+             [[ "$SRC_FILE" == *"etc/vintf/manifest/"* ]]; then
             IS_PRODUCT_PACKAGE=true
         fi
 
