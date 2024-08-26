@@ -1428,11 +1428,12 @@ function parse_file_list() {
         if [[ "$SPEC" =~ 'SYMLINK=' ]]; then
             PRODUCT_SYMLINKS_LIST+=("${SPEC#-}")
         fi
+
+        local IS_PRODUCT_PACKAGE=
         # if line starts with a dash, it needs to be packaged
         if [[ "$SPEC" =~ ^- ]]; then
-            PRODUCT_PACKAGES_LIST+=("${SPEC#-}")
-            PRODUCT_PACKAGES_HASHES+=("$HASH")
-            PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
+            IS_PRODUCT_PACKAGE=true
+            SPEC="${SPEC#-}"
         # if line contains apex, apk, jar or vintf fragment, it needs to be packaged
         elif suffix_match_file ".apex" "$(src_file "$SPEC")" || \
              suffix_match_file ".apk" "$(src_file "$SPEC")" || \
@@ -1442,6 +1443,10 @@ function parse_file_list() {
                   "$SPEC" == *"bin/"* || \
                   "$SPEC" == *"lib/rfsa"* ) ]] || \
              [[ "$SPEC" == *"etc/vintf/manifest/"* ]]; then
+            IS_PRODUCT_PACKAGE=true
+        fi
+
+        if [ "$IS_PRODUCT_PACKAGE" = true ]; then
             PRODUCT_PACKAGES_LIST+=("$SPEC")
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
