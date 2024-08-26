@@ -1977,7 +1977,10 @@ function extract() {
 
         local BLOB_DISPLAY_NAME="${SPEC_DST_FILE}"
         local VENDOR_REPO_FILE="$OUTPUT_DIR/${BLOB_DISPLAY_NAME}"
-        mkdir -p $(dirname "${VENDOR_REPO_FILE}")
+        local DIR="${VENDOR_REPO_FILE%/*}"
+        if [ ! -d "$DIR" ]; then
+            mkdir -p "$DIR"
+        fi
 
         # Check pinned files
         local HASH="${HASHLIST[$i-1]}"
@@ -2048,7 +2051,6 @@ function extract() {
             local POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
 
             if [ -f "${VENDOR_REPO_FILE}" ]; then
-                local DIR=$(dirname "${VENDOR_REPO_FILE}")
                 local TYPE="${DIR##*/}"
                 if [ "$TYPE" = "bin" ]; then
                     chmod 755 "${VENDOR_REPO_FILE}"
