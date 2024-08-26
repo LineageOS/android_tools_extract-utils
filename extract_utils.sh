@@ -442,7 +442,7 @@ function write_package_shared_libs() {
 # $1: The LOCAL_MODULE_CLASS for the given module list
 # $2: /system, /odm, /product, /system_ext, or /vendor partition
 # $3: type-specific extra flags
-# $4: Name of the array holding the target list
+# $4: Target list separated by newlines
 #
 # Internal function which writes out the BUILD_PREBUILT stanzas
 # for all modules in the list. This is called by write_product_packages
@@ -453,13 +453,8 @@ function write_blueprint_packages() {
     local CLASS="$1"
     local PARTITION="$2"
     local EXTRA="$3"
+    local FILELIST="$4"
 
-    # Yes, this is a horrible hack - we create a new array using indirection
-    local ARR_NAME="$4[@]"
-    local FILELIST=("${!ARR_NAME}")
-
-    local FILE=
-    local ARGS=
     local BASENAME=
     local EXTENSION=
     local PKGNAME=
@@ -470,15 +465,65 @@ function write_blueprint_packages() {
     local DISABLE_CHECKELF=
     local GENERATE_DEPS=
 
+    if [ -z "$EXTRA" ]; then
+        if [ "$CLASS" = "RFSA" ]; then
+            EXTRA="lib/rfsa"
+        elif [ "$CLASS" = "APEX" ]; then
+            EXTRA="apex"
+        elif [ "$CLASS" = "APPS" ]; then
+            EXTRA="app"
+        elif [ "$CLASS" = "JAVA_LIBRARIES" ]; then
+            EXTRA="framework"
+        elif [ "$CLASS" = "ETC" ]; then
+            EXTRA="etc"
+        elif [ "$CLASS" = "EXECUTABLES" ]; then
+            EXTRA="bin"
+        fi
+    fi
+
+    local SRC_REL=
+    if [ -n "$PARTITION" ]; then
+        SRC_REL+="$PARTITION"
+    fi
+
+    # SHARED_LIBRARIES's EXTRA is not a path
+    if [ -n "$EXTRA" ] && \
+       [ "$CLASS" != "SHARED_LIBRARIES" ]; then
+        if [ -n "$SRC_REL" ]; then
+            SRC_REL+="/"
+        fi
+
+        SRC_REL+="$EXTRA"
+    fi
+
+    # Automatically match everything except SHARED_LIBRARIES and RFSA
+    if [ -z "$FILELIST" ] && \
+       [ "$CLASS" != "SHARED_LIBRARIES" ] && \
+       [ "$CLASS" != "RFSA" ]; then
+
+        FILELIST=$(prefix_match "$SRC_REL/")
+    fi
+
+    local SRC="proprietary/$SRC_REL"
+
     [ "$COMMON" -eq 1 ] && local VENDOR="${VENDOR_COMMON:-$VENDOR}"
 
-    for P in "${FILELIST[@]}"; do
-        FILE=$(target_file "$P")
-        ARGS=$(target_args "$P")
-        ARGS=(${ARGS//;/ })
+    while IFS= read -r P; do
+        if [ "$P" = "" ]; then
+            continue
+        fi
 
-        BASENAME=$(basename "$FILE")
-        DIRNAME=$(dirname "$FILE")
+        # prefix_match results already only contain the dest part
+        local FILE=$(spec "$P")
+        local SPEC_ARGS=$(spec_target_args "$FILE" "$P")
+        local ARGS=(${SPEC_ARGS//;/ })
+
+        local DIRNAME="${FILE%/*}"
+        if [ "$DIRNAME" = "$FILE" ]; then
+            DIRNAME="."
+        fi
+
+        local BASENAME="${FILE##*/}"
         EXTENSION=${BASENAME##*.}
         PKGNAME=${BASENAME%.*}
 
@@ -506,19 +551,6 @@ function write_blueprint_packages() {
 
         # Add to final package list
         PACKAGE_LIST+=("$PKGNAME")
-
-        SRC="proprietary"
-        if [ "$PARTITION" = "system" ]; then
-            SRC+="/system"
-        elif [ "$PARTITION" = "vendor" ]; then
-            SRC+="/vendor"
-        elif [ "$PARTITION" = "product" ]; then
-            SRC+="/product"
-        elif [ "$PARTITION" = "system_ext" ]; then
-            SRC+="/system_ext"
-        elif [ "$PARTITION" = "odm" ]; then
-            SRC+="/odm"
-        fi
 
         if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf 'cc_prebuilt_library_shared {\n'
@@ -549,9 +581,7 @@ function write_blueprint_packages() {
                 printf '\t\t},\n'
             fi
             printf '\t},\n'
-            if [ "$EXTRA" != "none" ]; then
-                printf '\tcompile_multilib: "%s",\n' "$EXTRA"
-            fi
+            printf '\tcompile_multilib: "%s",\n' "$EXTRA"
             if [ ! -z "$DISABLE_CHECKELF" ]; then
                 printf '\tcheck_elf_files: false,\n'
             fi
@@ -560,23 +590,17 @@ function write_blueprint_packages() {
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\tfilename: "%s",\n' "$BASENAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tsrc: "%s/lib/rfsa/%s",\n' "$SRC" "$FILE"
+            printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
         elif [ "$CLASS" = "APEX" ]; then
             printf 'prebuilt_apex {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            SRC="$SRC/apex"
             printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
             printf '\tfilename: "%s",\n' "$FILE"
         elif [ "$CLASS" = "APPS" ]; then
             printf 'android_app_import {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            if [ "$EXTRA" = "priv-app" ]; then
-                SRC="$SRC/priv-app"
-            else
-                SRC="$SRC/app"
-            fi
             printf '\tapk: "%s/%s",\n' "$SRC" "$FILE"
             USE_PLATFORM_CERTIFICATE="true"
             for ARG in "${ARGS[@]}"; do
@@ -606,7 +630,7 @@ function write_blueprint_packages() {
             printf 'dex_import {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tjars: ["%s/framework/%s"],\n' "$SRC" "$FILE"
+            printf '\tjars: ["%s/%s"],\n' "$SRC" "$FILE"
         elif [ "$CLASS" = "ETC" ]; then
             if [ "$EXTENSION" = "xml" ]; then
                 printf 'prebuilt_etc_xml {\n'
@@ -615,10 +639,10 @@ function write_blueprint_packages() {
             fi
             printf '\tname: "%s",\n' "$PKGNAME"
             printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tsrc: "%s/etc/%s",\n' "$SRC" "$FILE"
+            printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
             printf '\tfilename_from_src: true,\n'
         elif [ "$CLASS" = "EXECUTABLES" ]; then
-            if ! "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" 2>/dev/null |grep -c 'file format elf' > /dev/null; then
+            if ! "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/"$FILE" 2>/dev/null |grep -c 'file format elf' > /dev/null; then
                 # This is not an elf file, assume it's a shell script that doesn't have an extension
                 # Setting extension here does not change the target extension, only the module type
                 EXTENSION="sh"
@@ -632,18 +656,18 @@ function write_blueprint_packages() {
             printf '\towner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
                 printf '\ttarget: {\n'
-                if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
+                if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/"$FILE" |grep -c 'file format elf64' > /dev/null; then
                     printf '\t\tandroid_arm64: {\n'
                 else
                     printf '\t\tandroid_arm: {\n'
                 fi
-                printf '\t\t\tsrcs: ["%s/bin/%s"],\n' "$SRC" "$FILE"
+                printf '\t\t\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
-                    write_package_shared_libs "$SRC" "bin" "$FILE" "$PARTITION"
+                    write_package_shared_libs "$SRC" "" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
                 printf '\t},\n'
-                if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/bin/"$FILE" |grep -c 'file format elf64' > /dev/null; then
+                if "$OBJDUMP" -a "$ANDROID_ROOT"/"$OUTDIR"/"$SRC"/"$FILE" |grep -c 'file format elf64' > /dev/null; then
                     printf '\tcompile_multilib: "%s",\n' "64"
                 else
                     printf '\tcompile_multilib: "%s",\n' "32"
@@ -656,11 +680,9 @@ function write_blueprint_packages() {
                 printf '\t},\n'
                 printf '\tprefer: true,\n'
             else
-                printf '\tsrc: "%s/bin/%s",\n' "$SRC" "$FILE"
+                printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
                 printf '\tfilename: "%s",\n' "$BASENAME"
             fi
-        else
-            printf '\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
         fi
         if [ "$CLASS" = "APPS" ]; then
             printf '\tdex_preopt: {\n'
@@ -697,7 +719,11 @@ function write_blueprint_packages() {
             printf '\tdevice_specific: true,\n'
         fi
         printf '}\n\n'
-    done
+    done <<< "$FILELIST"
+}
+
+function do_comm() {
+    LC_ALL=C comm "$1" <(echo "$2") <(echo "$3")
 }
 
 #
@@ -718,253 +744,128 @@ function write_product_packages() {
     fi
 
     # Figure out what's 32-bit, what's 64-bit, and what's multilib
-    # I really should not be doing this in bash due to shitty array passing :(
-    local T_LIB32=( $(prefix_match "lib/") )
-    local T_LIB64=( $(prefix_match "lib64/") )
-    local MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_LIB32[@]}") <(printf '%s\n' "${T_LIB64[@]}")) )
-    local LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${T_LIB32[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
-    local LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_LIB64[@]}") <(printf '%s\n' "${MULTILIBS[@]}")) )
+    local T_LIB32=$(prefix_match "lib/")
+    local T_LIB64=$(prefix_match "lib64/")
+    local MULTILIBS=$(do_comm -12 "$T_LIB32" "$T_LIB64")
+    local LIB32=$(do_comm -23 "$T_LIB32" "$MULTILIBS")
+    local LIB64=$(do_comm -23 "$T_LIB64" "$MULTILIBS")
+    {
+        write_blueprint_packages "SHARED_LIBRARIES" "" "both" "$MULTILIBS"
+        write_blueprint_packages "SHARED_LIBRARIES" "" "32" "$LIB32"
+        write_blueprint_packages "SHARED_LIBRARIES" "" "64" "$LIB64"
+    } >> "$ANDROIDBP"
 
-    if [ "${#MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "" "both" "MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "" "32" "LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "" "64" "LIB64" >> "$ANDROIDBP"
-    fi
+    local T_S_LIB32=$(prefix_match "system/lib/")
+    local T_S_LIB64=$(prefix_match "system/lib64/")
+    local S_MULTILIBS=$(do_comm -12 "$T_S_LIB32" "$T_S_LIB64")
+    local S_LIB32=$(do_comm -23 "$T_S_LIB32" "$S_MULTILIBS")
+    local S_LIB64=$(do_comm -23 "$T_S_LIB64" "$S_MULTILIBS")
+    {
+        write_blueprint_packages "SHARED_LIBRARIES" "system" "both" "$S_MULTILIBS"
+        write_blueprint_packages "SHARED_LIBRARIES" "system" "32" "$S_LIB32"
+        write_blueprint_packages "SHARED_LIBRARIES" "system" "64" "$S_LIB64"
+    } >> "$ANDROIDBP"
 
-    local T_S_LIB32=( $(prefix_match "system/lib/") )
-    local T_S_LIB64=( $(prefix_match "system/lib64/") )
-    local S_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_S_LIB32[@]}") <(printf '%s\n' "${T_S_LIB64[@]}")) )
-    local S_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n'  "${T_S_LIB32[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
-    local S_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_S_LIB64[@]}") <(printf '%s\n' "${S_MULTILIBS[@]}")) )
+    local T_V_LIB32=$(prefix_match "vendor/lib/")
+    local T_V_LIB64=$(prefix_match "vendor/lib64/")
+    local V_RFSA=$(prefix_match "vendor/lib/rfsa/")
+    local V_MULTILIBS=$(do_comm -12 "$T_V_LIB32" "$T_V_LIB64")
+    local V_LIB32=$(do_comm -23 "$T_V_LIB32" "$V_MULTILIBS")
+    local V_LIB32=$(grep -v 'rfsa/' <(echo "$V_LIB32"))
+    local V_LIB64=$(do_comm -23 "$T_V_LIB64" "$V_MULTILIBS")
+    {
+        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "both" "$V_MULTILIBS"
+        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "32" "$V_LIB32"
+        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "64" "$V_LIB64"
+        write_blueprint_packages "RFSA" "vendor" "" "$V_RFSA"
+    } >> "$ANDROIDBP"
 
-    if [ "${#S_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system" "both" "S_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#S_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system" "32" "S_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#S_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system" "64" "S_LIB64" >> "$ANDROIDBP"
-    fi
+    local T_P_LIB32=$(prefix_match "product/lib/")
+    local T_P_LIB64=$(prefix_match "product/lib64/")
+    local P_MULTILIBS=$(do_comm -12 "$T_P_LIB32" "$T_P_LIB64")
+    local P_LIB32=$(do_comm -23 "$T_P_LIB32" "$P_MULTILIBS")
+    local P_LIB64=$(do_comm -23 "$T_P_LIB64" "$P_MULTILIBS")
+    {
+        write_blueprint_packages "SHARED_LIBRARIES" "product" "both" "$P_MULTILIBS"
+        write_blueprint_packages "SHARED_LIBRARIES" "product" "32" "$P_LIB32"
+        write_blueprint_packages "SHARED_LIBRARIES" "product" "64" "$P_LIB64"
+    } >> "$ANDROIDBP"
 
-    local T_V_LIB32=( $(prefix_match "vendor/lib/") )
-    local T_V_LIB64=( $(prefix_match "vendor/lib64/") )
-    local V_RFSA=( $(prefix_match "vendor/lib/rfsa/") )
-    local V_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${T_V_LIB64[@]}")) )
-    local V_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB32[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
-    local V_LIB32=( $(LC_ALL=C grep -v 'rfsa/' <(printf '%s\n' "${V_LIB32[@]}")) )
-    local V_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_V_LIB64[@]}") <(printf '%s\n' "${V_MULTILIBS[@]}")) )
+    local T_SE_LIB32=$(prefix_match "system_ext/lib/")
+    local T_SE_LIB64=$(prefix_match "system_ext/lib64/")
+    local SE_MULTILIBS=$(do_comm -12 "$T_SE_LIB32" "$T_SE_LIB64")
+    local SE_LIB32=$(do_comm -23 "$T_SE_LIB32" "$SE_MULTILIBS")
+    local SE_LIB64=$(do_comm -23 "$T_SE_LIB64" "$SE_MULTILIBS")
+    {
+        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "both" "$SE_MULTILIBS"
+        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "32" "$SE_LIB32"
+        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "64" "$SE_LIB64"
+    } >> "$ANDROIDBP"
 
-    if [ "${#V_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "both" "V_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#V_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "32" "V_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#V_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "vendor" "64" "V_LIB64" >> "$ANDROIDBP"
-    fi
-    if [ "${#V_RFSA[@]}" -gt "0" ]; then
-        write_blueprint_packages "RFSA" "vendor" "" "V_RFSA" >> "$ANDROIDBP"
-    fi
-
-    local T_P_LIB32=( $(prefix_match "product/lib/") )
-    local T_P_LIB64=( $(prefix_match "product/lib64/") )
-    local P_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${T_P_LIB64[@]}")) )
-    local P_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_P_LIB32[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
-    local P_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_P_LIB64[@]}") <(printf '%s\n' "${P_MULTILIBS[@]}")) )
-
-    if [ "${#P_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "product" "both" "P_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#P_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "product" "32" "P_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#P_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "product" "64" "P_LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_SE_LIB32=( $(prefix_match "system_ext/lib/") )
-    local T_SE_LIB64=( $(prefix_match "system_ext/lib64/") )
-    local SE_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${T_SE_LIB64[@]}")) )
-    local SE_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_SE_LIB32[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
-    local SE_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_SE_LIB64[@]}") <(printf '%s\n' "${SE_MULTILIBS[@]}")) )
-
-    if [ "${#SE_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "both" "SE_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#SE_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "32" "SE_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#SE_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "system_ext" "64" "SE_LIB64" >> "$ANDROIDBP"
-    fi
-
-    local T_O_LIB32=( $(prefix_match "odm/lib/") )
-    local T_O_LIB64=( $(prefix_match "odm/lib64/") )
-    local O_MULTILIBS=( $(LC_ALL=C comm -12 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${T_O_LIB64[@]}")) )
-    local O_LIB32=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_O_LIB32[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
-    local O_LIB64=( $(LC_ALL=C comm -23 <(printf '%s\n' "${T_O_LIB64[@]}") <(printf '%s\n' "${O_MULTILIBS[@]}")) )
-
-    if [ "${#O_MULTILIBS[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "odm" "both" "O_MULTILIBS" >> "$ANDROIDBP"
-    fi
-    if [ "${#O_LIB32[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "odm" "32" "O_LIB32" >> "$ANDROIDBP"
-    fi
-    if [ "${#O_LIB64[@]}" -gt "0" ]; then
-        write_blueprint_packages "SHARED_LIBRARIES" "odm" "64" "O_LIB64" >> "$ANDROIDBP"
-    fi
+    local T_O_LIB32=$(prefix_match "odm/lib/")
+    local T_O_LIB64=$(prefix_match "odm/lib64/")
+    local O_MULTILIBS=$(do_comm -12 "$T_O_LIB32" "$T_O_LIB64")
+    local O_LIB32=$(do_comm -23 "$T_O_LIB32" "$O_MULTILIBS")
+    local O_LIB64=$(do_comm -23 "$T_O_LIB64" "$O_MULTILIBS")
+    {
+        write_blueprint_packages "SHARED_LIBRARIES" "odm" "both" "$O_MULTILIBS"
+        write_blueprint_packages "SHARED_LIBRARIES" "odm" "32" "$O_LIB32"
+        write_blueprint_packages "SHARED_LIBRARIES" "odm" "64" "$O_LIB64"
+    } >> "$ANDROIDBP"
 
     # APEX
-    local APEX=( $(prefix_match "apex/") )
-    if [ "${#APEX[@]}" -gt "0" ]; then
-        write_blueprint_packages "APEX" "" "" "APEX" >> "$ANDROIDBP"
-    fi
-    local S_APEX=( $(prefix_match "system/apex/") )
-    if [ "${#S_APEX[@]}" -gt "0" ]; then
-        write_blueprint_packages "APEX" "system" "" "S_APEX" >> "$ANDROIDBP"
-    fi
-    local V_APEX=( $(prefix_match "vendor/apex/") )
-    if [ "${#V_APEX[@]}" -gt "0" ]; then
-        write_blueprint_packages "APEX" "vendor" "" "V_APEX" >> "$ANDROIDBP"
-    fi
-    local SE_APEX=( $(prefix_match "system_ext/apex/") )
-    if [ "${#SE_APEX[@]}" -gt "0" ]; then
-        write_blueprint_packages "APEX" "system_ext" "" "SE_APEX" >> "$ANDROIDBP"
-    fi
+    {
+        write_blueprint_packages "APEX" ""
+        write_blueprint_packages "APEX" "system"
+        write_blueprint_packages "APEX" "vendor"
+        write_blueprint_packages "APEX" "system_ext"
+    } >> "$ANDROIDBP"
 
     # Apps
-    local APPS=( $(prefix_match "app/") )
-    if [ "${#APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "" "" "APPS" >> "$ANDROIDBP"
-    fi
-    local PRIV_APPS=( $(prefix_match "priv-app/") )
-    if [ "${#PRIV_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "" "priv-app" "PRIV_APPS" >> "$ANDROIDBP"
-    fi
-    local S_APPS=( $(prefix_match "system/app/") )
-    if [ "${#S_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "system" "" "S_APPS" >> "$ANDROIDBP"
-    fi
-    local S_PRIV_APPS=( $(prefix_match "system/priv-app/") )
-    if [ "${#S_PRIV_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "system" "priv-app" "S_PRIV_APPS" >> "$ANDROIDBP"
-    fi
-    local V_APPS=( $(prefix_match "vendor/app/") )
-    if [ "${#V_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "vendor" "" "V_APPS" >> "$ANDROIDBP"
-    fi
-    local V_PRIV_APPS=( $(prefix_match "vendor/priv-app/") )
-    if [ "${#V_PRIV_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "vendor" "priv-app" "V_PRIV_APPS" >> "$ANDROIDBP"
-    fi
-    local P_APPS=( $(prefix_match "product/app/") )
-    if [ "${#P_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "product" "" "P_APPS" >> "$ANDROIDBP"
-    fi
-    local P_PRIV_APPS=( $(prefix_match "product/priv-app/") )
-    if [ "${#P_PRIV_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "product" "priv-app" "P_PRIV_APPS" >> "$ANDROIDBP"
-    fi
-    local SE_APPS=( $(prefix_match "system_ext/app/") )
-    if [ "${#SE_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "system_ext" "" "SE_APPS" >> "$ANDROIDBP"
-    fi
-    local SE_PRIV_APPS=( $(prefix_match "system_ext/priv-app/") )
-    if [ "${#SE_PRIV_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "system_ext" "priv-app" "SE_PRIV_APPS" >> "$ANDROIDBP"
-    fi
-    local O_APPS=( $(prefix_match "odm/app/") )
-    if [ "${#O_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "odm" "" "O_APPS" >> "$ANDROIDBP"
-    fi
-    local O_PRIV_APPS=( $(prefix_match "odm/priv-app/") )
-    if [ "${#O_PRIV_APPS[@]}" -gt "0" ]; then
-        write_blueprint_packages "APPS" "odm" "priv-app" "O_PRIV_APPS" >> "$ANDROIDBP"
-    fi
+    {
+        write_blueprint_packages "APPS" "" ""
+        write_blueprint_packages "APPS" "" "priv-app"
+        write_blueprint_packages "APPS" "system" ""
+        write_blueprint_packages "APPS" "system" "priv-app"
+        write_blueprint_packages "APPS" "vendor" ""
+        write_blueprint_packages "APPS" "vendor" "priv-app"
+        write_blueprint_packages "APPS" "product" ""
+        write_blueprint_packages "APPS" "product" "priv-app"
+        write_blueprint_packages "APPS" "system_ext" ""
+        write_blueprint_packages "APPS" "system_ext" "priv-app"
+        write_blueprint_packages "APPS" "odm" ""
+        write_blueprint_packages "APPS" "odm" "priv-app"
+    } >> "$ANDROIDBP"
 
     # Framework
-    local FRAMEWORK=( $(prefix_match "framework/") )
-    if [ "${#FRAMEWORK[@]}" -gt "0" ]; then
-        write_blueprint_packages "JAVA_LIBRARIES" "" "" "FRAMEWORK" >> "$ANDROIDBP"
-    fi
-    local S_FRAMEWORK=( $(prefix_match "system/framework/") )
-    if [ "${#S_FRAMEWORK[@]}" -gt "0" ]; then
-        write_blueprint_packages "JAVA_LIBRARIES" "system" "" "S_FRAMEWORK" >> "$ANDROIDBP"
-    fi
-    local V_FRAMEWORK=( $(prefix_match "vendor/framework/") )
-    if [ "${#V_FRAMEWORK[@]}" -gt "0" ]; then
-        write_blueprint_packages "JAVA_LIBRARIES" "vendor" "" "V_FRAMEWORK" >> "$ANDROIDBP"
-    fi
-    local P_FRAMEWORK=( $(prefix_match "product/framework/") )
-    if [ "${#P_FRAMEWORK[@]}" -gt "0" ]; then
-        write_blueprint_packages "JAVA_LIBRARIES" "product" "" "P_FRAMEWORK" >> "$ANDROIDBP"
-    fi
-    local SE_FRAMEWORK=( $(prefix_match "system_ext/framework/") )
-    if [ "${#SE_FRAMEWORK[@]}" -gt "0" ]; then
-        write_blueprint_packages "JAVA_LIBRARIES" "system_ext" "" "SE_FRAMEWORK" >> "$ANDROIDBP"
-    fi
-    local O_FRAMEWORK=( $(prefix_match "odm/framework/") )
-    if [ "${#O_FRAMEWORK[@]}" -gt "0" ]; then
-        write_blueprint_packages "JAVA_LIBRARIES" "odm" "" "O_FRAMEWORK" >> "$ANDROIDBP"
-    fi
+    {
+        write_blueprint_packages "JAVA_LIBRARIES" ""
+        write_blueprint_packages "JAVA_LIBRARIES" "system"
+        write_blueprint_packages "JAVA_LIBRARIES" "vendor"
+        write_blueprint_packages "JAVA_LIBRARIES" "product"
+        write_blueprint_packages "JAVA_LIBRARIES" "system_ext"
+        write_blueprint_packages "JAVA_LIBRARIES" "odm"
+    } >> "$ANDROIDBP"
 
     # Etc
-    local ETC=( $(prefix_match "etc/") )
-    if [ "${#ETC[@]}" -gt "0" ]; then
-        write_blueprint_packages "ETC" "" "" "ETC" >> "$ANDROIDBP"
-    fi
-    local S_ETC=( $(prefix_match "system/etc/") )
-    if [ "${#S_ETC[@]}" -gt "0" ]; then
-        write_blueprint_packages "ETC" "system" "" "S_ETC" >> "$ANDROIDBP"
-    fi
-    local V_ETC=( $(prefix_match "vendor/etc/") )
-    if [ "${#V_ETC[@]}" -gt "0" ]; then
-        write_blueprint_packages "ETC" "vendor" "" "V_ETC" >> "$ANDROIDBP"
-    fi
-    local P_ETC=( $(prefix_match "product/etc/") )
-    if [ "${#P_ETC[@]}" -gt "0" ]; then
-        write_blueprint_packages "ETC" "product" "" "P_ETC" >> "$ANDROIDBP"
-    fi
-    local SE_ETC=( $(prefix_match "system_ext/etc/") )
-    if [ "${#SE_ETC[@]}" -gt "0" ]; then
-        write_blueprint_packages "ETC" "system_ext" "" "SE_ETC" >> "$ANDROIDBP"
-    fi
-    local O_ETC=( $(prefix_match "odm/etc/") )
-    if [ "${#O_ETC[@]}" -gt "0" ]; then
-        write_blueprint_packages "ETC" "odm" "" "O_ETC" >> "$ANDROIDBP"
-    fi
+    {
+        write_blueprint_packages "ETC" ""
+        write_blueprint_packages "ETC" "system"
+        write_blueprint_packages "ETC" "vendor"
+        write_blueprint_packages "ETC" "product"
+        write_blueprint_packages "ETC" "system_ext"
+        write_blueprint_packages "ETC" "odm"
+    } >> "$ANDROIDBP"
 
     # Executables
-    local BIN=( $(prefix_match "bin/") )
-    if [ "${#BIN[@]}" -gt "0"  ]; then
-        write_blueprint_packages "EXECUTABLES" "" "" "BIN" >> "$ANDROIDBP"
-    fi
-    local S_BIN=( $(prefix_match "system/bin/") )
-    if [ "${#S_BIN[@]}" -gt "0"  ]; then
-        write_blueprint_packages "EXECUTABLES" "system" "" "S_BIN" >> "$ANDROIDBP"
-    fi
-    local V_BIN=( $(prefix_match "vendor/bin/") )
-    if [ "${#V_BIN[@]}" -gt "0" ]; then
-        write_blueprint_packages "EXECUTABLES" "vendor" "" "V_BIN" >> "$ANDROIDBP"
-    fi
-    local P_BIN=( $(prefix_match "product/bin/") )
-    if [ "${#P_BIN[@]}" -gt "0" ]; then
-        write_blueprint_packages "EXECUTABLES" "product" "" "P_BIN" >> "$ANDROIDBP"
-    fi
-    local SE_BIN=( $(prefix_match "system_ext/bin/") )
-    if [ "${#SE_BIN[@]}" -gt "0" ]; then
-        write_blueprint_packages "EXECUTABLES" "system_ext" "" "SE_BIN" >> "$ANDROIDBP"
-    fi
-    local O_BIN=( $(prefix_match "odm/bin/") )
-    if [ "${#O_BIN[@]}" -gt "0" ]; then
-        write_blueprint_packages "EXECUTABLES" "odm" "" "O_BIN" >> "$ANDROIDBP"
-    fi
+    {
+        write_blueprint_packages "EXECUTABLES" ""
+        write_blueprint_packages "EXECUTABLES" "system"
+        write_blueprint_packages "EXECUTABLES" "vendor"
+        write_blueprint_packages "EXECUTABLES" "product"
+        write_blueprint_packages "EXECUTABLES" "system_ext"
+        write_blueprint_packages "EXECUTABLES" "odm"
+    } >> "$ANDROIDBP"
 
     write_package_definition "${PACKAGE_LIST[@]}" >> "$PRODUCTMK"
 }
