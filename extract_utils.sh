@@ -1784,7 +1784,10 @@ function prepare_images() {
         # Check if we're working with the same zip that was passed last time.
         # If so, let's just use what's already extracted.
         MD5=$(md5sum "$SRC" | awk '{print $1}')
-        OLDMD5=$(cat "$DUMPDIR"/zipmd5.txt)
+        OLDMD5=""
+        if [ -f "$DUMPDIR/zipmd5.txt" ]; then
+            OLDMD5=$(cat "$DUMPDIR/zipmd5.txt")
+        fi
 
         if [ "$MD5" != "$OLDMD5" ]; then
             rm -rf "$DUMPDIR"
