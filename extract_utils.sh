@@ -1962,7 +1962,9 @@ function extract() {
         local BLOB_DISPLAY_NAME="${DST_FILE#/system/}"
         local VENDOR_REPO_FILE="$OUTPUT_DIR/${BLOB_DISPLAY_NAME}"
         local DIR=$(dirname "${VENDOR_REPO_FILE}")
-        mkdir -p "$DIR"
+        if [ ! -d "$DIR" ]; then
+            mkdir -p "$DIR"
+        fi
 
         # Check pinned files
         local HASH="${HASHLIST[$i-1]}"
