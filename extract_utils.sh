@@ -1975,8 +1975,7 @@ function extract() {
         SRC_FILE="/system/${SPEC_SRC_FILE}"
         DST_FILE="/system/${SPEC_DST_FILE}"
 
-        # Strip the file path in the vendor repo of "system", if present
-        local BLOB_DISPLAY_NAME="${DST_FILE#/system/}"
+        local BLOB_DISPLAY_NAME="${SPEC_DST_FILE}"
         local VENDOR_REPO_FILE="$OUTPUT_DIR/${BLOB_DISPLAY_NAME}"
         mkdir -p $(dirname "${VENDOR_REPO_FILE}")
 
