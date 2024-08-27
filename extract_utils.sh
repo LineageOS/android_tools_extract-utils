@@ -1976,7 +1976,7 @@ function extract() {
 
         local BLOB_DISPLAY_NAME="${SPEC_DST_FILE}"
         local VENDOR_REPO_FILE="$OUTPUT_DIR/${BLOB_DISPLAY_NAME}"
-        local DIR=$(dirname "${VENDOR_REPO_FILE}")
+        local DIR="${VENDOR_REPO_FILE%/*}"
         if [ ! -d "$DIR" ]; then
             mkdir -p "$DIR"
         fi
