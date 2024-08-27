@@ -2170,6 +2170,10 @@ function extract_firmware() {
 
     echo "Extracting $COUNT files in $1 from $SRC:"
 
+    if [ "$EXTRACT_STATE" -ne "1" ]; then
+        prepare_images "$SRC"
+    fi
+
     prepare_firmware
 
     for ((i = 1; i < COUNT + 1; i++)); do
