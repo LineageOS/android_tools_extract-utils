@@ -425,7 +425,7 @@ function write_package_shared_libs() {
     local PARTITION="$4"
 
     local FILE_PATH="$ANDROID_ROOT/$OUTDIR/$SRC/$LOCATION/$FILE"
-    local LIBS=$("$OBJDUMP" -x "$FILE_PATH" 2> /dev/null | sed -n 's/^\s*NEEDED\s*\(.*\).so$/\1/p')
+    local LIBS=$("$OBJDUMP" -p "$FILE_PATH" 2> /dev/null | sed -n 's/^\s*NEEDED\s*\(.*\).so$/\1/p')
     local PACKAGES=$(
         while IFS= read -r LIB; do
             lib_to_package_fixup "$LIB" "$PARTITION" "$FILE" || echo "$LIB"
