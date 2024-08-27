@@ -1329,8 +1329,8 @@ function parse_file_list() {
         local SPLIT=(${line//\|/ })
         local COUNT=${#SPLIT[@]}
         local SPEC=${SPLIT[0]}
-        local HASH="x"
-        local FIXUP_HASH="x"
+        local HASH=
+        local FIXUP_HASH=
         if [ "$COUNT" -gt "1" ]; then
             HASH="${SPLIT[1],,}"
         fi
@@ -1667,11 +1667,11 @@ function print_spec() {
         ARGS=";${SPEC_ARGS}"
     fi
     local HASH=""
-    if [ ! -z "${SPEC_HASH}" ] && [ "${SPEC_HASH}" != "x" ]; then
+    if [ -n "${SPEC_HASH}" ]; then
         HASH="|${SPEC_HASH}"
     fi
     local FIXUP_HASH=""
-    if [ ! -z "${SPEC_FIXUP_HASH}" ] && [ "${SPEC_FIXUP_HASH}" != "x" ] && [ "${SPEC_FIXUP_HASH}" != "${SPEC_HASH}" ]; then
+    if [ -n "${SPEC_FIXUP_HASH}" ] && [ "${SPEC_FIXUP_HASH}" != "${SPEC_HASH}" ]; then
         FIXUP_HASH="|${SPEC_FIXUP_HASH}"
     fi
     printf '%s%s%s%s%s%s\n' "${PRODUCT_PACKAGE}" "${SRC}" "${DST}" "${ARGS}" "${HASH}" "${FIXUP_HASH}"
@@ -1925,11 +1925,11 @@ function extract() {
     # Allow failing, so we can try $DEST and/or $FILE
     set +e
 
-    local HASHLIST=( ${PRODUCT_COPY_FILES_HASHES[@]} ${PRODUCT_PACKAGES_HASHES[@]} )
+    local HASHLIST=( "${PRODUCT_COPY_FILES_HASHES[@]}" "${PRODUCT_PACKAGES_HASHES[@]}" )
     local SRC_LIST=( "${PRODUCT_COPY_FILES_SRC[@]}" "${PRODUCT_PACKAGES_SRC[@]}" )
     local DEST_LIST=( "${PRODUCT_COPY_FILES_DEST[@]}" "${PRODUCT_PACKAGES_DEST[@]}" )
     local ARGS_LIST=( "${PRODUCT_COPY_FILES_ARGS[@]}" "${PRODUCT_PACKAGES_ARGS[@]}" )
-    local FIXUP_HASHLIST=( ${PRODUCT_COPY_FILES_FIXUP_HASHES[@]} ${PRODUCT_PACKAGES_FIXUP_HASHES[@]} )
+    local FIXUP_HASHLIST=( "${PRODUCT_COPY_FILES_FIXUP_HASHES[@]}" "${PRODUCT_PACKAGES_FIXUP_HASHES[@]}" )
     local PRODUCT_COPY_FILES_COUNT=${#PRODUCT_COPY_FILES_SRC[@]}
     local COUNT=${#SRC_LIST[@]}
     local OUTPUT_ROOT="$ANDROID_ROOT"/"$OUTDIR"/proprietary
@@ -1987,7 +1987,7 @@ function extract() {
         local HASH="${HASHLIST[$i-1]}"
         local FIXUP_HASH="${FIXUP_HASHLIST[$i-1]}"
         local KEEP=""
-        if [ "$DISABLE_PINNING" != "1" ] && [ "$HASH" != "x" ]; then
+        if [ "$DISABLE_PINNING" != "1" ] && [ -n "$HASH" ]; then
             if [ -f "${VENDOR_REPO_FILE}" ]; then
                 local PINNED="${VENDOR_REPO_FILE}"
             else
@@ -2009,7 +2009,7 @@ function extract() {
         fi
 
         if [ "$KEEP" = "1" ]; then
-            if [ "${FIXUP_HASH}" != "x" ]; then
+            if [ -n "${FIXUP_HASH}" ]; then
                 printf '    + keeping pinned file with hash %s\n' "${FIXUP_HASH}"
             else
                 printf '    + keeping pinned file with hash %s\n' "${HASH}"
@@ -2078,7 +2078,7 @@ function extract() {
             if [ "${PRE_FIXUP_HASH}" != "${POST_FIXUP_HASH}" ]; then
                 printf "    + Fixed up %s\n" "${BLOB_DISPLAY_NAME}"
                 # Now sanity-check the spec for this blob.
-                if [ "${KANG}" = false ] && [ "${FIXUP_HASH}" = "x" ] && [ "${HASH}" != "x" ]; then
+                if [ "${KANG}" = false ] && [ -z "${FIXUP_HASH}" ] && [ -n "${HASH}" ]; then
                     colored_echo yellow "WARNING: The ${BLOB_DISPLAY_NAME} file was fixed up, but it is pinned."
                     colored_echo yellow "This is a mistake and you want to either remove the hash completely, or add an extra one."
                 fi
