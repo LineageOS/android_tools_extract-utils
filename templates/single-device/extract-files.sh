@@ -107,6 +107,14 @@ setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}" false "${CLEAN_VENDOR}"
 
 if [ -z "${ONLY_FIRMWARE}" ]; then
     extract "${MY_DIR}/proprietary-files.txt" "${SRC}" "${KANG}" --section "${SECTION}"
+
+    if [ -s "$EXTRACT_TMP_DIR/super_dump/product.img" ]; then
+        bash "${MY_DIR}/regen-carriersettings.sh" "$EXTRACT_TMP_DIR/super_dump/product.img" "${MY_DIR}/proprietary-files-carriersettings.txt"
+    fi
+
+    extract "${MY_DIR}/proprietary-files-carriersettings.txt" "${SRC}" "${KANG}" --section "${SECTION}"
+
+    extract_carriersettings
 fi
 
 if [ -z "${SECTION}" ]; then
