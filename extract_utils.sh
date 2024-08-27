@@ -1763,7 +1763,7 @@ function prepare_images() {
     # Consume positional parameters
     local SRC="$1"
     shift
-    local KEEP_DUMP_DIR="$SRC"
+    KEEP_DUMP_DIR="$SRC"
 
     if [ -d "$SRC"/output ]; then
         EXTRACT_SRC="$SRC"/output
@@ -2173,6 +2173,9 @@ function extract_firmware() {
     if [ "$EXTRACT_STATE" -ne "1" ]; then
         prepare_images "$SRC"
     fi
+    if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
+        mkdir "$KEEP_DUMP_DIR"/radio
+    fi
 
     prepare_firmware
 
@@ -2208,11 +2211,16 @@ function extract_firmware() {
                 "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions "$(basename "${DST_FILE%.*}")" 2>&1
                 if [ -f "$DUMPDIR/$(basename "$DST_FILE")" ]; then
                     COPY_FILE="$DUMPDIR/$(basename "$DST_FILE")"
+                    if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
+                        cp "$COPY_FILE" "$KEEP_DUMP_DIR"/radio/
+                    fi
                 fi
             fi
         else
             if [ -f "$SRC/$SRC_FILE" ]; then
                 COPY_FILE="$SRC/$SRC_FILE"
+            elif [ -f "$SRC/radio/$SRC_FILE" ]; then
+                COPY_FILE="$SRC/radio/$SRC_FILE"
             elif [ -f "$SRC/$DST_FILE" ]; then
                 COPY_FILE="$SRC/$DST_FILE"
             fi
