@@ -1,8 +1,7 @@
 #!/bin/bash
 #
-# Copyright (C) 2016 The CyanogenMod Project
-# Copyright (C) 2017-2023 The LineageOS Project
-#
+# SPDX-FileCopyrightText: 2016 The CyanogenMod Project
+# SPDX-FileCopyrightText: 2017-2024 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -23,6 +22,12 @@ if [ ! -f "${HELPER}" ]; then
     exit 1
 fi
 source "${HELPER}"
+
+function vendor_imports() {
+    cat << EOF >> "$1"
+		"device/foo/baz",
+EOF
+}
 
 # Initialize the helper
 setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}"
