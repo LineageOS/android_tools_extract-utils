@@ -2074,15 +2074,6 @@ function extract() {
                 POST_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
             fi
 
-            if [ -f "${VENDOR_REPO_FILE}" ]; then
-                local TYPE="${DIR##*/}"
-                if [ "$TYPE" = "bin" ]; then
-                    chmod 755 "${VENDOR_REPO_FILE}"
-                else
-                    chmod 644 "${VENDOR_REPO_FILE}"
-                fi
-            fi
-
             if [ "${KANG}" =  true ]; then
                 print_spec "${IS_PRODUCT_PACKAGE}" "${SPEC_SRC_FILE}" "${SPEC_DST_FILE}" "${SPEC_ARGS}" "${PRE_FIXUP_HASH}" "${POST_FIXUP_HASH}"
             fi
