@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d923f1e9_5d8b0c47",
+        "filename": "extract_utils.sh",
+        "patchSetId": 11
+      },
+      "lineNbr": 1827,
+      "author": {
+        "id": 21290
+      },
+      "writtenOn": "2024-08-27T22:18:36Z",
+      "side": 1,
+      "message": "```suggestion\n    local SUPERIMGS\u003d()\n```\nThis currently breaks extraction of AB OTAs for me.\nFrom my understanding, initializing SUPERIMGS like this will initialize it as an empty string, leading to bash treating it as a list including one empty string.\nInitializing as an empty list explicitly (as shown in the suggestion) fixes that.",
+      "range": {
+        "startLine": 1827,
+        "startChar": 4,
+        "endLine": 1827,
+        "endChar": 20
+      },
+      "revId": "0c5d8dee51030685715d4dd2f84eb8c058e90930",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
