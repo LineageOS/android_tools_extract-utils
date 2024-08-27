@@ -168,15 +168,21 @@ function spec() {
 }
 
 #
-# input: spec in the form of "src[:dst][;args]"
+# input: spec in the form of "src[:dst]"
 # output: "src"
 #
-function src_file() {
-    local SPEC="$(spec "$1")"
+function spec_src_file() {
     # Remove the shortest trailing substring starting with :
     # If there's no : to match against, src will be kept,
     # otherwise, :dst will be removed
-    echo "${SPEC%%:*}"
+    echo "${1%%:*}"
+}
+
+function spec_target_file() {
+    # Remove the shortest beginning substring ending in :
+    # If there's no : to match against, src will be kept,
+    # otherwise, src: will be removed
+    echo "${1##*:}"
 }
 
 #
@@ -185,10 +191,19 @@ function src_file() {
 #
 function target_file() {
     local SPEC="$(spec "$1")"
-    # Remove the shortest beginning substring ending in :
-    # If there's no : to match against, src will be kept,
-    # otherwise, src: will be removed
-    echo "${SPEC##*:}"
+    spec_target_file "$SPEC"
+}
+
+function spec_target_args() {
+    # Remove the shortest beginning substring ending in ;
+    # If there isn't one, the entire string will be kept, so check
+    # against that
+    local ARGS="${2#*;}"
+    if [ "$1" = "$ARGS" ]; then
+        echo ""
+    else
+        echo "$ARGS"
+    fi
 }
 
 #
@@ -197,15 +212,7 @@ function target_file() {
 #
 function target_args() {
     local SPEC="$(spec "$1")"
-    # Remove the shortest beginning substring ending in ;
-    # If there isn't one, the entire string will be kept, so check
-    # against that
-    local ARGS="${1#*;}"
-    if [ "$SPEC" = "$ARGS" ]; then
-        echo ""
-    else
-        echo "$ARGS"
-    fi
+    spec_target_args "$SPEC" "$1"
 }
 
 #
@@ -1338,7 +1345,16 @@ function parse_file_list() {
             IS_PRODUCT_PACKAGE=true
             SPEC="${SPEC#-}"
         fi
-        local SRC_FILE="$(src_file "$SPEC")"
+
+        local STRIPPED_SPEC="$(spec "$SPEC")"
+        local SRC_FILE="$(spec_src_file "$STRIPPED_SPEC")"
+        local TARGET_FILE="$SRC_FILE"
+        local ARGS=
+        if [ "$SRC_FILE" != "$SPEC" ]; then
+            TARGET_FILE="$(spec_target_file "$STRIPPED_SPEC")"
+            ARGS="$(spec_target_args "$STRIPPED_SPEC" "$SPEC")"
+        fi
+
         # if line contains apex, apk, jar or vintf fragment, it needs to be packaged
         if suffix_match_file ".apex" "$SRC_FILE" || \
              suffix_match_file ".apk" "$SRC_FILE" || \
@@ -1355,14 +1371,14 @@ function parse_file_list() {
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
             PRODUCT_PACKAGES_SRC+=("$SRC_FILE")
-            PRODUCT_PACKAGES_DEST+=("$(target_file "$SPEC")")
-            PRODUCT_PACKAGES_ARGS+=("$(target_args "$SPEC")")
+            PRODUCT_PACKAGES_DEST+=("$TARGET_FILE")
+            PRODUCT_PACKAGES_ARGS+=("$ARGS")
         else
             PRODUCT_COPY_FILES_HASHES+=("$HASH")
             PRODUCT_COPY_FILES_FIXUP_HASHES+=("$FIXUP_HASH")
             PRODUCT_COPY_FILES_SRC+=("$SRC_FILE")
-            PRODUCT_COPY_FILES_DEST+=("$(target_file "$SPEC")")
-            PRODUCT_COPY_FILES_ARGS+=("$(target_args "$SPEC")")
+            PRODUCT_COPY_FILES_DEST+=("$TARGET_FILE")
+            PRODUCT_COPY_FILES_ARGS+=("$ARGS")
         fi
 
     done < <(grep -v -E '(^#|^[[:space:]]*$)' "$LIST" | LC_ALL=C sort | uniq)
