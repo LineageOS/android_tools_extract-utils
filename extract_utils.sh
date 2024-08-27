@@ -1766,6 +1766,12 @@ function prepare_images() {
     local SRC="$1"; shift
     local KEEP_DUMP_DIR="$SRC"
 
+    if [ -d "$SRC"/output ]; then
+        EXTRACT_SRC="$SRC"/output
+        EXTRACT_STATE=1
+        return 0
+    fi
+
     if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
         local BASENAME=$(basename "$SRC")
         local DIRNAME=$(dirname "$SRC")
