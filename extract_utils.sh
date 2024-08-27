@@ -237,9 +237,9 @@ function prefix_match() {
         if [[ "$FILE" =~ ^"$PREFIX" ]]; then
             local ARGS="${ARGS_LIST[$i - 1]}"
             if [[ -z "${ARGS}" || "${ARGS}" =~ 'SYMLINK' ]]; then
-                NEW_ARRAY+=("${FILE#$PREFIX}")
+                NEW_ARRAY+=("${FILE#"$PREFIX"}")
             else
-                NEW_ARRAY+=("${FILE#$PREFIX};${ARGS}")
+                NEW_ARRAY+=("${FILE#"$PREFIX"};${ARGS}")
             fi
         fi
     done
@@ -295,10 +295,9 @@ function suffix_match_file() {
 #
 function truncate_file() {
     local FILE="$1"
-    RETURN_FILE="$2"
     local FIND="${FILE%%/*}"
     local LOCATION="${#FIND}+1"
-    echo ${FILE:$LOCATION}
+    echo "${FILE:$LOCATION}"
 }
 
 #
@@ -314,7 +313,6 @@ function write_product_copy_files() {
     local TARGET=
     local FILE=
     local LINEEND=
-    local TREBLE_COMPAT=$1
 
     if [ "$COUNT" -eq "0" ]; then
         return 0
@@ -328,56 +326,56 @@ function write_product_copy_files() {
             LINEEND=""
         fi
 
-        if prefix_match_file "product/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        if prefix_match_file "product/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_PRODUCT)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "system/product/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "system/product/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_PRODUCT)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "system_ext/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "system_ext/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_SYSTEM_EXT)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "system/system_ext/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "system/system_ext/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_SYSTEM_EXT)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "odm/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "odm/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_ODM)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "vendor/odm/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "vendor/odm/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_ODM)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "system/vendor/odm/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "system/vendor/odm/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_ODM)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "vendor/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "vendor/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_VENDOR)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "vendor_dlkm/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "vendor_dlkm/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_VENDOR_DLKM)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "system/vendor/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "system/vendor/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_VENDOR)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "system/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "system/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_SYSTEM)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "recovery/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "recovery/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_RECOVERY)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
-        elif prefix_match_file "vendor_ramdisk/" $TARGET; then
-            local OUTTARGET=$(truncate_file $TARGET)
+        elif prefix_match_file "vendor_ramdisk/" "$TARGET"; then
+            local OUTTARGET=$(truncate_file "$TARGET")
             printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/%s%s\n' \
                 "$OUTDIR" "$TARGET" "$OUTTARGET" "$LINEEND" >>"$PRODUCTMK"
         else
@@ -531,7 +529,6 @@ function write_blueprint_packages() {
         local FILE=$(spec "$P")
         local SPEC_ARGS=$(spec_target_args "$FILE" "$P")
         local ARGS=(${SPEC_ARGS//;/ })
-
         local DIRNAME="${FILE%/*}"
         if [ "$DIRNAME" = "$FILE" ]; then
             DIRNAME="."
@@ -569,7 +566,7 @@ function write_blueprint_packages() {
         if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf 'cc_prebuilt_library_shared {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
-            if [ ! -z "$STEM" ]; then
+            if [ -n "$STEM" ]; then
                 printf '\tstem: "%s",\n' "$STEM"
             fi
             printf '\towner: "%s",\n' "$VENDOR"
@@ -596,7 +593,7 @@ function write_blueprint_packages() {
             fi
             printf '\t},\n'
             printf '\tcompile_multilib: "%s",\n' "$EXTRA"
-            if [ ! -z "$DISABLE_CHECKELF" ]; then
+            if [ -n "$DISABLE_CHECKELF" ]; then
                 printf '\tcheck_elf_files: false,\n'
             fi
         elif [ "$CLASS" = "RFSA" ]; then
@@ -632,7 +629,7 @@ function write_blueprint_packages() {
                     printf '\trequired: ["%s"],\n' "${REQUIREDPKG//,/\", \"}"
                 elif [[ "$ARG" =~ "SYMLINK" ]]; then
                     continue
-                elif [ ! -z "$ARG" ]; then
+                elif [ -n "$ARG" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
                     printf '\tcertificate: "%s",\n' "$ARG"
                 fi
@@ -688,7 +685,7 @@ function write_blueprint_packages() {
                 else
                     printf '\tcompile_multilib: "%s",\n' "32"
                 fi
-                if [ ! -z "$DISABLE_CHECKELF" ]; then
+                if [ -n "$DISABLE_CHECKELF" ]; then
                     printf '\tcheck_elf_files: false,\n'
                 fi
                 printf '\tstrip: {\n'
@@ -895,7 +892,6 @@ function write_product_packages() {
 #
 function write_symlink_packages() {
     local FILE=
-    local ARGS=
     local ARCH=
     local BASENAME=
     local PKGNAME=
@@ -920,8 +916,8 @@ function write_symlink_packages() {
             ARCH="32"
         fi
         BASENAME=$(basename "$FILE")
-        ARGS=$(target_args "$LINE")
-        ARGS=(${ARGS//;/ })
+        local SPEC_ARGS=$(target_args "$LINE")
+        local ARGS=(${SPEC_ARGS//;/ })
         for ARG in "${ARGS[@]}"; do
             if [[ "$ARG" =~ "SYMLINK" ]]; then
                 SYMLINKS=${ARG#*=}
@@ -977,7 +973,7 @@ function write_single_product_copy_files() {
     fi
 
     local TARGET=$(target_file "$FILE")
-    local OUTTARGET=$(truncate_file $TARGET)
+    local OUTTARGET=$(truncate_file "$TARGET")
 
     printf '%s\n' "PRODUCT_COPY_FILES += \\" >>"$PRODUCTMK"
     printf '    %s/proprietary/%s:$(TARGET_COPY_OUT_PRODUCT)/%s\n' \
@@ -1000,7 +996,7 @@ function write_single_product_packages() {
     fi
 
     printf '\n%s\n' "PRODUCT_PACKAGES += \\" >>"$PRODUCTMK"
-    printf '    %s%s\n' "$PACKAGE" >>"$PRODUCTMK"
+    printf '    %s\n' "$PACKAGE" >>"$PRODUCTMK"
 }
 
 #
@@ -1067,14 +1063,14 @@ function write_rro_blueprint() {
 # be executed first!
 #
 function write_blueprint_header() {
-    if [ -f $1 ]; then
-        rm $1
+    if [ -f "$1" ]; then
+        rm "$1"
     fi
 
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
     [ "$COMMON" -eq 1 ] && local VENDOR="${VENDOR_COMMON:-$VENDOR}"
 
-    cat <<EOF >>$1
+    cat <<EOF >>"$1"
 // Automatically generated file. DO NOT MODIFY
 //
 // This file is generated by device/$VENDOR/$DEVICE/setup-makefiles.sh
@@ -1092,14 +1088,14 @@ EOF
 # be executed first!
 #
 function write_makefile_header() {
-    if [ -f $1 ]; then
-        rm $1
+    if [ -f "$1" ]; then
+        rm "$1"
     fi
 
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
     [ "$COMMON" -eq 1 ] && local VENDOR="${VENDOR_COMMON:-$VENDOR}"
 
-    cat <<EOF >>$1
+    cat <<EOF >>"$1"
 # Automatically generated file. DO NOT MODIFY
 #
 # This file is generated by device/$VENDOR/$DEVICE/setup-makefiles.sh
@@ -1117,14 +1113,14 @@ EOF
 # be executed first!
 #
 function write_xml_header() {
-    if [ -f $1 ]; then
-        rm $1
+    if [ -f "$1" ]; then
+        rm "$1"
     fi
 
     [ "$COMMON" -eq 1 ] && local DEVICE="$DEVICE_COMMON"
     [ "$COMMON" -eq 1 ] && local VENDOR="${VENDOR_COMMON:-$VENDOR}"
 
-    cat <<EOF >>$1
+    cat <<EOF >>"$1"
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Automatically generated file. DO NOT MODIFY
@@ -1253,7 +1249,7 @@ soong_namespace {
 	imports: [
 EOF
 
-    if [ ! -z "$DEVICE_COMMON" -a "$COMMON" -ne 1 ]; then
+    if [ -n "$DEVICE_COMMON" ] && [ "$COMMON" -ne 1 ]; then
         cat <<EOF >>"$ANDROIDBP"
 		"vendor/${VENDOR_COMMON:-$VENDOR}/$DEVICE_COMMON",
 EOF
@@ -1311,7 +1307,7 @@ function parse_file_list() {
         echo "An input file is expected!"
         exit 1
     elif [ ! -f "$1" ]; then
-        echo "Input file "$1" does not exist!"
+        echo "Input file $1 does not exist!"
         exit 1
     fi
 
@@ -1322,7 +1318,7 @@ function parse_file_list() {
         # comment and contain** $2, and ending with first line to be empty*.
         # *whitespaces (tabs, spaces) at the beginning of lines are discarded
         # **the $2 match is case-insensitive
-        cat $1 | sed -n '/^[[:space:]]*#.*'"$2"'/I,/^[[:space:]]*$/ p' >$LIST
+        cat "$1" | sed -n '/^[[:space:]]*#.*'"$2"'/I,/^[[:space:]]*$/ p' >$LIST
     else
         LIST=$1
     fi
@@ -1417,7 +1413,7 @@ function parse_file_list() {
 #
 function write_makefiles() {
     parse_file_list "$1"
-    write_product_copy_files "$2"
+    write_product_copy_files
     write_product_packages
     write_symlink_packages
 }
@@ -1443,10 +1439,10 @@ function append_firmware_calls_to_makefiles() {
 
     for ((i = 1; i < COUNT + 1; i++)); do
         local DST_FILE="${DEST_LIST[$i - 1]}"
-        local ARGS="${ARGS_LIST[$i - 1]}"
+        local SPEC_ARGS="${ARGS_LIST[$i - 1]}"
         local SHA1=$(get_hash "$ANDROID_ROOT"/"$OUTDIR"/radio/"$DST_FILE")
-        DST_FILE_NAME=(${DST_FILE//.img/ })
-        ARGS=(${ARGS//;/ })
+        local DST_FILE_NAME="${DST_FILE%.img}"
+        local ARGS=(${SPEC_ARGS//;/ })
         LINEEND=" \\"
         if [ "$i" -eq "$COUNT" ]; then
             LINEEND=""
@@ -1575,13 +1571,14 @@ function oat2dex() {
                 "$JAVA" -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
             fi
         elif [[ "$CUSTOM_TARGET" =~ .jar$ ]]; then
-            JAROAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot-$(basename ${OEM_TARGET%.*}).oat"
-            JARVDEX="/system/framework/boot-$(basename ${OEM_TARGET%.*}).vdex"
+            JARNAME="$(basename "${OEM_TARGET%.*}")"
+            JAROAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot-$JARNAME.oat"
+            JARVDEX="$EXTRACT_TMP_DIR/system/framework/boot-$JARNAME.vdex"
             if [ ! -f "$JAROAT" ]; then
                 JAROAT=$BOOTOAT
             fi
             if [ ! -f "$JARVDEX" ]; then
-                JARVDEX="/system/framework/$ARCH/boot-$(basename ${OEM_TARGET%.*}).vdex"
+                JARVDEX="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot-$JARNAME.vdex"
             fi
             # try to extract classes.dex from boot.vdex for frameworks jars
             # fallback to boot.oat if vdex is not available
@@ -1670,19 +1667,19 @@ function print_spec() {
     local SPEC_FIXUP_HASH="$6"
 
     local PRODUCT_PACKAGE=""
-    if [ ${SPEC_PRODUCT_PACKAGE} = true ]; then
+    if [ "$SPEC_PRODUCT_PACKAGE" = true ]; then
         PRODUCT_PACKAGE="-"
     fi
     local SRC=""
-    if [ ! -z "${SPEC_SRC_FILE}" ] && [ "${SPEC_SRC_FILE}" != "${SPEC_DST_FILE}" ]; then
+    if [ -n "${SPEC_SRC_FILE}" ] && [ "${SPEC_SRC_FILE}" != "${SPEC_DST_FILE}" ]; then
         SRC="${SPEC_SRC_FILE}:"
     fi
     local DST=""
-    if [ ! -z "${SPEC_DST_FILE}" ]; then
+    if [ -n "${SPEC_DST_FILE}" ]; then
         DST="${SPEC_DST_FILE}"
     fi
     local ARGS=""
-    if [ ! -z "${SPEC_ARGS}" ]; then
+    if [ -n "${SPEC_ARGS}" ]; then
         ARGS=";${SPEC_ARGS}"
     fi
     local HASH=""
@@ -1806,12 +1803,12 @@ function prepare_images() {
             for PARTITION in "system" "odm" "product" "system_ext" "vendor"; do
                 # If OTA is block based, extract it.
                 if [ -a "$DUMPDIR"/"$PARTITION".new.dat.br ]; then
-                    echo "Converting "$PARTITION".new.dat.br to "$PARTITION".new.dat"
+                    echo "Converting $PARTITION.new.dat.br to $PARTITION.new.dat"
                     brotli -d "$DUMPDIR"/"$PARTITION".new.dat.br
                     rm "$DUMPDIR"/"$PARTITION".new.dat.br
                 fi
                 if [ -a "$DUMPDIR"/"$PARTITION".new.dat ]; then
-                    echo "Converting "$PARTITION".new.dat to "$PARTITION".img"
+                    echo "Converting $PARTITION.new.dat to $PARTITION.img"
                     python "$ANDROID_ROOT"/tools/extract-utils/sdat2img.py "$DUMPDIR"/"$PARTITION".transfer.list "$DUMPDIR"/"$PARTITION".new.dat "$DUMPDIR"/"$PARTITION".img 2>&1
                     rm -rf "$DUMPDIR"/"$PARTITION".new.dat "$DUMPDIR"/"$PARTITION"
                     mkdir "$DUMPDIR"/"$PARTITION" "$DUMPDIR"/tmp
@@ -1827,23 +1824,22 @@ function prepare_images() {
         SRC="$DUMPDIR"
     fi
 
-    local SUPERIMG=""
-
+    local SUPERIMGS=
     if [ -d "$SRC" ] && [ -f "$SRC"/super.img ]; then
-        SUPERIMG="$SRC"/super.img
+        SUPERIMGS=("$SRC"/super.img)
     elif [ -d "$SRC" ] && [ -f "$SRC"/super.img_sparsechunk.0 ]; then
-        SUPERIMG="$(find $SRC -name 'super.img_sparsechunk.*' | sort -V | xargs)"
+        readarray -t SUPERIMGS < <(find "$SRC" -name 'super.img_sparsechunk.*' | sort -V)
     fi
 
-    if [ -n "$SUPERIMG" ]; then
+    if [ "${#SUPERIMGS[@]}" -ne 0 ]; then
         DUMPDIR="$EXTRACT_TMP_DIR"/super_dump
         mkdir -p "$DUMPDIR"
 
         echo "Unpacking super.img"
-        "$SIMG2IMG" $SUPERIMG "$DUMPDIR"/super.raw
+        "$SIMG2IMG" "${SUPERIMGS[@]}" "$DUMPDIR"/super.raw
 
         for PARTITION in "system" "odm" "product" "system_ext" "vendor"; do
-            echo "Preparing "$PARTITION""
+            echo "Preparing $PARTITION"
             if "$LPUNPACK" -p "$PARTITION"_a "$DUMPDIR"/super.raw "$DUMPDIR"; then
                 mv "$DUMPDIR"/"$PARTITION"_a.img "$DUMPDIR"/"$PARTITION".img
             else
@@ -1865,7 +1861,7 @@ function prepare_images() {
         mkdir -p "$DUMPDIR"
 
         for PARTITION in "system" "odm" "product" "system_ext" "vendor"; do
-            echo "Extracting "$PARTITION""
+            echo "Extracting $PARTITION"
             local IMAGE="$SRC"/"$PARTITION".img
             if [ -f "$IMAGE" ]; then
                 if [[ $(file -b "$IMAGE") == EROFS* ]]; then
@@ -1876,7 +1872,7 @@ function prepare_images() {
                     "$SIMG2IMG" "$IMAGE" "$DUMPDIR"/"$PARTITION".raw
                     extract_img_data "$DUMPDIR"/"$PARTITION".raw "$DUMPDIR"/"$PARTITION"/
                 else
-                    echo "Unsupported "$IMAGE""
+                    echo "Unsupported $IMAGE"
                 fi
             fi
         done
@@ -2047,7 +2043,7 @@ function extract() {
             # the "/system" prefix, if we're actually extracting
             # from a system image.
             for CANDIDATE in "${DST_FILE}" "${SRC_FILE}"; do
-                get_file ${CANDIDATE} ${VENDOR_REPO_FILE} ${EXTRACT_SRC} && {
+                get_file "${CANDIDATE}" "${VENDOR_REPO_FILE}" "${EXTRACT_SRC}" && {
                     FOUND=true
                     break
                 }
@@ -2201,9 +2197,9 @@ function extract_firmware() {
         if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
             # Extract A/B OTA
             if [ -a "$DUMPDIR"/payload.bin ]; then
-                "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions $(basename "${DST_FILE%.*}") 2>&1
-                if [ -f "$DUMPDIR/$(basename $DST_FILE)" ]; then
-                    COPY_FILE="$DUMPDIR/$(basename $DST_FILE)"
+                "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions "$(basename "${DST_FILE%.*}")" 2>&1
+                if [ -f "$DUMPDIR/$(basename "$DST_FILE")" ]; then
+                    COPY_FILE="$DUMPDIR/$(basename "$DST_FILE")"
                 fi
             fi
         else
@@ -2277,7 +2273,7 @@ function generate_prop_list_from_image() {
         extract_img_data "$image_dir"/"$(basename "$image_file").raw" "$image_dir"
         rm "$image_dir"/"$(basename "$image_file").raw"
     else
-        echo "Unsupported "$image_file""
+        echo "Unsupported $image_file"
     fi
 
     if [ -z "$component" ]; then
@@ -2311,8 +2307,8 @@ function colored_echo() {
     IFS=" "
     local color=$1
     shift
-    if ! [[ $color =~ '^[0-9]$' ]]; then
-        case $(echo $color | tr '[:upper:]' '[:lower:]') in
+    if ! [[ $color =~ ^[0-9]$ ]]; then
+        case $(echo "$color" | tr '[:upper:]' '[:lower:]') in
         black) color=0 ;;
         red) color=1 ;;
         green) color=2 ;;
@@ -2323,7 +2319,7 @@ function colored_echo() {
         white | *) color=7 ;; # white or invalid color
         esac
     fi
-    if [ -t 1 ]; then tput setaf $color; fi
+    if [ -t 1 ]; then tput setaf "$color"; fi
     printf '%s\n' "$*"
     if [ -t 1 ]; then tput sgr0; fi
 }
