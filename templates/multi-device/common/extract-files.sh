@@ -32,6 +32,7 @@ ONLY_FIRMWARE=
 ONLY_TARGET=
 KANG=
 SECTION=
+CARRIER_SKIP_FILES=()
 
 while [ "${#}" -gt 0 ]; do
     case "${1}" in
@@ -114,6 +115,13 @@ if [ -z "${ONLY_COMMON}" ] && [ -s "${MY_DIR}/../../${VENDOR}/${DEVICE}/propriet
 
     if [ -z "${ONLY_FIRMWARE}" ]; then
         extract "${MY_DIR}/../../${VENDOR}/${DEVICE}/proprietary-files.txt" "${SRC}" "${KANG}" --section "${SECTION}"
+
+        if [ -f "${MY_DIR}/../../${VENDOR}/${DEVICE}/proprietary-files-carriersettings.txt" ]; then
+            generate_prop_list_from_image "product.img" "${MY_DIR}/../../proprietary-files-carriersettings.txt" CARRIER_SKIP_FILES carriersettings
+            extract "${MY_DIR}/../../${VENDOR}/${DEVICE}/proprietary-files-carriersettings.txt" "${SRC}" "${KANG}" --section "${SECTION}"
+
+            extract_carriersettings
+        fi
     fi
 
     if [ -z "${SECTION}" ] && [ -f "${MY_DIR}/../../${VENDOR}/${DEVICE}/proprietary-firmware.txt" ]; then
