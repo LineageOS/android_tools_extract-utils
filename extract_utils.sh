@@ -2053,7 +2053,7 @@ function extract() {
                     rm "$EXTRACT_TMP_DIR/classes"*
                     printf '    (updated %s from odex files)\n' "${SRC_FILE}"
                 fi
-            elif [[ "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
+            elif [[ "${TARGET_DISABLE_XML_FIXING}" != true && "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
                 PRE_FIXUP_HASH=$(get_hash ${VENDOR_REPO_FILE})
                 fix_xml "${VENDOR_REPO_FILE}"
             elif [ "$KANG" = true ]; then
