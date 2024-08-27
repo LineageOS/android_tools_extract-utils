@@ -30,7 +30,7 @@ FULLY_DEODEXED=-1
 KEEP_DUMP=${KEEP_DUMP:-0}
 SKIP_CLEANUP=${SKIP_CLEANUP:-0}
 EXTRACT_TMP_DIR=$(mktemp -d)
-HOST="$(uname | tr '[:upper:]' '[:lower:]')"
+HOST=$(uname | tr '[:upper:]' '[:lower:]')
 
 #
 # cleanup
@@ -1549,8 +1549,9 @@ function oat2dex() {
     for ARCH in $ARCHES; do
         BOOTOAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot.oat"
 
-        local OAT="$(dirname "$OEM_TARGET")/oat/$ARCH/$(basename "$OEM_TARGET" ."${OEM_TARGET##*.}").odex"
-        local VDEX="$(dirname "$OEM_TARGET")/oat/$ARCH/$(basename "$OEM_TARGET" ."${OEM_TARGET##*.}").vdex"
+        local OAT_VDEX_PATH=$(dirname "$OEM_TARGET")/oat/$ARCH/$(basename "$OEM_TARGET" ."${OEM_TARGET##*.}")
+        local OAT="$OAT_VDEX_PATH.odex"
+        local VDEX="$OAT_VDEX_PATH.vdex"
 
         if get_file "$OAT" "$EXTRACT_TMP_DIR" "$SRC"; then
             if get_file "$VDEX" "$EXTRACT_TMP_DIR" "$SRC"; then
@@ -1571,7 +1572,7 @@ function oat2dex() {
                 "$JAVA" -jar "$SMALIJAR" assemble "$EXTRACT_TMP_DIR/dexout" -o "$EXTRACT_TMP_DIR/classes.dex"
             fi
         elif [[ "$CUSTOM_TARGET" =~ .jar$ ]]; then
-            JARNAME="$(basename "${OEM_TARGET%.*}")"
+            JARNAME=$(basename "${OEM_TARGET%.*}")
             JAROAT="$EXTRACT_TMP_DIR/system/framework/$ARCH/boot-$JARNAME.oat"
             JARVDEX="$EXTRACT_TMP_DIR/system/framework/boot-$JARNAME.vdex"
             if [ ! -f "$JAROAT" ]; then
