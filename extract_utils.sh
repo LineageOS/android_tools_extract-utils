@@ -1713,7 +1713,8 @@ function apktool_patch() {
 
     while IFS= read -r PATCH_PATH; do
         echo "Applying patch $PATCH_PATH"
-        patch -N -p1 -d "$TEMP_DIR" <"$PATCH_PATH"
+        # unsafe-paths is required since the directory is outside of the current working directory
+        git apply --unsafe-paths --directory="$TEMP_DIR" "$PATCH_PATH"
     done <<<"$PATCHES_PATHS"
 
     # apktool modifies timestamps, we cannot use its output.
