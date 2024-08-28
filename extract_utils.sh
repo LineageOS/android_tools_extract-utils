@@ -21,6 +21,7 @@ PACKAGE_LIST=()
 REQUIRED_PACKAGES_LIST=
 EXTRACT_SRC=
 EXTRACT_STATE=-1
+EXTRACT_RADIO_STATE=-1
 VENDOR_STATE=-1
 VENDOR_RADIO_STATE=-1
 COMMON=-1
@@ -2167,16 +2168,24 @@ function extract_firmware() {
         VENDOR_RADIO_STATE=1
     fi
 
+    if [ -d "$SRC"/radio ]; then
+        EXTRACT_RADIO_STATE=1
+    fi
+
     echo "Extracting $COUNT files in $1 from $SRC:"
 
     if [ "$EXTRACT_STATE" -ne "1" ]; then
         prepare_images "$SRC"
     fi
-    if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
-        mkdir "$KEEP_DUMP_DIR"/radio
-    fi
 
-    prepare_firmware
+    if [ "$EXTRACT_RADIO_STATE" -ne "1" ]; then
+        if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
+            rm -rf "$KEEP_DUMP_DIR"/radio
+            mkdir "$KEEP_DUMP_DIR"/radio
+        fi
+
+        prepare_firmware
+    fi
 
     for ((i = 1; i < COUNT + 1; i++)); do
         local SRC_FILE="${SRC_LIST[$i - 1]}"
@@ -2210,9 +2219,6 @@ function extract_firmware() {
                 "$OTA_EXTRACTOR" --payload "$DUMPDIR"/payload.bin --output_dir "$DUMPDIR" --partitions "$(basename "${DST_FILE%.*}")" 2>&1
                 if [ -f "$DUMPDIR/$(basename "$DST_FILE")" ]; then
                     COPY_FILE="$DUMPDIR/$(basename "$DST_FILE")"
-                    if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
-                        cp "$COPY_FILE" "$KEEP_DUMP_DIR"/radio/
-                    fi
                 fi
             fi
         else
@@ -2232,6 +2238,9 @@ function extract_firmware() {
         if [ -f "$COPY_FILE" ]; then
             cp "$COPY_FILE" "$OUTPUT_DIR/$DST_FILE"
             chmod 644 "$OUTPUT_DIR/$DST_FILE"
+            if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
+                cp "$OUTPUT_DIR/$DST_FILE" "$KEEP_DUMP_DIR"/radio/
+            fi
         else
             colored_echo yellow "${DST_FILE} not found, skipping copy"
         fi
