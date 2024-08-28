@@ -2280,6 +2280,19 @@ function generate_prop_list_from_image() {
 
     mkdir -p "$image_dir"
 
+    if [ -f "$EXTRACT_TMP_DIR"/super_dump/"$image_file" ]; then
+        image_file="$EXTRACT_TMP_DIR"/super_dump/"$image_file"
+    elif [ -f "$EXTRACT_TMP_DIR"/"$image_file" ]; then
+        image_file="$EXTRACT_TMP_DIR"/"$image_file"
+    elif [ -f "$SRC"/super_dump/"$image_file" ]; then
+        image_file="$SRC"/super_dump/"$image_file"
+    elif [ -f "$SRC"/"$image_file" ]; then
+        image_file="$SRC"/"$image_file"
+    elif [ ! -f "$image_file" ]; then
+        colored_echo yellow "$image_file not found, skipping $output_list regen"
+        return 0
+    fi
+
     if [[ $(file -b "$image_file") == EROFS* ]]; then
         fsck.erofs --extract="$image_dir" "$image_file"
     elif [[ $(file -b "$image_file") == Linux* ]]; then
@@ -2289,7 +2302,8 @@ function generate_prop_list_from_image() {
         extract_img_data "$image_dir"/"$(basename "$image_file").raw" "$image_dir"
         rm "$image_dir"/"$(basename "$image_file").raw"
     else
-        echo "Unsupported $image_file"
+        colored_echo yellow "Unsupported $image_file filesystem, skipping $output_list regen"
+        return 0
     fi
 
     if [ -z "$component" ]; then
@@ -2297,6 +2311,8 @@ function generate_prop_list_from_image() {
     elif [[ "$component" == "carriersettings" ]]; then
         partition="product"
     fi
+
+    echo "# All blobs below are extracted from the release mentioned in proprietary-files.txt" >"$output_list_tmp"
 
     find "$image_dir" -not -type d | sed "s#^$image_dir/##" | while read -r FILE; do
         if [[ "$component" == "carriersettings" ]] && ! prefix_match_file "etc/CarrierSettings" "$FILE"; then
