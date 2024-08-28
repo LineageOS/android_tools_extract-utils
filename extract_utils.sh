@@ -2332,6 +2332,7 @@ function generate_prop_list_from_image() {
     LC_ALL=C sort -u "$output_list_tmp" >"$output_list"
 
     # Clean-up
+    rm -rf "$image_dir"
     rm -f "$output_list_tmp"
 }
 
