@@ -74,8 +74,8 @@ function setup_vendor_deps() {
     export JAVA="$JDK_BINARIES_LOCATION"/java
     export APKTOOL="$COMMON_BINARIES_LOCATION"/apktool/apktool.jar
 
-    for version in 0_8 0_9 0_17_2; do
-        export PATCHELF_${version}="$BINARIES_LOCATION"/patchelf-"${version}"
+    for VERSION in 0_8 0_9 0_17_2; do
+        export PATCHELF_${VERSION}="$BINARIES_LOCATION"/patchelf-"${VERSION}"
     done
 
     if [ -z "$PATCHELF_VERSION" ]; then
@@ -83,8 +83,8 @@ function setup_vendor_deps() {
     fi
 
     if [ -z "$PATCHELF" ]; then
-        local patchelf_variable="PATCHELF_${PATCHELF_VERSION}"
-        export PATCHELF=${!patchelf_variable}
+        local PATCHELF_VARIABLE="PATCHELF_${PATCHELF_VERSION}"
+        export PATCHELF=${!PATCHELF_VARIABLE}
     fi
 }
 
@@ -458,7 +458,6 @@ function write_package_shared_libs() {
 # after the modules are categorized.
 #
 function write_blueprint_packages() {
-
     local CLASS="$1"
     local PARTITION="$2"
     local EXTRA="$3"
@@ -2240,119 +2239,119 @@ function extract_firmware() {
 }
 
 function extract_img_data() {
-    local image_file="$1"
-    local out_dir="$2"
-    local logFile="$EXTRACT_TMP_DIR/debugfs.log"
+    local IMAGE_FILE="$1"
+    local OUT_DIR="$2"
+    local LOG_FILE="$EXTRACT_TMP_DIR/debugfs.log"
 
-    if [ ! -d "$out_dir" ]; then
-        mkdir -p "$out_dir"
+    if [ ! -d "$OUT_DIR" ]; then
+        mkdir -p "$OUT_DIR"
     fi
 
-    debugfs -R 'ls -p' "$image_file" 2>/dev/null | cut -d '/' -f6 | while read -r entry; do
-        debugfs -R "rdump \"$entry\" \"$out_dir\"" "$image_file" >>"$logFile" 2>&1 || {
-            echo "[-] Failed to extract data from '$image_file'"
+    debugfs -R 'ls -p' "$IMAGE_FILE" 2>/dev/null | cut -d '/' -f6 | while read -r ENTRY; do
+        debugfs -R "rdump \"$ENTRY\" \"$OUT_DIR\"" "$IMAGE_FILE" >>"$LOG_FILE" 2>&1 || {
+            echo "[-] Failed to extract data from '$IMAGE_FILE'"
             abort 1
         }
     done
 
-    local symlink_err="rdump: Attempt to read block from filesystem resulted in short read while reading symlink"
-    if grep -Fq "$symlink_err" "$logFile"; then
-        echo "[-] Symlinks have not been properly processed from $image_file"
+    local SYMLINK_ERR="rdump: Attempt to read block from filesystem resulted in short read while reading symlink"
+    if grep -Fq "$SYMLINK_ERR" "$LOG_FILE"; then
+        echo "[-] Symlinks have not been properly processed from $IMAGE_FILE"
         echo "[!] You might not have a compatible debugfs version"
         abort 1
     fi
 }
 
 function array_contains() {
-    local element
-    for element in "${@:2}"; do [[ "$element" == "$1" ]] && return 0; done
+    local ELEMENT
+    for ELEMENT in "${@:2}"; do [[ "$ELEMENT" == "$1" ]] && return 0; done
     return 1
 }
 
 function generate_prop_list_from_image() {
-    local image_file="$1"
-    local image_dir="$EXTRACT_TMP_DIR/image-temp"
-    local output_list="$2"
-    local output_list_tmp="$EXTRACT_TMP_DIR/_proprietary-blobs.txt"
-    local -n skipped_files="$3"
-    local component="$4"
-    local partition="$component"
+    local IMAGE_FILE="$1"
+    local IMAGE_DIR="$EXTRACT_TMP_DIR/image-temp"
+    local OUTPUT_LIST="$2"
+    local OUTPUT_LIST_TMP="$EXTRACT_TMP_DIR/_proprietary-blobs.txt"
+    local -n SKIPPED_FILES="$3"
+    local COMPONENT="$4"
+    local PARTITION="$COMPONENT"
 
-    mkdir -p "$image_dir"
+    mkdir -p "$IMAGE_DIR"
 
-    if [ -f "$EXTRACT_TMP_DIR"/super_dump/"$image_file" ]; then
-        image_file="$EXTRACT_TMP_DIR"/super_dump/"$image_file"
-    elif [ -f "$EXTRACT_TMP_DIR"/"$image_file" ]; then
-        image_file="$EXTRACT_TMP_DIR"/"$image_file"
-    elif [ -f "$SRC"/super_dump/"$image_file" ]; then
-        image_file="$SRC"/super_dump/"$image_file"
-    elif [ -f "$SRC"/"$image_file" ]; then
-        image_file="$SRC"/"$image_file"
-    elif [ ! -f "$image_file" ]; then
-        colored_echo yellow "$image_file not found, skipping $output_list regen"
+    if [ -f "$EXTRACT_TMP_DIR"/super_dump/"$IMAGE_FILE" ]; then
+        IMAGE_FILE="$EXTRACT_TMP_DIR"/super_dump/"$IMAGE_FILE"
+    elif [ -f "$EXTRACT_TMP_DIR"/"$IMAGE_FILE" ]; then
+        IMAGE_FILE="$EXTRACT_TMP_DIR"/"$IMAGE_FILE"
+    elif [ -f "$SRC"/super_dump/"$IMAGE_FILE" ]; then
+        IMAGE_FILE="$SRC"/super_dump/"$IMAGE_FILE"
+    elif [ -f "$SRC"/"$IMAGE_FILE" ]; then
+        IMAGE_FILE="$SRC"/"$IMAGE_FILE"
+    elif [ ! -f "$IMAGE_FILE" ]; then
+        colored_echo yellow "$IMAGE_FILE not found, skipping $OUTPUT_LIST regen"
         return 0
     fi
 
-    if [[ $(file -b "$image_file") == EROFS* ]]; then
-        fsck.erofs --extract="$image_dir" "$image_file"
-    elif [[ $(file -b "$image_file") == Linux* ]]; then
-        extract_img_data "$image_file" "$image_dir"
-    elif [[ $(file -b "$image_file") == Android* ]]; then
-        "$SIMG2IMG" "$image_file" "$image_dir"/"$(basename "$image_file").raw"
-        extract_img_data "$image_dir"/"$(basename "$image_file").raw" "$image_dir"
-        rm "$image_dir"/"$(basename "$image_file").raw"
+    if [[ $(file -b "$IMAGE_FILE") == EROFS* ]]; then
+        fsck.erofs --extract="$IMAGE_DIR" "$IMAGE_FILE"
+    elif [[ $(file -b "$IMAGE_FILE") == Linux* ]]; then
+        extract_img_data "$IMAGE_FILE" "$IMAGE_DIR"
+    elif [[ $(file -b "$IMAGE_FILE") == Android* ]]; then
+        "$SIMG2IMG" "$IMAGE_FILE" "$IMAGE_DIR"/"$(basename "$IMAGE_FILE").raw"
+        extract_img_data "$IMAGE_DIR"/"$(basename "$IMAGE_FILE").raw" "$IMAGE_DIR"
+        rm "$IMAGE_DIR"/"$(basename "$IMAGE_FILE").raw"
     else
-        colored_echo yellow "Unsupported $image_file filesystem, skipping $output_list regen"
+        colored_echo yellow "Unsupported $IMAGE_FILE filesystem, skipping $OUTPUT_LIST regen"
         return 0
     fi
 
-    if [ -z "$component" ]; then
-        partition="vendor"
-    elif [[ "$component" == "carriersettings" ]]; then
-        partition="product"
+    if [ -z "$COMPONENT" ]; then
+        PARTITION="vendor"
+    elif [[ "$COMPONENT" == "carriersettings" ]]; then
+        PARTITION="product"
     fi
 
-    echo "# All blobs below are extracted from the release mentioned in proprietary-files.txt" >"$output_list_tmp"
+    echo "# All blobs below are extracted from the release mentioned in proprietary-files.txt" >"$OUTPUT_LIST_TMP"
 
-    find "$image_dir" -not -type d | sed "s#^$image_dir/##" | while read -r FILE; do
-        if [[ "$component" == "carriersettings" ]] && ! prefix_match_file "etc/CarrierSettings" "$FILE"; then
+    find "$IMAGE_DIR" -not -type d | sed "s#^$IMAGE_DIR/##" | while read -r FILE; do
+        if [[ "$COMPONENT" == "carriersettings" ]] && ! prefix_match_file "etc/CarrierSettings" "$FILE"; then
             continue
         fi
         if suffix_match_file ".odex" "$FILE" || suffix_match_file ".vdex" "$FILE"; then
             continue
         fi
         # Skip device defined skipped files since they will be re-generated at build time
-        if array_contains "$FILE" "${skipped_files[@]}"; then
+        if array_contains "$FILE" "${SKIPPED_FILES[@]}"; then
             continue
         fi
-        echo "$partition/$FILE" >>"$output_list_tmp"
+        echo "$PARTITION/$FILE" >>"$OUTPUT_LIST_TMP"
     done
 
     # Sort merged file with all lists
-    LC_ALL=C sort -u "$output_list_tmp" >"$output_list"
+    LC_ALL=C sort -u "$OUTPUT_LIST_TMP" >"$OUTPUT_LIST"
 
     # Clean-up
-    rm -rf "$image_dir"
-    rm -f "$output_list_tmp"
+    rm -rf "$IMAGE_DIR"
+    rm -f "$OUTPUT_LIST_TMP"
 }
 
 function colored_echo() {
     IFS=" "
-    local color=$1
+    local COLOR=$1
     shift
-    if ! [[ $color =~ ^[0-9]$ ]]; then
-        case $(echo "$color" | tr '[:upper:]' '[:lower:]') in
-            black) color=0 ;;
-            red) color=1 ;;
-            green) color=2 ;;
-            yellow) color=3 ;;
-            blue) color=4 ;;
-            magenta) color=5 ;;
-            cyan) color=6 ;;
-            white | *) color=7 ;; # white or invalid color
+    if ! [[ $COLOR =~ ^[0-9]$ ]]; then
+        case $(echo "$COLOR" | tr '[:upper:]' '[:lower:]') in
+            black) COLOR=0 ;;
+            red) COLOR=1 ;;
+            green) COLOR=2 ;;
+            yellow) COLOR=3 ;;
+            blue) COLOR=4 ;;
+            magenta) COLOR=5 ;;
+            cyan) COLOR=6 ;;
+            white | *) COLOR=7 ;; # white or invalid color
         esac
     fi
-    if [ -t 1 ]; then tput setaf "$color"; fi
+    if [ -t 1 ]; then tput setaf "$COLOR"; fi
     printf '%s\n' "$*"
     if [ -t 1 ]; then tput sgr0; fi
 }
