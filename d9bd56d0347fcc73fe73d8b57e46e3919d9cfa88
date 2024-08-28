@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dfa813aa_689a49ec",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32620
+      },
+      "writtenOn": "2024-08-28T16:36:08Z",
+      "side": 1,
+      "message": "Fixes oat2dex issues while trying to extract Huawei P20 Lite\u0027s stock ROM.",
+      "revId": "d9bd56d0347fcc73fe73d8b57e46e3919d9cfa88",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
