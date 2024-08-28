@@ -1455,9 +1455,29 @@ function append_firmware_calls_to_makefiles() {
 }
 
 #
+# get_file_helper:
+#
+# $1: input file/folder (exact path)
+# $2: target file/folder
+# $3: source of the file (must be local folder)
+#
+# Silently extracts the input file to defined target if normal file, or calls get_file if symlink.
+# Returns success if file exists
+#
+function get_file_helper() {
+    local SRC="$3"
+    if [[ -L "$1" ]]; then
+        # Always resolve symlink path to be able to handle /system/odm etc in relative and absolute symlinks
+        get_file "$(readlink -nm "$1")" "$2" "$SRC"
+    else
+        cp -r "$1" "$2"
+    fi
+}
+
+#
 # get_file:
 #
-# $1: input file
+# $1: input file/folder
 # $2: target file/folder
 # $3: source of the file (can be "adb" or a local folder)
 #
@@ -1477,12 +1497,12 @@ function get_file() {
     else
         for SOURCE in "${SOURCES[@]}"; do
             if [ -f "$SRC/$SOURCE" ] || [ -d "$SRC/$SOURCE" ]; then
-                cp -Lr "$SRC/$SOURCE" "$2" 2>/dev/null && return 0
+                get_file_helper "$SRC/$SOURCE" "$2" 2>/dev/null && return 0
             fi
         done
 
         # try /vendor/odm for devices without /odm partition
-        [[ "$1" == /system/odm/* ]] && cp -Lr "$SRC/vendor/${1#/system}" "$2" 2>/dev/null && return 0
+        [[ "$1" == /system/odm/* ]] && get_file_helper "$SRC/vendor/${1#/system}" "$2" 2>/dev/null && return 0
 
         return 1
     fi
