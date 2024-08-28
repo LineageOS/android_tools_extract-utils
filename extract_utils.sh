@@ -2355,3 +2355,28 @@ function colored_echo() {
     printf '%s\n' "$*"
     if [ -t 1 ]; then tput sgr0; fi
 }
+
+# Helper functions to easily apply modifications to automatically generated vendor blob lists
+function set_as_module() {
+    sed -i "s|${1}$|-${1}|g" "${2}"
+}
+
+function set_disable_checkelf() {
+    sed -i "s|${1}$|${1};DISABLE_CHECKELF|g" "${2}"
+}
+
+function set_module() {
+    sed -i "s|${1}$|${1};MODULE=${2}|g" "${3}"
+}
+
+function set_presigned() {
+    sed -i "s|${1}$|${1};PRESIGNED|g" "${2}"
+}
+
+function set_required() {
+    sed -i "s|${1}$|${1};REQUIRED=${2}|g" "${3}"
+}
+
+function set_symlink() {
+    sed -i "s|${1}$|${1};SYMLINK=${2}|g" "${3}"
+}
