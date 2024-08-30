@@ -117,7 +117,7 @@ if [ -z "${ONLY_FIRMWARE}" ]; then
     extract_carriersettings
 fi
 
-if [ -z "${SECTION}" ]; then
+if [ -z "${SECTION}" ] && [ -z "${ONLY_TARGET}" ]; then
     extract_firmware "${MY_DIR}/proprietary-firmware.txt" "${SRC}"
 fi
 
