@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db4d0da0_df9dbb96",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-08-30T18:16:56Z",
+      "side": 1,
+      "message": "What argument?",
+      "revId": "6cc864154b8226358cd25bc24b3342f957af7c8b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d4e786da_072cb490",
+        "filename": "templates/single-device/extract-files.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-08-30T18:16:56Z",
+      "side": 1,
+      "message": "Doesn\u0027t make sense in this template (single-device)",
+      "revId": "6cc864154b8226358cd25bc24b3342f957af7c8b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
