@@ -472,6 +472,7 @@ function write_blueprint_packages() {
     local OVERRIDEPKG=
     local REQUIREDPKG=
     local DISABLE_CHECKELF=
+    local ALLOW_UNDEFINED_SYMBOLS=
     local GENERATE_DEPS=
 
     if [ -z "$EXTRA" ]; then
@@ -542,6 +543,7 @@ function write_blueprint_packages() {
 
         # Allow overriding module name
         STEM=
+        ALLOW_UNDEFINED_SYMBOLS=
         if [ "$TARGET_ENABLE_CHECKELF" == "true" ]; then
             DISABLE_CHECKELF=
             GENERATE_DEPS="true"
@@ -554,6 +556,8 @@ function write_blueprint_packages() {
                 PKGNAME=${ARG#*=}
             elif [[ "$ARG" == "DISABLE_CHECKELF" ]]; then
                 DISABLE_CHECKELF="true"
+            elif [[ "$ARG" == "ALLOW_UNDEFINED_SYMBOLS" ]]; then
+                ALLOW_UNDEFINED_SYMBOLS="true"
             fi
         done
 
@@ -592,6 +596,8 @@ function write_blueprint_packages() {
             printf '\tcompile_multilib: "%s",\n' "$EXTRA"
             if [ -n "$DISABLE_CHECKELF" ]; then
                 printf '\tcheck_elf_files: false,\n'
+            elif [ -n "$ALLOW_UNDEFINED_SYMBOLS" ]; then
+                printf '\tallow_undefined_symbols: true,\n'
             fi
         elif [ "$CLASS" = "RFSA" ]; then
             printf 'prebuilt_rfsa {\n'
@@ -687,6 +693,8 @@ function write_blueprint_packages() {
                 fi
                 if [ -n "$DISABLE_CHECKELF" ]; then
                     printf '\tcheck_elf_files: false,\n'
+                elif [ -n "$ALLOW_UNDEFINED_SYMBOLS" ]; then
+                    printf '\tallow_undefined_symbols: true,\n'
                 fi
                 printf '\tstrip: {\n'
                 printf '\t\tnone: true,\n'
