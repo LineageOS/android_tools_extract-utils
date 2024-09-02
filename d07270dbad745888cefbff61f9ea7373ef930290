@@ -16,6 +16,24 @@
       "message": ".rc is already handled somewhere else?",
       "revId": "d07270dbad745888cefbff61f9ea7373ef930290",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "638eaf8c_0d93db70",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2024-09-02T17:26:45Z",
+      "side": 1,
+      "message": ".rc is not built in bp yet. We can switch all */etc/ modules to use bp instead of copy files at some point in the future",
+      "parentUuid": "17dd7f4c_2ed2db61",
+      "revId": "d07270dbad745888cefbff61f9ea7373ef930290",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
