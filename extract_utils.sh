@@ -452,9 +452,13 @@ function write_package_shared_libs() {
             lib_to_package_fixup "$LIB" "$PARTITION" "$FILE" || echo "$LIB"
         done <<<"$LIBS"
     )
-    local PACKAGES_LIST=$(echo "$PACKAGES" | sed 's/\(.\+\)/"\1",/g' | tr '\n' ' ')
+    local PACKAGES_LIST=$(echo "$PACKAGES" | sed 's/\(.\+\)/"\1",/g' | sed '$ s/,$//')
 
-    printf '\t\t\tshared_libs: [%s],\n' "$PACKAGES_LIST"
+    printf '\t\t\tshared_libs: [\n'
+    while IFS= read -r LINE; do
+        printf '\t\t\t\t%s\n' "$LINE"
+    done <<<"$PACKAGES_LIST"
+    printf '\t\t\t],\n'
 }
 
 #
