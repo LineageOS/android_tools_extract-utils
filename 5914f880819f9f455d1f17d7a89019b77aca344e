@@ -85,6 +85,24 @@
       "parentUuid": "a9d8f392_a99c3248",
       "revId": "5914f880819f9f455d1f17d7a89019b77aca344e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8aff0529_d7240570",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-09-02T17:13:09Z",
+      "side": 1,
+      "message": "Disabling everything also disables DT_NEEDED checks",
+      "parentUuid": "fbb064a6_47a94d74",
+      "revId": "5914f880819f9f455d1f17d7a89019b77aca344e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ],
   "submitRequirementResults": []
