@@ -1899,6 +1899,10 @@ function prepare_images() {
 
         echo "Unpacking super.img"
         "$SIMG2IMG" "${SUPERIMGS[@]}" "$DUMPDIR"/super.raw
+        # If simg2img failed, then the given super partition is likely already unsparsed
+        if [ $? -ne 0 ]; then
+            ln -sf "${SUPERIMGS[@]}" "$DUMPDIR"/super.raw
+        fi
 
         for PARTITION in "system" "odm" "product" "system_ext" "vendor"; do
             echo "Preparing $PARTITION"
