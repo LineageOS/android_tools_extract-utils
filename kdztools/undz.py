@@ -1016,7 +1016,7 @@ class DZFileTools:
                                 if slice.getIndex() == None:
                                     slice = self.dz_file.getSlice(idx)
 
-                        name = slice.getSliceName() + ".image"
+                        name = slice.getSliceName() + ".img"
                         file = io.FileIO(name, "wb")
                         self.dz_file.extractSlice(file, name, cur)
                         file.close()
