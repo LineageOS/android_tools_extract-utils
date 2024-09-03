@@ -103,6 +103,24 @@
       "message": "Well those would be nice as an extra, but I can enable elf checks without any of those changes, which means the elf checks don\u0027t run against those libs anyway",
       "revId": "2bf7718f491aa0935010f51c3f3e81cd01c30f37",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fa27c8a_35b7ffa1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-09-03T01:44:26Z",
+      "side": 1,
+      "message": "Would it not? I thought rfsa was still doing some checks at least. Would expect dsp at least to match. But perhaps not.",
+      "parentUuid": "506c9a7d_f980e14a",
+      "revId": "2bf7718f491aa0935010f51c3f3e81cd01c30f37",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
