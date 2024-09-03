@@ -23,7 +23,7 @@ import os
 import sys
 import io
 import zlib
-import zstandard as zstd
+import zstd
 import argparse
 import hashlib
 from binascii import crc32, b2a_hex
@@ -215,8 +215,7 @@ class UNDZChunk(dz.DZChunk, UNDZUtils):
 
                 else:
                     # decompress with zstandard
-                    dctx = zstd.ZstdDecompressor()
-                    buf = dctx.decompress(zdata, max_output_size=200000000)
+                    buf = zstd.ZSTD_uncompress(zdata)
     
                 crc = crc32(buf) & 0xFFFFFFFF
 
