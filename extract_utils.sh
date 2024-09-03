@@ -2061,12 +2061,17 @@ function extract() {
         local SRC_FILE=
         local DST_FILE=
         local IS_PRODUCT_PACKAGE=false
+        local TRY_SRC_FILE_FIRST=false
 
         # Note: this relies on the fact that the ${SRC_LIST[@]} array
         # contains first ${PRODUCT_COPY_FILES_SRC[@]}, then ${PRODUCT_PACKAGES_SRC[@]}.
         if [ "${i}" -gt "${PRODUCT_COPY_FILES_COUNT}" ]; then
             IS_PRODUCT_PACKAGE=true
         fi
+
+        for arg in "${ARGS[@]}"; do
+            [ "${arg}" = "TRYSRCFIRST" ] && TRY_SRC_FILE_FIRST=true
+        done
 
         OUTPUT_DIR="${OUTPUT_ROOT}"
         TMP_DIR="${OUTPUT_TMP}"
@@ -2113,8 +2118,17 @@ function extract() {
             fi
         else
             local FOUND=false
-            # Try custom target first.
-            for CANDIDATE in "${DST_FILE}" "${SRC_FILE}"; do
+            local FIRST_CANDIDATE=
+            local SECOND_CANDIDATE=
+            if $TRY_SRC_FILE_FIRST; then
+                FIRST_CANDIDATE="$SRC_FILE"
+                SECOND_CANDIDATE="$DST_FILE"
+            else
+                # Try custom target first by default.
+                FIRST_CANDIDATE="$DST_FILE"
+                SECOND_CANDIDATE="$SRC_FILE"
+            fi
+            for CANDIDATE in "${FIRST_CANDIDATE}" "${SECOND_CANDIDATE}"; do
                 get_file "${CANDIDATE}" "${VENDOR_REPO_FILE}" "${EXTRACT_SRC}" && {
                     FOUND=true
                     break
