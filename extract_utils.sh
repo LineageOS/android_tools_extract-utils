@@ -1778,6 +1778,26 @@ function vendor_imports() {
 }
 
 #
+# extract_kdz:
+#
+# Positional parameters:
+# $1: path to manufacturer KDZ package
+# $2: Directory to dump to
+#
+function extract_kdz() {
+    KDZTOOLS_DIR="$ANDROID_ROOT/tools/extract-utils/kdztools"
+    KDZ_EXTRACT_DIR="$EXTRACT_TMP_DIR/kdz_extracted"
+    if [ ! -d "$KDZ_EXTRACT_DIR" ]; then
+        python "$KDZTOOLS_DIR"/unkdz.py -f "${1}" -d "${KDZ_EXTRACT_DIR}" -x
+    fi
+    find "${KDZ_EXTRACT_DIR}" -name "*.dz" -exec python "$KDZTOOLS_DIR"/undz.py -f {} -s -d "${2}" \;
+
+    # Clean up
+    rm -rf "${2}"/*_b.img
+    for i in "${2}"/*_a.img; do mv -- "${i}" "${i/_a.img/.img}"; done
+}
+
+#
 # prepare_images:
 #
 # Positional parameters:
@@ -1795,7 +1815,41 @@ function prepare_images() {
         return 0
     fi
 
-    if [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
+    # Try KDZ first
+    if [ -f "$SRC" ] && [ "${SRC##*.}" == "kdz" ]; then
+        local BASENAME=$(basename "$SRC")
+        local DIRNAME=$(dirname "$SRC")
+        DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
+        KEEP_DUMP_DIR="$DIRNAME"/"${BASENAME%.kdz}"
+        if [ "$KEEP_DUMP" == "true" ] || [ "$KEEP_DUMP" == "1" ]; then
+            rm -rf "$KEEP_DUMP_DIR"
+            mkdir "$KEEP_DUMP_DIR"
+        fi
+
+        # Check if we're working with the same kdz that was passed last time.
+        # If so, let's just use what's already extracted.
+        MD5=$(md5sum "$SRC" | awk '{print $1}')
+        OLDMD5=""
+        if [ -f "$DUMPDIR/zipmd5.txt" ]; then
+            OLDMD5=$(cat "$DUMPDIR/zipmd5.txt")
+        fi
+
+        if [ "$MD5" != "$OLDMD5" ]; then
+            rm -rf "$DUMPDIR"
+            mkdir "$DUMPDIR"
+            extract_kdz "$SRC" "$DUMPDIR"
+            echo "$MD5" >"$DUMPDIR"/zipmd5.txt
+
+            for PARTITION in "system" "odm" "product" "system_ext" "vendor"; do
+                if [ -a "$DUMPDIR"/"$PARTITION".img ]; then
+                    extract_img_data "$DUMPDIR"/"$PARTITION".img "$DUMPDIR"/"$PARTITION"/
+                fi
+            done
+        fi
+
+        SRC="$DUMPDIR"
+
+    elif [ -f "$SRC" ] && [ "${SRC##*.}" == "zip" ]; then
         local BASENAME=$(basename "$SRC")
         local DIRNAME=$(dirname "$SRC")
         DUMPDIR="$EXTRACT_TMP_DIR"/system_dump
