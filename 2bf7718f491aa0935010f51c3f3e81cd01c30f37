@@ -51,6 +51,23 @@
       "message": "Looks like this also fixes qcom pixels, which have similar libs in vendor/dsp/adsp/ and vendor/dsp/cdsp/",
       "revId": "2bf7718f491aa0935010f51c3f3e81cd01c30f37",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6ef8590_3b788e9c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-09-03T01:39:31Z",
+      "side": 1,
+      "message": "https://android.googlesource.com/platform/system/chre/+/HEAD/doc/nanoapp_overview.md#Example-AOSP-Nanoapps\nMmm, so this says to use prebuilt_firmware or prebuilt_dsp. A quick glance at docs on those doesn\u0027t make it clear how that\u0027s supposed to end up in the appropriate location, though.",
+      "revId": "2bf7718f491aa0935010f51c3f3e81cd01c30f37",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
