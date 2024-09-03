@@ -408,6 +408,20 @@ function lib_to_package_fixup_proto_3_9_1() {
     esac
 }
 
+function lib_to_package_fixup_proto_suffix() {
+    case "$1" in
+        libprotobuf-cpp-lite-21.12)
+            echo "libprotobuf-cpp-lite"
+            ;;
+            libprotobuf-cpp-full-21.12)
+            echo "libprotobuf-cpp-full"
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
 #
 # lib_to_package_fixup
 #
@@ -420,7 +434,8 @@ function lib_to_package_fixup_proto_3_9_1() {
 #
 function lib_to_package_fixup() {
     lib_to_package_fixup_clang_rt_ubsan_standalone "$1" ||
-        lib_to_package_fixup_proto_3_9_1 "$1"
+        lib_to_package_fixup_proto_3_9_1 "$1" ||
+        lib_to_package_fixup_proto_suffix "$1"
 }
 
 #
