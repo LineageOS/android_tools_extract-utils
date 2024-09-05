@@ -16,6 +16,24 @@
       "message": "Add the version to the name of the function like the other one",
       "revId": "d8a23db815902383599e61ec0468d6d1e195f5e8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2f82c77_5eb8f820",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29415
+      },
+      "writtenOn": "2024-09-05T16:34:43Z",
+      "side": 1,
+      "message": "Wanted to keep the name of the function generic so we don\u0027t break device trees when we upgrade this function on version upgrades. This version should reflect whatever the latest in the current version of Android is.",
+      "parentUuid": "17e911de_25b34c3d",
+      "revId": "d8a23db815902383599e61ec0468d6d1e195f5e8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
