@@ -34,6 +34,24 @@
       "parentUuid": "17e911de_25b34c3d",
       "revId": "d8a23db815902383599e61ec0468d6d1e195f5e8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "23907e07_bb52e7d3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-09-05T16:40:35Z",
+      "side": 1,
+      "message": "If you ever change the version being fixed up here you will break devices that are still using stock blobs from the past Android version. No?",
+      "parentUuid": "e2f82c77_5eb8f820",
+      "revId": "d8a23db815902383599e61ec0468d6d1e195f5e8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
