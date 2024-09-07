@@ -817,13 +817,16 @@ function write_product_packages() {
 
     local T_O_LIB32=$(prefix_match "odm/lib/")
     local T_O_LIB64=$(prefix_match "odm/lib64/")
+    local O_RFSA=$(prefix_match "odm/lib/rfsa/")
     local O_MULTILIBS=$(do_comm -12 "$T_O_LIB32" "$T_O_LIB64")
     local O_LIB32=$(do_comm -23 "$T_O_LIB32" "$O_MULTILIBS")
+    local O_LIB32=$(grep -v 'rfsa/' <(echo "$O_LIB32"))
     local O_LIB64=$(do_comm -23 "$T_O_LIB64" "$O_MULTILIBS")
     {
         write_blueprint_packages "SHARED_LIBRARIES" "odm" "both" "$O_MULTILIBS"
         write_blueprint_packages "SHARED_LIBRARIES" "odm" "32" "$O_LIB32"
         write_blueprint_packages "SHARED_LIBRARIES" "odm" "64" "$O_LIB64"
+        write_blueprint_packages "RFSA" "odm" "" "$O_RFSA"
     } >>"$ANDROIDBP"
 
     # APEX
