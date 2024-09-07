@@ -452,13 +452,13 @@ function write_package_shared_libs() {
             lib_to_package_fixup "$LIB" "$PARTITION" "$FILE" || echo "$LIB"
         done <<<"$LIBS"
     )
-    local PACKAGES_LIST=$(echo "$PACKAGES" | sed 's/\(.\+\)/"\1",/g' | sed '$ s/,$//')
+    local PACKAGES_LIST=$(echo "$PACKAGES" | sed 's/\(.\+\)/"\1",/g')
 
-    printf '\t\t\tshared_libs: [\n'
+    printf '            shared_libs: [\n'
     while IFS= read -r LINE; do
-        printf '\t\t\t\t%s\n' "$LINE"
+        printf '                %s\n' "$LINE"
     done <<<"$PACKAGES_LIST"
-    printf '\t\t\t],\n'
+    printf '            ],\n'
 }
 
 #
@@ -587,95 +587,95 @@ function write_blueprint_packages() {
 
         if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf 'cc_prebuilt_library_shared {\n'
-            printf '\tname: "%s",\n' "$PKGNAME"
+            printf '    name: "%s",\n' "$PKGNAME"
             if [ -n "$STEM" ]; then
-                printf '\tstem: "%s",\n' "$STEM"
+                printf '    stem: "%s",\n' "$STEM"
             fi
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tstrip: {\n'
-            printf '\t\tnone: true,\n'
-            printf '\t},\n'
-            printf '\ttarget: {\n'
+            printf '    owner: "%s",\n' "$VENDOR"
+            printf '    strip: {\n'
+            printf '        none: true,\n'
+            printf '    },\n'
+            printf '    target: {\n'
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "32" ]; then
-                printf '\t\t%s: {\n' $(elf_format_android "$ANDROID_ROOT/$OUTDIR/$SRC/lib/$FILE")
-                printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
+                printf '        %s: {\n' $(elf_format_android "$ANDROID_ROOT/$OUTDIR/$SRC/lib/$FILE")
+                printf '            srcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "lib" "$FILE" "$PARTITION"
                 fi
-                printf '\t\t},\n'
+                printf '        },\n'
             fi
 
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "64" ]; then
-                printf '\t\t%s: {\n' $(elf_format_android "$ANDROID_ROOT/$OUTDIR/$SRC/lib64/$FILE")
-                printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
+                printf '        %s: {\n' $(elf_format_android "$ANDROID_ROOT/$OUTDIR/$SRC/lib64/$FILE")
+                printf '            srcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "lib64" "$FILE" "$PARTITION"
                 fi
-                printf '\t\t},\n'
+                printf '        },\n'
             fi
-            printf '\t},\n'
-            printf '\tcompile_multilib: "%s",\n' "$EXTRA"
+            printf '    },\n'
+            printf '    compile_multilib: "%s",\n' "$EXTRA"
             if [ -n "$DISABLE_CHECKELF" ]; then
-                printf '\tcheck_elf_files: false,\n'
+                printf '    check_elf_files: false,\n'
             fi
         elif [ "$CLASS" = "RFSA" ]; then
             printf 'prebuilt_rfsa {\n'
-            printf '\tname: "%s",\n' "$PKGNAME"
-            printf '\tfilename: "%s",\n' "$BASENAME"
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
+            printf '    name: "%s",\n' "$PKGNAME"
+            printf '    filename: "%s",\n' "$BASENAME"
+            printf '    owner: "%s",\n' "$VENDOR"
+            printf '    src: "%s/%s",\n' "$SRC" "$FILE"
         elif [ "$CLASS" = "APEX" ]; then
             printf 'prebuilt_apex {\n'
-            printf '\tname: "%s",\n' "$PKGNAME"
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
-            printf '\tfilename: "%s",\n' "$FILE"
+            printf '    name: "%s",\n' "$PKGNAME"
+            printf '    owner: "%s",\n' "$VENDOR"
+            printf '    src: "%s/%s",\n' "$SRC" "$FILE"
+            printf '    filename: "%s",\n' "$FILE"
         elif [ "$CLASS" = "APPS" ]; then
             printf 'android_app_import {\n'
-            printf '\tname: "%s",\n' "$PKGNAME"
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tapk: "%s/%s",\n' "$SRC" "$FILE"
+            printf '    name: "%s",\n' "$PKGNAME"
+            printf '    owner: "%s",\n' "$VENDOR"
+            printf '    apk: "%s/%s",\n' "$SRC" "$FILE"
             USE_PLATFORM_CERTIFICATE="true"
             for ARG in "${ARGS[@]}"; do
                 if [ "$ARG" = "PRESIGNED" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
-                    printf '\tpreprocessed: true,\n'
-                    printf '\tpresigned: true,\n'
+                    printf '    preprocessed: true,\n'
+                    printf '    presigned: true,\n'
                 elif [ "$ARG" = "SKIPAPKCHECKS" ]; then
-                    printf '\tskip_preprocessed_apk_checks: true,\n'
+                    printf '    skip_preprocessed_apk_checks: true,\n'
                 elif [[ "$ARG" =~ "OVERRIDES" ]]; then
                     OVERRIDEPKG=${ARG#*=}
                     OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
-                    printf '\toverrides: ["%s"],\n' "$OVERRIDEPKG"
+                    printf '    overrides: ["%s"],\n' "$OVERRIDEPKG"
                 elif [[ "$ARG" =~ "REQUIRED" ]]; then
                     REQUIREDPKG=${ARG#*=}
                     REQUIRED_PACKAGES_LIST+="$REQUIREDPKG,"
-                    printf '\trequired: ["%s"],\n' "${REQUIREDPKG//,/\", \"}"
+                    printf '    required: ["%s"],\n' "${REQUIREDPKG//,/\", \"}"
                 elif [[ "$ARG" =~ "SYMLINK" ]]; then
                     continue
                 elif [ -n "$ARG" ]; then
                     USE_PLATFORM_CERTIFICATE="false"
-                    printf '\tcertificate: "%s",\n' "$ARG"
+                    printf '    certificate: "%s",\n' "$ARG"
                 fi
             done
             if [ "$USE_PLATFORM_CERTIFICATE" = "true" ]; then
-                printf '\tcertificate: "platform",\n'
+                printf '    certificate: "platform",\n'
             fi
         elif [ "$CLASS" = "JAVA_LIBRARIES" ]; then
             printf 'dex_import {\n'
-            printf '\tname: "%s",\n' "$PKGNAME"
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tjars: ["%s/%s"],\n' "$SRC" "$FILE"
+            printf '    name: "%s",\n' "$PKGNAME"
+            printf '    owner: "%s",\n' "$VENDOR"
+            printf '    jars: ["%s/%s"],\n' "$SRC" "$FILE"
         elif [ "$CLASS" = "ETC" ]; then
             if [ "$EXTENSION" = "xml" ]; then
                 printf 'prebuilt_etc_xml {\n'
             else
                 printf 'prebuilt_etc {\n'
             fi
-            printf '\tname: "%s",\n' "$PKGNAME"
-            printf '\towner: "%s",\n' "$VENDOR"
-            printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
-            printf '\tfilename_from_src: true,\n'
+            printf '    name: "%s",\n' "$PKGNAME"
+            printf '    owner: "%s",\n' "$VENDOR"
+            printf '    src: "%s/%s",\n' "$SRC" "$FILE"
+            printf '    filename_from_src: true,\n'
         elif [ "$CLASS" = "EXECUTABLES" ]; then
             local FILE_PATH="$ANDROID_ROOT/$OUTDIR/$SRC/$FILE"
             local ELF_FORMAT=$(elf_format_android "$FILE_PATH")
@@ -689,70 +689,70 @@ function write_blueprint_packages() {
             else
                 printf 'cc_prebuilt_binary {\n'
             fi
-            printf '\tname: "%s",\n' "$PKGNAME"
+            printf '    name: "%s",\n' "$PKGNAME"
             if [ -n "$STEM" ]; then
-                printf '\tstem: "%s",\n' "$STEM"
+                printf '    stem: "%s",\n' "$STEM"
             fi
-            printf '\towner: "%s",\n' "$VENDOR"
+            printf '    owner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
-                printf '\ttarget: {\n'
-                printf '\t\t%s: {\n' "$ELF_FORMAT"
-                printf '\t\t\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
+                printf '    target: {\n'
+                printf '        %s: {\n' "$ELF_FORMAT"
+                printf '            srcs: ["%s/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "" "$FILE" "$PARTITION"
                 fi
-                printf '\t\t},\n'
-                printf '\t},\n'
+                printf '        },\n'
+                printf '    },\n'
                 if [[ "$ELF_FORMAT" =~ "64" ]]; then
-                    printf '\tcompile_multilib: "%s",\n' "64"
+                    printf '    compile_multilib: "%s",\n' "64"
                 else
-                    printf '\tcompile_multilib: "%s",\n' "32"
+                    printf '    compile_multilib: "%s",\n' "32"
                 fi
                 if [ -n "$DISABLE_CHECKELF" ]; then
-                    printf '\tcheck_elf_files: false,\n'
+                    printf '    check_elf_files: false,\n'
                 fi
-                printf '\tstrip: {\n'
-                printf '\t\tnone: true,\n'
-                printf '\t},\n'
-                printf '\tprefer: true,\n'
+                printf '    strip: {\n'
+                printf '        none: true,\n'
+                printf '    },\n'
+                printf '    prefer: true,\n'
             else
-                printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
-                printf '\tfilename: "%s",\n' "$BASENAME"
+                printf '    src: "%s/%s",\n' "$SRC" "$FILE"
+                printf '    filename: "%s",\n' "$BASENAME"
             fi
         fi
         if [ "$CLASS" = "APPS" ]; then
-            printf '\tdex_preopt: {\n'
-            printf '\t\tenabled: false,\n'
-            printf '\t},\n'
+            printf '    dex_preopt: {\n'
+            printf '        enabled: false,\n'
+            printf '    },\n'
         fi
         if [ "$CLASS" = "SHARED_LIBRARIES" ] || [ "$CLASS" = "EXECUTABLES" ] || [ "$CLASS" = "RFSA" ]; then
             if [ "$DIRNAME" != "." ]; then
                 if [ "$EXTENSION" = "sh" ]; then
-                    printf '\tsub_dir: "%s",\n' "$DIRNAME"
+                    printf '    sub_dir: "%s",\n' "$DIRNAME"
                 else
-                    printf '\trelative_install_path: "%s",\n' "$DIRNAME"
+                    printf '    relative_install_path: "%s",\n' "$DIRNAME"
                 fi
             fi
         fi
         if [ "$CLASS" = "ETC" ]; then
             if [ "$DIRNAME" != "." ]; then
-                printf '\tsub_dir: "%s",\n' "$DIRNAME"
+                printf '    sub_dir: "%s",\n' "$DIRNAME"
             fi
         fi
         if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
-            printf '\tprefer: true,\n'
+            printf '    prefer: true,\n'
         fi
         if [ "$EXTRA" = "priv-app" ]; then
-            printf '\tprivileged: true,\n'
+            printf '    privileged: true,\n'
         fi
         if [ "$PARTITION" = "vendor" ]; then
-            printf '\tsoc_specific: true,\n'
+            printf '    soc_specific: true,\n'
         elif [ "$PARTITION" = "product" ]; then
-            printf '\tproduct_specific: true,\n'
+            printf '    product_specific: true,\n'
         elif [ "$PARTITION" = "system_ext" ]; then
-            printf '\tsystem_ext_specific: true,\n'
+            printf '    system_ext_specific: true,\n'
         elif [ "$PARTITION" = "odm" ]; then
-            printf '\tdevice_specific: true,\n'
+            printf '    device_specific: true,\n'
         fi
         printf '}\n\n'
     done <<<"$FILELIST"
@@ -969,22 +969,22 @@ function write_symlink_packages() {
                     fi
                     {
                         printf 'install_symlink {\n'
-                        printf '\tname: "%s",\n' "$PKGNAME"
+                        printf '    name: "%s",\n' "$PKGNAME"
                         if prefix_match_file "vendor/" "$SYMLINK"; then
                             PREFIX='vendor/'
-                            printf '\tsoc_specific: true,\n'
+                            printf '    soc_specific: true,\n'
                         elif prefix_match_file "product/" "$SYMLINK"; then
                             PREFIX='product/'
-                            printf '\tproduct_specific: true,\n'
+                            printf '    product_specific: true,\n'
                         elif prefix_match_file "system_ext/" "$SYMLINK"; then
                             PREFIX='system_ext/'
-                            printf '\tsystem_ext_specific: true,\n'
+                            printf '    system_ext_specific: true,\n'
                         elif prefix_match_file "odm/" "$SYMLINK"; then
                             PREFIX='odm/'
-                            printf '\tdevice_specific: true,\n'
+                            printf '    device_specific: true,\n'
                         fi
-                        printf '\tinstalled_location: "%s",\n' "${SYMLINK#"$PREFIX"}"
-                        printf '\tsymlink_target: "/%s",\n' "$FILE"
+                        printf '    installed_location: "%s",\n' "${SYMLINK#"$PREFIX"}"
+                        printf '    symlink_target: "/%s",\n' "$FILE"
                         printf '}\n\n'
                     } >>"$ANDROIDBP"
                     SYMLINK_PACKAGES+=("$PKGNAME")
@@ -1075,19 +1075,19 @@ function write_rro_blueprint() {
     local PARTITION="$2"
 
     printf 'runtime_resource_overlay {\n'
-    printf '\tname: "%s",\n' "$PKGNAME"
-    printf '\ttheme: "%s",\n' "$PKGNAME"
-    printf '\tsdk_version: "%s",\n' "current"
-    printf '\taaptflags: ["%s"],\n' "--keep-raw-values"
+    printf '    name: "%s",\n' "$PKGNAME"
+    printf '    theme: "%s",\n' "$PKGNAME"
+    printf '    sdk_version: "%s",\n' "current"
+    printf '    aaptflags: ["%s"],\n' "--keep-raw-values"
 
     if [ "$PARTITION" = "vendor" ]; then
-        printf '\tsoc_specific: true,\n'
+        printf '    soc_specific: true,\n'
     elif [ "$PARTITION" = "product" ]; then
-        printf '\tproduct_specific: true,\n'
+        printf '    product_specific: true,\n'
     elif [ "$PARTITION" = "system_ext" ]; then
-        printf '\tsystem_ext_specific: true,\n'
+        printf '    system_ext_specific: true,\n'
     elif [ "$PARTITION" = "odm" ]; then
-        printf '\tdevice_specific: true,\n'
+        printf '    device_specific: true,\n'
     fi
     printf '}\n'
 }
@@ -1285,18 +1285,18 @@ EOF
 
     cat <<EOF >>"$ANDROIDBP"
 soong_namespace {
-	imports: [
+    imports: [
 EOF
 
     if [ -n "$DEVICE_COMMON" ] && [ "$COMMON" -ne 1 ]; then
         cat <<EOF >>"$ANDROIDBP"
-		"vendor/${VENDOR_COMMON:-$VENDOR}/$DEVICE_COMMON",
+        "vendor/${VENDOR_COMMON:-$VENDOR}/$DEVICE_COMMON",
 EOF
     fi
     vendor_imports "$ANDROIDBP"
 
     cat <<EOF >>"$ANDROIDBP"
-	],
+    ],
 }
 
 EOF
@@ -1320,6 +1320,9 @@ function write_footers() {
     cat <<EOF >>"$ANDROIDMK"
 endif
 EOF
+
+    # Remove extra empty newline at the end of the file
+    sed -i '${/^$/d;}' "$ANDROIDBP"
 }
 
 # Return success if adb is up and not in recovery

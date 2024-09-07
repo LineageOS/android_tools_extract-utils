@@ -22,7 +22,7 @@ source "${HELPER}"
 
 function vendor_imports() {
     cat <<EOF >>"$1"
-		"device/foo/bar-common",
+        "device/foo/bar-common",
 EOF
 }
 
