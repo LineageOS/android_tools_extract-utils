@@ -553,7 +553,10 @@ function write_blueprint_packages() {
             DISABLE_CHECKELF="true"
         fi
         for ARG in "${ARGS[@]}"; do
-            if [[ "$ARG" =~ "MODULE" ]]; then
+            if [[ "$ARG" =~ "MODULE_SUFFIX" ]]; then
+                STEM="$PKGNAME"
+                PKGNAME+=${ARG#*=}
+            elif [[ "$ARG" =~ "MODULE" ]]; then
                 STEM="$PKGNAME"
                 PKGNAME=${ARG#*=}
             elif [[ "$ARG" == "DISABLE_CHECKELF" ]]; then
