@@ -2124,6 +2124,9 @@ function extract() {
                 if [[ "$ARG" == "FIX_SONAME" ]]; then
                     PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
                     fix_soname "${VENDOR_REPO_FILE}"
+                elif [[ "$ARG" == "FIX_XML" ]]; then
+                    PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+                    fix_xml "${VENDOR_REPO_FILE}"
                 fi
             done
 
