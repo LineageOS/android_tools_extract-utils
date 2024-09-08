@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd1323cc_a49b9947",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2024-09-08T16:42:43Z",
+      "side": 1,
+      "message": "This breaks backwards compatibility, which will break any device that requires xml fixing",
+      "revId": "45877b47ea03166dfd02b494d5d017ca7de7270a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "63a784c5_118d413e",
