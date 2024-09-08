@@ -2114,6 +2114,9 @@ function extract() {
                     PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
                     # Fix soname so that it matches the blob filename
                     "${PATCHELF}" --set-soname $(basename "$VENDOR_REPO_FILE") "$VENDOR_REPO_FILE"
+                elif [[ "$ARG" == "FIX_XML" ]]; then
+                    PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+                    fix_xml "${VENDOR_REPO_FILE}"
                 fi
             done
 
