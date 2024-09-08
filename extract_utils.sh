@@ -1671,6 +1671,17 @@ function init_adb_connection() {
 }
 
 #
+# fix_soname:
+#
+# $1: so file to fix
+#
+function fix_soname() {
+    local SO="$1"
+
+    "${PATCHELF}" --set-soname "$(basename "$SO")" "$SO"
+}
+
+#
 # fix_xml:
 #
 # $1: xml file to fix
@@ -2108,6 +2119,14 @@ function extract() {
             elif [ "$KANG" = true ]; then
                 PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
             fi
+
+            for ARG in "${SPEC_ARGS[@]}"; do
+                if [[ "$ARG" == "FIX_SONAME" ]]; then
+                    PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+                    # Fix soname so that it matches the blob filename
+                    fix_soname "${VENDOR_REPO_FILE}"
+                fi
+            done
 
             blob_fixup_dry "$BLOB_DISPLAY_NAME"
             if [ $? -ne 1 ]; then
