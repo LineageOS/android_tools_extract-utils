@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "326aad7c_c4357576",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-09-08T17:05:23Z",
+      "side": 1,
+      "message": "Ehhh, I really wanted to kill TARGET_DISABLE_XML_FIXING. :P",
+      "revId": "637e366b56620deacece58656238517d3f3e1365",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
