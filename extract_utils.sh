@@ -2432,6 +2432,14 @@ function set_disable_deps() {
     sed -i "s|${1}$|${1};DISABLE_DEPS|g" "${2}"
 }
 
+function set_fix_soname() {
+    sed -i "s|${1}$|${1};FIX_SONAME|g" "${2}"
+}
+
+function set_fix_xml() {
+    sed -i "s|${1}$|${1};FIX_XML|g" "${2}"
+}
+
 function set_module() {
     sed -i "s|${1}$|${1};MODULE=${2}|g" "${3}"
 }
