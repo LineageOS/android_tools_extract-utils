@@ -2113,9 +2113,6 @@ function extract() {
                     rm "$EXTRACT_TMP_DIR/classes"*
                     printf '    (updated %s from odex files)\n' "${SRC_FILE}"
                 fi
-            elif [[ "$TARGET_DISABLE_XML_FIXING" != true && "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
-                PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
-                fix_xml "${VENDOR_REPO_FILE}"
             elif [ "$KANG" = true ]; then
                 PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
             fi
@@ -2125,6 +2122,10 @@ function extract() {
                     PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
                     # Fix soname so that it matches the blob filename
                     fix_soname "${VENDOR_REPO_FILE}"
+                elif [[ "$ARG" == "FIX_XML" && "${VENDOR_REPO_FILE}" =~ .xml$ ]]; then
+                    PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
+                    # Fix corrupted xml
+                    fix_xml "${VENDOR_REPO_FILE}"
                 fi
             done
 
