@@ -1384,7 +1384,7 @@ function parse_file_list() {
             suffix_match_file ".apk" "$SRC_FILE" ||
             suffix_match_file ".jar" "$SRC_FILE" ||
             [[ "$TARGET_ENABLE_CHECKELF" == "true" &&
-                ("$SRC_FILE" == *"lib/"*".so" ||
+                (("$SRC_FILE" == *"lib/"*".so" && "$SRC_FILE" != *"lib/adsp_camera"*".so") ||
                 "$SRC_FILE" == *"lib64/"*".so" ||
                 "$SRC_FILE" == *"bin/"* ||
                 "$SRC_FILE" == *"lib/rfsa"*) ]] ||
