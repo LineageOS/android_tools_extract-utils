@@ -582,7 +582,7 @@ function write_blueprint_packages() {
             printf '\t},\n'
             printf '\ttarget: {\n'
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "32" ]; then
-                printf '\t\tandroid_arm: {\n'
+                printf '\t\t%s: {\n' $(elf_format_android "$ANDROID_ROOT/$OUTDIR/$SRC/lib/$FILE")
                 printf '\t\t\tsrcs: ["%s/lib/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "lib" "$FILE" "$PARTITION"
@@ -591,7 +591,7 @@ function write_blueprint_packages() {
             fi
 
             if [ "$EXTRA" = "both" ] || [ "$EXTRA" = "64" ]; then
-                printf '\t\tandroid_arm64: {\n'
+                printf '\t\t%s: {\n' $(elf_format_android "$ANDROID_ROOT/$OUTDIR/$SRC/lib64/$FILE")
                 printf '\t\t\tsrcs: ["%s/lib64/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "lib64" "$FILE" "$PARTITION"
@@ -661,7 +661,7 @@ function write_blueprint_packages() {
             printf '\tfilename_from_src: true,\n'
         elif [ "$CLASS" = "EXECUTABLES" ]; then
             local FILE_PATH="$ANDROID_ROOT/$OUTDIR/$SRC/$FILE"
-            local ELF_FORMAT=$("$OBJDUMP" -a "$FILE_PATH" 2>/dev/null | sed -nE "s|^.+file format elf(..).+$|\1|p")
+            local ELF_FORMAT=$(elf_format_android "$FILE_PATH")
             if [ "$ELF_FORMAT" = "" ]; then
                 # This is not an elf file, assume it's a shell script that doesn't have an extension
                 # Setting extension here does not change the target extension, only the module type
@@ -679,18 +679,14 @@ function write_blueprint_packages() {
             printf '\towner: "%s",\n' "$VENDOR"
             if [ "$EXTENSION" != "sh" ]; then
                 printf '\ttarget: {\n'
-                if [ "$ELF_FORMAT" = "64" ]; then
-                    printf '\t\tandroid_arm64: {\n'
-                else
-                    printf '\t\tandroid_arm: {\n'
-                fi
+                printf '\t\t%s: {\n' "$ELF_FORMAT"
                 printf '\t\t\tsrcs: ["%s/%s"],\n' "$SRC" "$FILE"
                 if [ -n "$GENERATE_DEPS" ]; then
                     write_package_shared_libs "$SRC" "" "$FILE" "$PARTITION"
                 fi
                 printf '\t\t},\n'
                 printf '\t},\n'
-                if [ "$ELF_FORMAT" = "64" ]; then
+                if [[ "$ELF_FORMAT" =~ "64" ]]; then
                     printf '\tcompile_multilib: "%s",\n' "64"
                 else
                     printf '\tcompile_multilib: "%s",\n' "32"
@@ -747,6 +743,19 @@ function write_blueprint_packages() {
 
 function do_comm() {
     LC_ALL=C comm "$1" <(echo "$2") <(echo "$3")
+}
+
+function elf_format_android() {
+    local ELF_FORMAT=$("$OBJDUMP" -a "$1" 2>/dev/null | sed -nE "s|^.+file format (.*)$|\1|p")
+    if [ "$ELF_FORMAT" = "elf64-littleaarch64" ]; then
+        echo "android_arm64"
+    elif [ "$ELF_FORMAT" = "elf32-littlearm" ] || [ "$ELF_FORMAT" = "elf32-hexagon" ]; then
+        echo "android_arm"
+    elif [ "$ELF_FORMAT" = "elf64-x86-64" ]; then
+        echo "android_x86_64"
+    elif [ "$ELF_FORMAT" = "elf32-i386" ]; then
+        echo "android_x86"
+    fi
 }
 
 #
