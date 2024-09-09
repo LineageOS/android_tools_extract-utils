@@ -58,8 +58,8 @@ setup_vendor "${DEVICE}" "${VENDOR}" "${ANDROID_ROOT}"
 # Warning headers and guards
 write_headers
 
-write_makefiles "${MY_DIR}/proprietary-files.txt" true
-write_makefiles "${MY_DIR}/proprietary-files-carriersettings.txt" true
+write_makefiles "${MY_DIR}/proprietary-files.txt"
+write_makefiles "${MY_DIR}/proprietary-files-carriersettings.txt"
 
 write_rro_package "CarrierConfigOverlay" "com.android.carrierconfig" product
 write_single_product_packages "CarrierConfigOverlay"
