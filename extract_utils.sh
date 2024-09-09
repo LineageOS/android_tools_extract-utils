@@ -472,7 +472,6 @@ function write_blueprint_packages() {
     local OVERRIDEPKG=
     local REQUIREDPKG=
     local DISABLE_CHECKELF=
-    local DISABLE_DEPS=
     local GENERATE_DEPS=
 
     if [ -z "$EXTRA" ]; then
