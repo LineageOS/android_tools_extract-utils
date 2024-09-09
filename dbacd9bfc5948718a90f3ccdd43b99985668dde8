@@ -16,6 +16,24 @@
       "message": "This will make extract slower and take up more space. I\u0027d prefer assigning the image name to a variable and use that below instead.",
       "revId": "dbacd9bfc5948718a90f3ccdd43b99985668dde8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d00ce17_ee2e0816",
+        "filename": "extract_utils.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1870,
+      "author": {
+        "id": 2195
+      },
+      "writtenOn": "2024-09-09T21:23:48Z",
+      "side": 1,
+      "message": "A symlink might work too if that\u0027s easier",
+      "parentUuid": "8774ed81_ad075f26",
+      "revId": "dbacd9bfc5948718a90f3ccdd43b99985668dde8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
