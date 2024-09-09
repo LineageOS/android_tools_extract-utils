@@ -2028,6 +2028,7 @@ function extract() {
         local SPEC_SRC_FILE="${SRC_LIST[$i - 1]}"
         local SPEC_DST_FILE="${DEST_LIST[$i - 1]}"
         local SPEC_ARGS="${ARGS_LIST[$i - 1]}"
+        local ARGS=(${SPEC_ARGS//;/ })
         local OUTPUT_DIR=
         local TMP_DIR=
         local SRC_FILE=
@@ -2120,7 +2121,7 @@ function extract() {
                 PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
             fi
 
-            for ARG in "${SPEC_ARGS[@]}"; do
+            for ARG in "${ARGS[@]}"; do
                 if [[ "$ARG" == "FIX_SONAME" ]]; then
                     PRE_FIXUP_HASH=$(get_hash "$VENDOR_REPO_FILE")
                     fix_soname "${VENDOR_REPO_FILE}"
