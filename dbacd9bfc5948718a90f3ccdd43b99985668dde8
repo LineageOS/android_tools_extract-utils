@@ -34,6 +34,24 @@
       "parentUuid": "8774ed81_ad075f26",
       "revId": "dbacd9bfc5948718a90f3ccdd43b99985668dde8",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dfce4d8d_7d472fe1",
+        "filename": "extract_utils.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1870,
+      "author": {
+        "id": 31496
+      },
+      "writtenOn": "2024-09-10T01:14:51Z",
+      "side": 1,
+      "message": "I did a symlink for the moment.\n\nI\u0027m really not sure how to improve on this:\n- I have no idea how to check if an image is sparse, which would remove attempting simg2img altogether\n- `super.raw` is hardcoded to a point where it removes the unsparsed image at the end, and I\u0027m not sure what\u0027s the best way to introduce yet another local variable here to avoid that from happening if the source is already unsparsed\n\nWould appreciate some more thoughts on the matter.",
+      "parentUuid": "3d00ce17_ee2e0816",
+      "revId": "dbacd9bfc5948718a90f3ccdd43b99985668dde8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
