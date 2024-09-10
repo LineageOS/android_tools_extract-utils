@@ -1,0 +1,7 @@
+line-length = 80
+
+[lint]
+select = ['FA100', 'FA102']
+
+[format]
+quote-style = 'single'
