@@ -1388,10 +1388,10 @@ function parse_file_list() {
         local STRIPPED_SPEC=$(spec "$SPEC")
         local SRC_FILE=$(spec_src_file "$STRIPPED_SPEC")
         local TARGET_FILE="$SRC_FILE"
-        local ARGS=
+        local SPEC_ARGS=
         if [ "$SRC_FILE" != "$SPEC" ]; then
             TARGET_FILE=$(spec_target_file "$STRIPPED_SPEC")
-            ARGS=$(spec_target_args "$STRIPPED_SPEC" "$SPEC")
+            SPEC_ARGS=$(spec_target_args "$STRIPPED_SPEC" "$SPEC")
         fi
 
         # if line contains apex, apk, jar or vintf fragment, it needs to be packaged
@@ -1407,18 +1407,29 @@ function parse_file_list() {
             IS_PRODUCT_PACKAGE=true
         fi
 
+        local ARGS=(${SPEC_ARGS//;/ })
+        local MAKE_COPY_RULE=
+
+        for ARG in "${ARGS[@]}"; do
+            if [ "$ARG" = "MAKE_COPY_RULE" ]; then
+                MAKE_COPY_RULE=true
+            fi
+        done
+
         if [ "$IS_PRODUCT_PACKAGE" = true ]; then
             PRODUCT_PACKAGES_HASHES+=("$HASH")
             PRODUCT_PACKAGES_FIXUP_HASHES+=("$FIXUP_HASH")
             PRODUCT_PACKAGES_SRC+=("$SRC_FILE")
             PRODUCT_PACKAGES_DEST+=("$TARGET_FILE")
-            PRODUCT_PACKAGES_ARGS+=("$ARGS")
-        else
+            PRODUCT_PACKAGES_ARGS+=("$SPEC_ARGS")
+        fi
+
+        if [ "$IS_PRODUCT_PACKAGE" != true ] || [ "$MAKE_COPY_RULE" = true ]; then
             PRODUCT_COPY_FILES_HASHES+=("$HASH")
             PRODUCT_COPY_FILES_FIXUP_HASHES+=("$FIXUP_HASH")
             PRODUCT_COPY_FILES_SRC+=("$SRC_FILE")
             PRODUCT_COPY_FILES_DEST+=("$TARGET_FILE")
-            PRODUCT_COPY_FILES_ARGS+=("$ARGS")
+            PRODUCT_COPY_FILES_ARGS+=("$SPEC_ARGS")
         fi
 
     done < <(grep -v -E '(^#|^[[:space:]]*$)' "$LIST" | LC_ALL=C sort | uniq)
