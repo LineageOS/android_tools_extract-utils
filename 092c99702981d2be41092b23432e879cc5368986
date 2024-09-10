@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "755b9c42_853fef03",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-09-10T22:39:22Z",
+      "side": 1,
+      "message": "Please place everything into a package, you risk overriding stdlib stuff",
+      "revId": "092c99702981d2be41092b23432e879cc5368986",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
