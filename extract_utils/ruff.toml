@@ -1,0 +1,7 @@
+line-length = 80
+
+[lint]
+select = ['E4', 'E7', 'E9', 'F', 'FA100', 'FA102']
+
+[format]
+quote-style = 'single'
