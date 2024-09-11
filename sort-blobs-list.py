@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2021-2022 The LineageOS Project
+# Copyright (C) 2021-2024 The LineageOS Project
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -11,19 +11,28 @@ from locale import LC_ALL, setlocale, strcoll
 from pathlib import Path
 
 
+def get_source_file_name(line: str) -> str:
+    # Remove '-' from strings if there,
+    # it is used to indicate a build target
+    line = re.sub("^-", "", line)
+
+    # Remove the various additional arguments
+    line = re.sub(";.*", "", line)
+
+    # Remove the destination path if there
+    line = re.sub(":.*", "", line)
+
+    return line
+
+
 def strcoll_extract_utils(string1: str, string2: str) -> int:
     # Skip logic if one of the string if empty
     if not string1 or not string2:
         return strcoll(string1, string2)
 
-    # Remove '-' from strings if there,
-    # it is used to indicate a build target
-    string1 = re.sub("^-", "", string1)
-    string2 = re.sub("^-", "", string2)
-
-    # Remove ';.*' from strings if there
-    string1 = re.sub(";.*", "", string1)
-    string2 = re.sub(";.*", "", string2)
+    # Get the source file name
+    string1 = get_source_file_name(string1)
+    string2 = get_source_file_name(string2)
 
     # Compare normally
     return strcoll(string1, string2)
