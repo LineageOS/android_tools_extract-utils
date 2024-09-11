@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6b3a78e4_c677d919",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-09-11T02:29:29Z",
+      "side": 1,
+      "message": "Small change needed in device tree to prevent infinitely generating makefiles:\n\ndiff --git a/setup-makefiles.sh b/setup-makefiles.sh\nindex 217f477d9..7c3b5abed 100755\n--- a/setup-makefiles.sh\n+++ b/setup-makefiles.sh\n@@ -60,6 +60,12 @@ function lib_to_package_fixup() {\n         lib_to_package_fixup_vendor_variants \"$@\"\n }\n \n+# If we\u0027re being sourced by bp generation script, stop.\n+# We only need to setup the vendor, not write anything\n+if [ \"${BASH_SOURCE[0]}\" !\u003d \"${0}\" ]; then\n+    return\n+fi\n+\n # Initialize the helper for common\n setup_vendor \"${DEVICE_COMMON}\" \"${VENDOR_COMMON:-$VENDOR}\" \"${ANDROID_ROOT}\" true",
+      "revId": "12d6c71e63381634f4c3743b0f2280024bb2c7d4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
