@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2380e25e_4abe1c61",
+        "filename": "extract_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 10258
+      },
+      "writtenOn": "2024-09-11T03:47:36Z",
+      "side": 1,
+      "message": "ig cache intermediate contents in a string and write file once at last would be much faster",
+      "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6bb0113b_e1a17504",
+        "filename": "file.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 10258
+      },
+      "writtenOn": "2024-09-11T03:47:36Z",
+      "side": 1,
+      "message": "pathlib can be helpful here",
+      "range": {
+        "startLine": 116,
+        "startChar": 7,
+        "endLine": 121,
+        "endChar": 58
+      },
+      "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "be7511f8_b0851594",
+        "filename": "file.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 10258
+      },
+      "writtenOn": "2024-09-11T03:47:36Z",
+      "side": 1,
+      "message": "add @property decorator?",
+      "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
