@@ -473,6 +473,7 @@ function write_blueprint_packages() {
     local REQUIREDPKG=
     local DISABLE_CHECKELF=
     local GENERATE_DEPS=
+    local PREFER=
 
     if [ -z "$EXTRA" ]; then
         if [ "$CLASS" = "RFSA" ]; then
@@ -549,6 +550,7 @@ function write_blueprint_packages() {
         if [ "$TARGET_ENABLE_CHECKELF" == "true" ]; then
             DISABLE_CHECKELF=
             GENERATE_DEPS="true"
+            PREFER=
         else
             DISABLE_CHECKELF="true"
         fi
@@ -564,6 +566,8 @@ function write_blueprint_packages() {
             elif [[ "$ARG" == "DISABLE_DEPS" ]]; then
                 DISABLE_CHECKELF="true"
                 GENERATE_DEPS=
+            elif [[ "$ARG" == "PREFER" ]]; then
+                PREFER="true"
             fi
         done
 
@@ -697,7 +701,9 @@ function write_blueprint_packages() {
                 printf '\tstrip: {\n'
                 printf '\t\tnone: true,\n'
                 printf '\t},\n'
-                printf '\tprefer: true,\n'
+                if [ -n "$PREFER" ]; then
+                    printf '\tprefer: true,\n'
+                fi
             else
                 printf '\tsrc: "%s/%s",\n' "$SRC" "$FILE"
                 printf '\tfilename: "%s",\n' "$BASENAME"
@@ -722,7 +728,7 @@ function write_blueprint_packages() {
                 printf '\tsub_dir: "%s",\n' "$DIRNAME"
             fi
         fi
-        if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
+        if [ "$CLASS" = "SHARED_LIBRARIES" ] && [ -n "$PREFER" ]; then
             printf '\tprefer: true,\n'
         fi
         if [ "$EXTRA" = "priv-app" ]; then
@@ -2458,6 +2464,10 @@ function set_module() {
 
 function set_module_suffix() {
     sed -i "s|${1}$|${1};MODULE_SUFFIX=${2}|g" "${3}"
+}
+
+function set_prefer() {
+    sed -i "s|${1}$|${1};PREFER|g" "${2}"
 }
 
 function set_presigned() {
