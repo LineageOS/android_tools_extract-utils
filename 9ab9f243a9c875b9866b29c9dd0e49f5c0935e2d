@@ -16,6 +16,24 @@
       "message": "Messed up locale with lambda, wait",
       "revId": "9ab9f243a9c875b9866b29c9dd0e49f5c0935e2d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fea86a91_cda7a0f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-09-12T01:05:52Z",
+      "side": 1,
+      "message": "Nope, works fine",
+      "parentUuid": "906c4208_3077cf19",
+      "revId": "9ab9f243a9c875b9866b29c9dd0e49f5c0935e2d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
