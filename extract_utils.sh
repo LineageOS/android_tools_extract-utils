@@ -88,11 +88,21 @@ function setup_vendor_deps() {
 
     # prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
     export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
-    export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
+    if [ -d "$CLANG_BINUTILS" ]; then
+        export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
+    else
+        llvm-objdump --version > /dev/null && export OBJDUMP=llvm-objdump \
+            || (echo "llvm-objdump not found" ; exit 1)
+    fi
 
     # prebuilts/jdk/jdk21/${HOST}-x86/bin
     export JDK_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/jdk/jdk21/${HOST}-x86/bin
-    export JAVA="$JDK_BINARIES_LOCATION"/java
+    if [ -d "$CLANG_BINUTILS" ]; then
+        export JAVA="$JDK_BINARIES_LOCATION"/java
+    else
+        java --version > /dev/null && export JAVA=java \
+            || (echo "java not found" ; exit 1)
+    fi
 }
 
 #
