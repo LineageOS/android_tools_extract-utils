@@ -16,6 +16,23 @@
       "message": "This is a breaking but necessary change IMO, so we might as well do it now before everyone enables elf checks. Setting prefer: true makes the build not break even when BUILD_BROKEN_DUP_RULES is unset and you have vendor libs overriding source built ones.\n\nThis is especially annoying for pixel devices since their blobs change every 3 months and we are regenerating vendor blob lists automatically, but there is no way to see what libs are getting overridden.",
       "revId": "c2e5394ad65fa599d0d4d3652455669201e80ae1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e36ba43c_bd609be9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 14048
+      },
+      "writtenOn": "2024-09-12T17:12:05Z",
+      "side": 1,
+      "message": "I agree with this concept.",
+      "revId": "c2e5394ad65fa599d0d4d3652455669201e80ae1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
