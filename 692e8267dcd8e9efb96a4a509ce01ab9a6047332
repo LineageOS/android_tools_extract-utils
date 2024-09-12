@@ -16,6 +16,24 @@
       "message": "Why do you need this? we already have sort-blob-list \u003cinsert-txt-here\u003e in envsetup",
       "revId": "692e8267dcd8e9efb96a4a509ce01ab9a6047332",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e188eb17_f403c96d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-09-12T00:35:25Z",
+      "side": 1,
+      "message": "To store `--dir-first` somewhere so that multiple people can agree on the same format, although one can indeed notice whether it\u0027s used or not based on the diff result",
+      "parentUuid": "7ae20cc9_9aaffe0f",
+      "revId": "692e8267dcd8e9efb96a4a509ce01ab9a6047332",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
