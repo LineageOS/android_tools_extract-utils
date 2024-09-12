@@ -61,19 +61,13 @@ function setup_vendor_deps() {
         exit 1
     fi
 
+    # prebuilts/extract-tools/${HOST}-x86/bin
     export BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/${HOST}-x86/bin
-    export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
-    export JDK_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/jdk/jdk21/${HOST}-x86/bin
-    export COMMON_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/common
-
-    export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export LPUNPACK="$BINARIES_LOCATION"/lpunpack
     export OTA_EXTRACTOR="$BINARIES_LOCATION"/ota_extractor
     export SIGSCAN="$BINARIES_LOCATION"/SigScan
+    export SIMG2IMG="$BINARIES_LOCATION"/simg2img
     export STRIPZIP="$BINARIES_LOCATION"/stripzip
-    export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
-    export JAVA="$JDK_BINARIES_LOCATION"/java
-    export APKTOOL="$COMMON_BINARIES_LOCATION"/apktool/apktool.jar
 
     for VERSION in 0_8 0_9 0_17_2; do
         export PATCHELF_${VERSION}="$BINARIES_LOCATION"/patchelf-"${VERSION}"
@@ -87,6 +81,18 @@ function setup_vendor_deps() {
         local PATCHELF_VARIABLE="PATCHELF_${PATCHELF_VERSION}"
         export PATCHELF=${!PATCHELF_VARIABLE}
     fi
+
+    # prebuilts/extract-tools/common
+    export COMMON_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/extract-tools/common
+    export APKTOOL="$COMMON_BINARIES_LOCATION"/apktool/apktool.jar
+
+    # prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
+    export CLANG_BINUTILS="$ANDROID_ROOT"/prebuilts/clang/host/${HOST}-x86/llvm-binutils-stable
+    export OBJDUMP="$CLANG_BINUTILS"/llvm-objdump
+
+    # prebuilts/jdk/jdk21/${HOST}-x86/bin
+    export JDK_BINARIES_LOCATION="$ANDROID_ROOT"/prebuilts/jdk/jdk21/${HOST}-x86/bin
+    export JAVA="$JDK_BINARIES_LOCATION"/java
 }
 
 #
