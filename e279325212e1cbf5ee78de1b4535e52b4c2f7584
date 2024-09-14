@@ -52,6 +52,23 @@
       "parentUuid": "cf369cf4_96969926",
       "revId": "e279325212e1cbf5ee78de1b4535e52b4c2f7584",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f15c00b0_bcd6b377",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-09-14T19:22:07Z",
+      "side": 1,
+      "message": "This doesn\u0027t really help with reproducible builds (or blobs in this case), while I agree with the \"bail out if not found\"",
+      "revId": "e279325212e1cbf5ee78de1b4535e52b4c2f7584",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
