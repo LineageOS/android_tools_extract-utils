@@ -16,6 +16,24 @@
       "message": "Why?",
       "revId": "e279325212e1cbf5ee78de1b4535e52b4c2f7584",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf369cf4_96969926",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32245
+      },
+      "writtenOn": "2024-09-14T06:23:48Z",
+      "side": 1,
+      "message": "I do development on one machine and do build on another, on the development machine I don\u0027t sync the full LineageOS tree (including deps of this). I once was doing development on a very low specs machine daily.\n\nWell, I can workaround it locally but this can convenience the others too.",
+      "parentUuid": "56f52f3a_44c54250",
+      "revId": "e279325212e1cbf5ee78de1b4535e52b4c2f7584",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
