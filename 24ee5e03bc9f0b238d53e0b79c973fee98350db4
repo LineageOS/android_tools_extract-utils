@@ -16,6 +16,137 @@
       "message": "https://gist.github.com/Demon000/7c1ff7891920a5a5bb8000d32c598eff",
       "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "31ee679f_affbcc91",
+        "filename": "extract_utils/args.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "i think we can drop this?",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 29
+      },
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51567e19_3cc05a3c",
+        "filename": "extract_utils/bp_builder.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "if, since prev returns",
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dcf26e20_d0921ce4",
+        "filename": "extract_utils/bp_builder.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "i think in PEP it\u0027s single underscore for private members",
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb902307_fe1a88c3",
+        "filename": "extract_utils/bp_encoder.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "`\u0027 \u0027 * 4`",
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9cbb24ad_295ac3c5",
+        "filename": "extract_utils/copy.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "file_src_partition, _ \u003d file_src.split(\u0027/\u0027, 1)",
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ed11739d_316beb49",
+        "filename": "extract_utils/elf.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "`return any(l \u003d\u003d lib for x in libs)`",
+      "range": {
+        "startLine": 45,
+        "startChar": 12,
+        "endLine": 47,
+        "endChar": 31
+      },
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c8a520d_f593db40",
+        "filename": "extract_utils/file.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-09-17T21:24:52Z",
+      "side": 1,
+      "message": "instanceof(v, dict) is probably nicer?",
+      "revId": "24ee5e03bc9f0b238d53e0b79c973fee98350db4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
