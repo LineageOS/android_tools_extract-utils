@@ -626,6 +626,8 @@ function write_blueprint_packages() {
                     USE_PLATFORM_CERTIFICATE="false"
                     printf '\tpreprocessed: true,\n'
                     printf '\tpresigned: true,\n'
+                elif [ "$ARG" = "SKIPAPKCHECKS" ]; then
+                    printf '\tskip_preprocessed_apk_checks: true,\n'
                 elif [[ "$ARG" =~ "OVERRIDES" ]]; then
                     OVERRIDEPKG=${ARG#*=}
                     OVERRIDEPKG=${OVERRIDEPKG//,/\", \"}
