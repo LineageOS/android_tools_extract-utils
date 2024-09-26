@@ -236,11 +236,21 @@ function prefix_match() {
     for ((i = 1; i < COUNT + 1; i++)); do
         local FILE="${DEST_LIST[$i - 1]}"
         if [[ "$FILE" =~ ^"$PREFIX" ]]; then
-            local ARGS="${ARGS_LIST[$i - 1]}"
-            if [[ -z "${ARGS}" || "${ARGS}" =~ 'SYMLINK' ]]; then
+            local SPEC_ARGS="${ARGS_LIST[$i - 1]}"
+            local ARGS=(${SPEC_ARGS//;/ })
+            local FILTERED_ARGS=()
+
+            for ARG in "${ARGS[@]}"; do
+                if [[ "$ARG" =~ ^SYMLINK= ]]; then
+                    continue
+                fi
+                FILTERED_ARGS+=("$ARG")
+            done
+
+            if [ ${#FILTERED_ARGS[@]} -eq 0 ]; then
                 NEW_ARRAY+=("${FILE#"$PREFIX"}")
             else
-                NEW_ARRAY+=("${FILE#"$PREFIX"};${ARGS}")
+                NEW_ARRAY+=("${FILE#"$PREFIX"};${FILTERED_ARGS}")
             fi
         fi
     done
