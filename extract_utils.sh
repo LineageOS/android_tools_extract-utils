@@ -237,7 +237,7 @@ function prefix_match() {
         local FILE="${DEST_LIST[$i - 1]}"
         if [[ "$FILE" =~ ^"$PREFIX" ]]; then
             local ARGS="${ARGS_LIST[$i - 1]}"
-            if [[ -z "${ARGS}" || "${ARGS}" =~ 'SYMLINK' ]]; then
+            if [[ -z "${ARGS}" ]]; then
                 NEW_ARRAY+=("${FILE#"$PREFIX"}")
             else
                 NEW_ARRAY+=("${FILE#"$PREFIX"};${ARGS}")
