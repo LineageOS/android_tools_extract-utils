@@ -16,6 +16,24 @@
       "message": "this leaks into Android.bp.",
       "revId": "4553410367df78f30b9e64a4df19f55669d9cce4",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c8b1531_85e2698c",
+        "filename": "extract_utils.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2024-10-02T06:47:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f5bee043_1b98e468",
+      "revId": "4553410367df78f30b9e64a4df19f55669d9cce4",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
