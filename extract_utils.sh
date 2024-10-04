@@ -247,7 +247,9 @@ function prefix_match() {
                 FILTERED_ARGS+=("$ARG")
             done
 
-            if [ ${#FILTERED_ARGS[@]} -eq 0 ]; then
+            FILTERED_ARGS=$(IFS=";" echo "${FILTERED_ARGS[@]}")
+
+            if [ -z "$FILTERED_ARGS" ]; then
                 NEW_ARRAY+=("${FILE#"$PREFIX"}")
             else
                 NEW_ARRAY+=("${FILE#"$PREFIX"};${FILTERED_ARGS}")
