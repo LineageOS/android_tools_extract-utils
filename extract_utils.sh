@@ -247,11 +247,8 @@ function prefix_match() {
                 FILTERED_ARGS+=("$ARG")
             done
 
-            if [ ${#FILTERED_ARGS[@]} -eq 0 ]; then
-                NEW_ARRAY+=("${FILE#"$PREFIX"}")
-            else
-                NEW_ARRAY+=("${FILE#"$PREFIX"};${FILTERED_ARGS}")
-            fi
+            FILTERED_ARGS=$(IFS=";"; echo "${FILTERED_ARGS[@]}")
+            NEW_ARRAY+=("${FILE#"$PREFIX"};${FILTERED_ARGS}")
         fi
     done
     printf '%s\n' "${NEW_ARRAY[@]}" | LC_ALL=C sort
