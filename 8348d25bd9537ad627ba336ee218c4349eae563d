@@ -34,6 +34,24 @@
       "parentUuid": "da8ea76d_224b20cb",
       "revId": "8348d25bd9537ad627ba336ee218c4349eae563d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41247798_f92d0e14",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 24442
+      },
+      "writtenOn": "2024-10-06T16:18:45Z",
+      "side": 1,
+      "message": "I don\u0027t think diverging from the intended behavior is better either honestly. Considering that\u0027s it\u0027s a whole stack who depend over those files and it\u0027s extract-utils who\u0027s broken, not the other way around",
+      "parentUuid": "da8ea76d_224b20cb",
+      "revId": "8348d25bd9537ad627ba336ee218c4349eae563d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
