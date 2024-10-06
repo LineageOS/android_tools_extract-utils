@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a9e4544f_417db18b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 24442
+      },
+      "writtenOn": "2024-10-06T14:54:33Z",
+      "side": 1,
+      "message": "ig we can exclude the crossbuild directory instead but idk since it will make the aproach less generic in case other SoCs platform are also affected by this problem at some point",
+      "revId": "b61279e2339304300f8e97817540eceaf466482b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
