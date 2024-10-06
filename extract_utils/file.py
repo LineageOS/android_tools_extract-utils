@@ -497,10 +497,11 @@ class FileList:
             ):
                 return True
 
-        if file.contains_path_parts(BIN_PARTS) or file.contains_path_parts(
-            LIB_RFSA_PARTS
-        ):
-            return True
+        if ext != '.db':
+            if file.contains_path_parts(BIN_PARTS) or file.contains_path_parts(
+                LIB_RFSA_PARTS
+            ):
+                return True
 
         return False
 
