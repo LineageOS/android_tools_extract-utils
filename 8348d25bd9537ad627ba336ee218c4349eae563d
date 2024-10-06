@@ -16,6 +16,24 @@
       "message": "*/bin shouldn\u0027t contain anything apart from binaries\nmaybe move those files to /vendor/etc and patch the libs instead?",
       "revId": "8348d25bd9537ad627ba336ee218c4349eae563d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2dd79825_8a02288c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2024-10-06T16:16:01Z",
+      "side": 1,
+      "message": "Well, patching libs unnecessarily is kinda crazy too.",
+      "parentUuid": "da8ea76d_224b20cb",
+      "revId": "8348d25bd9537ad627ba336ee218c4349eae563d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
