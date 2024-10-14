@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb93c6d2_76224065",
+        "filename": "extract_utils.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-14T13:02:18Z",
+      "side": 1,
+      "message": "Not really.",
+      "parentUuid": "2380e25e_4abe1c61",
+      "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6bb0113b_e1a17504",
@@ -41,6 +59,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f75a2996_00ad0ce2",
+        "filename": "file.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-14T13:02:18Z",
+      "side": 1,
+      "message": "How?",
+      "parentUuid": "6bb0113b_e1a17504",
+      "range": {
+        "startLine": 116,
+        "startChar": 7,
+        "endLine": 121,
+        "endChar": 58
+      },
+      "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "be7511f8_b0851594",
@@ -54,6 +96,24 @@
       "writtenOn": "2024-09-11T03:47:36Z",
       "side": 1,
       "message": "add @property decorator?",
+      "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef7e7273_cb7d2413",
+        "filename": "file.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-14T13:02:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be7511f8_b0851594",
       "revId": "098f9da706d59554d8fbd7c99d7a7b767dcb67d6",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
