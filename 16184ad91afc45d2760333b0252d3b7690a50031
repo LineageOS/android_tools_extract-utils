@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f6bf36f_4c745547",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 98
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-10-17T18:49:48Z",
+      "side": 1,
+      "message": "last import changes are from `ruff check --select I --fix .` fyi",
+      "revId": "16184ad91afc45d2760333b0252d3b7690a50031",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
