@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-from argparse import ArgumentParser
 import re
+from argparse import ArgumentParser
 from functools import cmp_to_key
 from locale import LC_ALL, setlocale, strcoll
 from pathlib import Path
