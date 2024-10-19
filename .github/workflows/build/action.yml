@@ -6,7 +6,7 @@ runs:
     steps:
     - name: Install dependencies
       shell: bash
-      run: pip install pre-commit
+      run: sudo apt -y install pre-commit
 
     - name: Lint
       shell: bash
