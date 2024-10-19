@@ -588,7 +588,7 @@ def write_mk_firmware_ab_partitions(files: SimpleFileList, out: TextIO):
     out.write('\nAB_OTA_PARTITIONS +=')
 
     for file in files:
-        line = f' \\\n    {file.dst}'
+        line = f' \\\n    {file.root}'
         out.write(line)
 
     out.write('\n')
