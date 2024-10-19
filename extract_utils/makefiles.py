@@ -622,8 +622,6 @@ def write_mk_header(out: TextIO):
 #
 # {AUTO_GENERATED_MESSAGE}
 #
-
-LOCAL_PATH := $(call my-dir)
 """.lstrip()
     )
 
@@ -646,6 +644,14 @@ def write_xml_header(out: TextIO):
     {AUTO_GENERATED_MESSAGE}
 -->
 """.lstrip()
+    )
+
+
+def write_mk_local_path(out: TextIO):
+    out.write(
+        f"""
+LOCAL_PATH := $(call my-dir)
+"""
     )
 
 
