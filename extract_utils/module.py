@@ -31,6 +31,7 @@ from extract_utils.makefiles import (
     write_mk_guard_begin,
     write_mk_guard_end,
     write_mk_header,
+    write_mk_local_path,
     write_mk_soong_namespace,
     write_product_copy_files,
     write_product_packages,
@@ -480,6 +481,7 @@ class ExtractUtilsModule:
 
             write_mk_header(ctx.board_config_mk_out)
             write_mk_header(ctx.mk_out)
+            write_mk_local_path(ctx.mk_out)
 
             self.write_rro_makefiles(ctx)
 
