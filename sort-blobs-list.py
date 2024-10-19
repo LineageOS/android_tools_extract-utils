@@ -14,18 +14,20 @@ from pathlib import Path
 def get_source_file_name(line: str) -> str:
     # Remove '-' from strings if there,
     # it is used to indicate a build target
-    line = re.sub("^-", "", line)
+    line = re.sub('^-', '', line)
 
     # Remove the various additional arguments
-    line = re.sub(";.*", "", line)
+    line = re.sub(';.*', '', line)
 
     # Remove the destination path if there
-    line = re.sub(":.*", "", line)
+    line = re.sub(':.*', '', line)
 
     return line
 
 
-def strcoll_extract_utils(string1: str, string2: str, dir_first: bool = False) -> int:
+def strcoll_extract_utils(
+    string1: str, string2: str, dir_first: bool = False
+) -> int:
     # Skip logic if one of the string if empty
     if not string1 or not string2:
         return strcoll(string1, string2)
@@ -36,11 +38,11 @@ def strcoll_extract_utils(string1: str, string2: str, dir_first: bool = False) -
 
     if dir_first:
         # If no directories, compare normally
-        if "/" not in string1 and "/" not in string2:
+        if '/' not in string1 and '/' not in string2:
             return strcoll(string1, string2)
 
-        string1_dir = string1.rsplit("/", 1)[0] + "/"
-        string2_dir = string2.rsplit("/", 1)[0] + "/"
+        string1_dir = string1.rsplit('/', 1)[0] + '/'
+        string2_dir = string2.rsplit('/', 1)[0] + '/'
         if string1_dir == string2_dir:
             # Same directory, compare normally
             return strcoll(string1, string2)
@@ -59,38 +61,40 @@ def strcoll_extract_utils(string1: str, string2: str, dir_first: bool = False) -
     return strcoll(string1, string2)
 
 
-if __name__ == "__main__":
-    setlocale(LC_ALL, "C")
+if __name__ == '__main__':
+    setlocale(LC_ALL, 'C')
 
-    parser = ArgumentParser(description="Sort blobs list")
+    parser = ArgumentParser(description='Sort blobs list')
     parser.add_argument(
-        "files",
-        nargs="*",
-        default=["proprietary-files.txt"],
-        help="Files to sort",
+        'files',
+        nargs='*',
+        default=['proprietary-files.txt'],
+        help='Files to sort',
     )
     parser.add_argument(
-        "--dir-first",
-        action="store_true",
-        help="Sort directories first",
+        '--dir-first',
+        action='store_true',
+        help='Sort directories first',
     )
     args = parser.parse_args()
 
-    sort_key = cmp_to_key(lambda x, y: strcoll_extract_utils(x, y, args.dir_first))
+    sort_key = cmp_to_key(
+        lambda x, y: strcoll_extract_utils(x, y, args.dir_first)
+    )
 
     for file in args.files:
         if not Path(file).is_file():
-            print(f"File {file} not found")
+            print(f'File {file} not found')
             continue
 
-        with open(file, "r") as f:
-            sections = f.read().split("\n\n")
+        with open(file, 'r') as f:
+            sections = f.read().split('\n\n')
 
         ordered_sections = []
         for section in sections:
             section_list = [line.strip() for line in section.splitlines()]
             section_list.sort(key=sort_key)
-            ordered_sections.append("\n".join(section_list))
+            ordered_sections.append('\n'.join(section_list))
 
-        with open(file, "w") as f:
-            f.write("\n\n".join(ordered_sections).strip() + "\n")
+        with open(file, 'w') as f:
+            f.write('\n\n'.join(ordered_sections).strip() + '\n')
