@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 import re
 from enum import Enum
 from os import path
@@ -499,7 +500,7 @@ class FileList:
         if FileArgs.SYMLINK in file.args:
             self.package_symlinks.add(file)
 
-        if self.__section is None or section == self.__section:
+        if self.__section is None or fnmatch.fnmatch(section, self.__section):
             self.files.add(file)
             self.partitions.add(file.partition)
             if file.has_dst:
