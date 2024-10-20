@@ -105,13 +105,13 @@ def find_files_with_magic(
 ) -> List[str]:
     file_paths = []
     for file in os.scandir(input_path):
-        if not path.isfile(file):
+        if not file.is_file():
             continue
 
         if not is_extract_partition_file_name(extract_partitions, file.name):
             continue
 
-        with open(file.path, 'rb') as f:
+        with open(file, 'rb') as f:
             f.seek(position)
             file_magic = f.read(len(magic))
             if file_magic == magic:
@@ -127,7 +127,7 @@ def find_files_with_ext(
 ):
     file_paths = []
     for file in os.scandir(input_path):
-        if not path.isfile(file):
+        if not file.is_file():
             continue
 
         if not is_extract_partition_file_name(extract_partitions, file.name):

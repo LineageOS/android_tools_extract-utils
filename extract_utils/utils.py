@@ -42,9 +42,9 @@ def remove_dir_contents(dir_path: str):
         if f.name[0] == '.':
             continue
 
-        if path.isdir(f.path):
+        if f.is_dir():
             shutil.rmtree(f.path)
-        elif path.isfile(f.path):
+        elif f.is_file():
             os.remove(f.path)
         else:
             assert False
