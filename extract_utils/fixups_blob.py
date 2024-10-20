@@ -182,7 +182,8 @@ class blob_fixup:
             reversed_patches = list(reversed(patches))
             run_cmd(base_cmd + ['--reverse'] + reversed_patches)
 
-        run_cmd(base_cmd + patches)
+        with suppress(Exception):
+            run_cmd(base_cmd + patches)
 
     def patch_dir(self, patches_path: str) -> Self:
         impl = partial(self.patch_impl, patches_path)
