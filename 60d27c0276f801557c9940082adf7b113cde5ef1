@@ -16,6 +16,24 @@
       "message": "i don\u0027t think this works properly, maybe this would be better:\n\n```python\n        if device_path:\n            self.device_path \u003d path.join(android_root, device_path)\n        else:\n            self.device_path \u003d path.join(android_root, \u0027device\u0027, vendor, device)\n```",
       "revId": "60d27c0276f801557c9940082adf7b113cde5ef1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e64d27f_3bd0ac46",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29415
+      },
+      "writtenOn": "2024-10-20T12:55:04Z",
+      "side": 1,
+      "message": "Tested updated patchset, works as expected with and without appending script_dir in the device script:\n\nParsing device/google/caimito/caiman/proprietary-files.txt\nProcessing device/google/caimito/caiman/proprietary-files.txt\n\nParsing device/google/caiman/proprietary-files.txt\nFileNotFoundError: [Errno 2] No such file or directory: \u0027/home/nexus/LineageOS/device/google/caiman/proprietary-files.txt\u0027",
+      "parentUuid": "62636ab5_782fd2cf",
+      "revId": "60d27c0276f801557c9940082adf7b113cde5ef1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
