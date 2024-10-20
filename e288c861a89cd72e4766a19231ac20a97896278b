@@ -87,6 +87,23 @@
       "message": "Maybe update templates?",
       "revId": "e288c861a89cd72e4766a19231ac20a97896278b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8fa9f516_e711025d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-20T14:51:14Z",
+      "side": 1,
+      "message": "I\u0027d much rather have explicit None checks here.",
+      "revId": "e288c861a89cd72e4766a19231ac20a97896278b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
