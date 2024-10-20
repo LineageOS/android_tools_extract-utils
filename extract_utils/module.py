@@ -894,6 +894,8 @@ class ExtractUtilsModule:
         section: Optional[str],
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
+            os.makedirs(self.vendor_path, exist_ok=True)
+
             # Kang is usually combined with section, but allow them separately
             if not kang:
                 self.backup_pinned_files(backup_dir)
