@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "62636ab5_782fd2cf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-10-20T12:41:25Z",
+      "side": 1,
+      "message": "i don\u0027t think this works properly, maybe this would be better:\n\n```python\n        if device_path:\n            self.device_path \u003d path.join(android_root, device_path)\n        else:\n            self.device_path \u003d path.join(android_root, \u0027device\u0027, vendor, device)\n```",
+      "revId": "60d27c0276f801557c9940082adf7b113cde5ef1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
