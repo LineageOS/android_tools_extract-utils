@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa877595_5a4579a6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-20T21:26:47Z",
+      "side": 1,
+      "message": "Argument of type \"str | None\" cannot be assigned to parameter \"name\" of type \"AnyStr@fnmatch\" in function \"fnmatch\"\n  Type \"str | None\" is not assignable to type \"str\"\n    \"None\" is not assignable to \"str\"",
+      "revId": "5298aaaa250c1e6451ff936a6ffcf8b636eced9e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
