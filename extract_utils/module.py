@@ -67,10 +67,12 @@ class ProprietaryFile:
     def __init__(
         self,
         file_list_path: str,
+        vendor_rel_sub_path: str = 'proprietary',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
     ):
         self.file_list_path = file_list_path
         self.root_path = path.relpath(self.file_list_path, android_root)
+        self.vendor_rel_sub_path = vendor_rel_sub_path
         self.file_list = FileList()
 
         self.__fix_file_list = fix_file_list
@@ -117,18 +119,27 @@ class ProprietaryFile:
             fn(ctx)
 
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
+        vendor_path = path.join(
+            module.vendor_path,
+            self.vendor_rel_sub_path,
+        )
+        vendor_rel_path = path.join(
+            module.vendor_rel_path,
+            self.vendor_rel_sub_path,
+        )
+
         packages_ctx = ProductPackagesCtx(
             module.check_elf,
             module.vendor,
-            module.vendor_prop_path,
-            module.vendor_prop_rel_sub_path,
+            vendor_path,
+            self.vendor_rel_sub_path,
             module.lib_fixups,
         )
 
         self.run_pre_makefile_generation_fns(ctx)
 
         write_product_copy_files(
-            module.vendor_prop_rel_path,
+            vendor_rel_path,
             self.file_list.copy_files,
             ctx.product_mk_out,
         )
@@ -167,6 +178,14 @@ class ProprietaryFile:
 
 
 class FirmwareProprietaryFile(ProprietaryFile):
+    def __init__(
+        self,
+        file_list_path: str,
+        vendor_rel_sub_path: str = 'radio',
+        fix_file_list: Optional[fix_file_list_fn_type] = None,
+    ):
+        super().__init__(file_list_path, vendor_rel_sub_path, fix_file_list)
+
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
         write_mk_firmware_ab_partitions(
             self.file_list.files,
@@ -177,7 +196,7 @@ class FirmwareProprietaryFile(ProprietaryFile):
 
         write_mk_firmware(
             module.vendor_path,
-            module.vendor_radio_rel_sub_path,
+            self.vendor_rel_sub_path,
             self.file_list.files,
             ctx.mk_out,
         )
@@ -210,9 +229,10 @@ class GeneratedProprietaryFile(ProprietaryFile):
         rel_path: str,
         regex: str,
         skip_file_list_name: Optional[str] = None,
+        vendor_rel_sub_path: str = 'proprietary',
         fix_file_list_fn: Optional[fix_file_list_fn_type] = None,
     ):
-        super().__init__(file_list_name, fix_file_list_fn)
+        super().__init__(file_list_name, vendor_rel_sub_path, fix_file_list_fn)
 
         self.partition = partition
         self.rel_path = rel_path
@@ -303,22 +323,6 @@ class ExtractUtilsModule:
         self.vendor_rel_path = path.join('vendor', vendor, device)
         self.vendor_path = path.join(android_root, self.vendor_rel_path)
 
-        self.vendor_prop_rel_sub_path = 'proprietary'
-        self.vendor_prop_rel_path = path.join(
-            self.vendor_rel_path, self.vendor_prop_rel_sub_path
-        )
-        self.vendor_prop_path = path.join(
-            self.vendor_path, self.vendor_prop_rel_sub_path
-        )
-
-        self.vendor_radio_rel_sub_path = 'radio'
-        self.vendor_radio_rel_path = path.join(
-            self.vendor_rel_path, self.vendor_radio_rel_sub_path
-        )
-        self.vendor_radio_path = path.join(
-            self.vendor_path, self.vendor_radio_rel_sub_path
-        )
-
         self.vendor_rro_rel_sub_path = 'rro_overlays'
         self.vendor_rro_rel_path = path.join(
             self.vendor_rel_path, self.vendor_rro_rel_sub_path
@@ -372,10 +376,7 @@ class ExtractUtilsModule:
         return files
 
     def proprietary_file_vendor_path(self, proprietary_file: ProprietaryFile):
-        vendor_path = self.vendor_prop_path
-        if proprietary_file.is_firmware:
-            vendor_path = self.vendor_radio_path
-        return vendor_path
+        return path.join(self.vendor_path, proprietary_file.vendor_rel_sub_path)
 
     def proprietary_file_path(self, file_list_name: str):
         return path.join(self.device_path, file_list_name)
@@ -437,9 +438,8 @@ class ExtractUtilsModule:
             pb_partition,
         )
 
-        pb_dir_path = (
-            f'{self.vendor_prop_path}/{pb_partition}/{pb_dir_rel_path}'
-        )
+        vendor_path = self.proprietary_file_vendor_path(proprietary_file)
+        pb_dir_path = f'{vendor_path}/{pb_partition}/{pb_dir_rel_path}'
         rro_xml_dir_path = f'{self.vendor_rro_path}/{package_name}/res/xml'
 
         postprocess_fn = partial(
