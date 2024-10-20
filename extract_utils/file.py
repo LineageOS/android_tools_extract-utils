@@ -500,7 +500,9 @@ class FileList:
         if FileArgs.SYMLINK in file.args:
             self.package_symlinks.add(file)
 
-        if self.__section is None or fnmatch.fnmatch(section, self.__section):
+        if self.__section is None or (
+            section is not None and fnmatch.fnmatch(section, self.__section)
+        ):
             self.files.add(file)
             self.partitions.add(file.partition)
             if file.has_dst:
