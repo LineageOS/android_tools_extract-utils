@@ -16,6 +16,24 @@
       "message": "import re and use re.sub",
       "revId": "42afc8571fe07df5a8c61bd701a14d04eaa352f0",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5ddb5c99_9a51af2f",
+        "filename": "extract_utils/fixups_lib.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-20T19:53:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75cf6201_0f9ef548",
+      "revId": "42afc8571fe07df5a8c61bd701a14d04eaa352f0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
