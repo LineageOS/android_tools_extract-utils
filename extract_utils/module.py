@@ -319,17 +319,9 @@ class ExtractUtilsModule:
         self.device_rel_path = device_rel_path
 
         self.device_path = path.join(android_root, self.device_rel_path)
-
         self.vendor_rel_path = path.join('vendor', vendor, device)
         self.vendor_path = path.join(android_root, self.vendor_rel_path)
-
-        self.vendor_rro_rel_sub_path = 'rro_overlays'
-        self.vendor_rro_rel_path = path.join(
-            self.vendor_rel_path, self.vendor_rro_rel_sub_path
-        )
-        self.vendor_rro_path = path.join(
-            self.vendor_path, self.vendor_rro_rel_sub_path
-        )
+        self.vendor_rro_path = path.join(self.vendor_path, 'rro_overlays')
 
         if add_firmware_proprietary_file:
             self.add_firmware_proprietary_file()
@@ -442,8 +434,16 @@ class ExtractUtilsModule:
         )
 
         vendor_path = self.proprietary_file_vendor_path(proprietary_file)
-        pb_dir_path = f'{vendor_path}/{pb_partition}/{pb_dir_rel_path}'
-        rro_xml_dir_path = f'{self.vendor_rro_path}/{package_name}/res/xml'
+        pb_dir_path = path.join(
+            vendor_path,
+            pb_partition,
+            pb_dir_rel_path,
+        )
+        rro_xml_dir_path = path.join(
+            self.vendor_rro_path,
+            package_name,
+            'res/xml',
+        )
 
         postprocess_fn = partial(
             postprocess_carriersettings_fn_impl,
