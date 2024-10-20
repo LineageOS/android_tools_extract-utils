@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7488223_27a7d84b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-10-20T13:00:15Z",
+      "side": 1,
+      "message": "try current ps with `device_rel_path\u003d\u0027device/google/caimito/caiman\u0027`",
+      "revId": "e288c861a89cd72e4766a19231ac20a97896278b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
