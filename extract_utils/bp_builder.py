@@ -176,7 +176,7 @@ class FileBpBuilder(BpBuilder):
 
     def sub_dir(self) -> Self:
         p = self.__file_dir_without_prefix()
-        return self.set('sub_dir', p)
+        return self.set('sub_dir', p, optional=True)
 
     def __file_rel_sub_path(self, file_rel_path: str) -> str:
         return f'{self.__rel_sub_path}/{file_rel_path}'
