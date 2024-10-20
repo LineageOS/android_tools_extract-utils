@@ -484,6 +484,7 @@ function write_blueprint_packages() {
     local REQUIREDPKG=
     local DISABLE_CHECKELF=
     local GENERATE_DEPS=
+    local SET_ELF_FORMAT=
 
     if [ -z "$EXTRA" ]; then
         if [ "$CLASS" = "RFSA" ]; then
@@ -557,6 +558,7 @@ function write_blueprint_packages() {
 
         # Allow overriding module name
         STEM=
+        SET_ELF_FORMAT=
         if [ "$TARGET_ENABLE_CHECKELF" == "true" ]; then
             DISABLE_CHECKELF=
             GENERATE_DEPS="true"
@@ -575,6 +577,8 @@ function write_blueprint_packages() {
             elif [[ "$ARG" == "DISABLE_DEPS" ]]; then
                 DISABLE_CHECKELF="true"
                 GENERATE_DEPS=
+            elif [[ "$ARG" =~ "ELF_FORMAT" ]]; then
+                SET_ELF_FORMAT="${ARG#*=}"
             fi
         done
 
@@ -760,7 +764,9 @@ function do_comm() {
 
 function elf_format_android() {
     local ELF_FORMAT=$("$OBJDUMP" -a "$1" 2>/dev/null | sed -nE "s|^.+file format (.*)$|\1|p")
-    if [ "$ELF_FORMAT" = "elf64-littleaarch64" ]; then
+    if [ "$SET_ELF_FORMAT" != "" ];then
+        echo $SET_ELF_FORMAT
+    elif [ "$ELF_FORMAT" = "elf64-littleaarch64" ]; then
         echo "android_arm64"
     elif [ "$ELF_FORMAT" = "elf32-littlearm" ] || [ "$ELF_FORMAT" = "elf32-hexagon" ]; then
         echo "android_arm"
