@@ -268,6 +268,7 @@ class ExtractUtilsModule:
         self,
         device,
         vendor,
+        device_path: Optional[str] = None,
         blob_fixups: Optional[blob_fixups_user_type] = None,
         lib_fixups: Optional[lib_fixups_user_type] = None,
         namespace_imports: Optional[List[str]] = None,
@@ -293,8 +294,9 @@ class ExtractUtilsModule:
 
         self.check_elf = check_elf
 
-        self.device_rel_path = path.join('device', vendor, device)
-        self.device_path = path.join(android_root, self.device_rel_path)
+        self.device_path = device_path or path.join(
+            android_root, 'device', vendor, device
+        )
 
         self.vendor_rel_path = path.join('vendor', vendor, device)
         self.vendor_path = path.join(android_root, self.vendor_rel_path)
