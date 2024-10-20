@@ -38,6 +38,9 @@ def get_module_attr(module, attr):
 
 
 def remove_dir_contents(dir_path: str):
+    if not path.exists(dir_path):
+        return
+
     for f in os.scandir(dir_path):
         if f.name[0] == '.':
             continue

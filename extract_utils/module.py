@@ -466,6 +466,8 @@ class ExtractUtilsModule:
             self.vendor_path, 'BoardConfigVendor.mk'
         )
 
+        os.makedirs(self.vendor_path, exist_ok=True)
+
         with MakefilesCtx.from_paths(
             legacy,
             bp_path,
