@@ -61,7 +61,7 @@ TRANSFER_LIST_EXT = '.transfer.list'
 SPARSE_CHUNK_SUFFIX = '_sparsechunk'
 
 
-extract_fn_type = Callable[['ExtractCtx', str, str], str]
+extract_fn_type = Callable[['ExtractCtx', str, str], str | None]
 extract_fns_user_type = fixups_user_type[extract_fn_type]
 extract_fns_type = fixups_type[extract_fn_type]
 
@@ -681,7 +681,8 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
             print_file_paths([file.path], f'pattern: "{extract_pattern}"')
             print(f'Processing {file.name}')
             processed_file = extract_fn(ctx, file.path, dump_dir)
-            remove_file_paths([processed_file])
+            if processed_file is not None:
+                remove_file_paths([processed_file])
 
     move_alternate_partition_paths(dump_dir)
 
