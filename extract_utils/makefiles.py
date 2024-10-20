@@ -535,8 +535,7 @@ def write_symlink_package(
     symlink_target = f'/{file.dst}'
     # TODO: symlinks outside of partitions?
     part, location = symlink.split('/', 1)
-    symlink_root, _ = path.splitext(symlink)
-    package_name = symlink_root.replace('/', '_')
+    package_name = symlink.replace('/', '_').replace('.', '_')
 
     (
         BpBuilder(encoder)
