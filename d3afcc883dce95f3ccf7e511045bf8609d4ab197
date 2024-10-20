@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a06e10e_d3aff391",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-20T14:50:40Z",
+      "side": 1,
+      "message": "The patch reversion part should handle already applied patches unless the output of apktool decompile + patching is no the same as output of apktool decompile + patching + apktool compile + apktool decompile.",
+      "revId": "d3afcc883dce95f3ccf7e511045bf8609d4ab197",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
