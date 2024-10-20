@@ -509,7 +509,7 @@ def write_product_packages(
 
 
 def write_product_copy_files(rel_path: str, files: SimpleFileList, out: TextIO):
-    if not files:
+    if not any(files):
         return
 
     out.write('\nPRODUCT_COPY_FILES +=')
