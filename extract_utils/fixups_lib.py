@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+from re import sub
 from typing import Callable, List, Optional
 
 from extract_utils.fixups import fixups_type, fixups_user_type
@@ -21,6 +22,7 @@ libs_clang_rt_ubsan = (
 
 
 libs_proto_3_9_1 = ('libprotobuf-cpp-lite-3.9.1', 'libprotobuf-cpp-full-3.9.1')
+libs_proto_21_12 = ('libprotobuf-cpp-lite-21.12', 'libprotobuf-cpp-full-21.12')
 
 
 def lib_fixup_remove(lib: str, *args, **kwargs):
@@ -40,9 +42,14 @@ def lib_fixup_vendorcompat(lib: str, *args, **kwargs):
     return f'{lib}-vendorcompat'
 
 
+def lib_fixup_remove_proto_version_suffix(lib: str, *args, **kwargs):
+    return sub(r'-\d+(\.\d+)*$', '', lib)
+
+
 lib_fixups = {
     libs_clang_rt_ubsan: lib_fixup_remove_arch_suffix,
     libs_proto_3_9_1: lib_fixup_vendorcompat,
+    libs_proto_21_12: lib_fixup_remove_proto_version_suffix,
 }
 
 
