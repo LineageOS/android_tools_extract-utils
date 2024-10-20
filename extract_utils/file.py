@@ -432,6 +432,9 @@ class SimpleFileList:
     def __init__(self):
         self.__files = {}
 
+    def __bool__(self):
+        return bool(self.__files)
+
     def __iter__(self) -> Iterator[File]:
         return iter(self.__files.values())
 
