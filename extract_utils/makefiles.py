@@ -172,6 +172,7 @@ def write_sh_package(file: File, builder: FileBpBuilder):
         .owner()
         .src()
         .filename()
+        .sub_dir()
         .specific()
     )
 
