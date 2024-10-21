@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7daf6e06_3941c003",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2024-10-21T16:14:17Z",
+      "side": 1,
+      "message": "factory scripts expect the stock name",
+      "revId": "2fbdc36857f142522befe1ab114dd5b5d770c7f1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
