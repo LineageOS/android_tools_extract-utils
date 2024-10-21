@@ -89,6 +89,7 @@ class ExtractUtils:
                 source,
                 self.__args.kang,
                 self.__args.no_cleanup,
+                self.__args.extract_factory,
                 self.__args.section,
             )
             if not copied:
@@ -125,12 +126,16 @@ class ExtractUtils:
 
     def write_makefiles(self):
         for module in self.__modules:
-            module.write_makefiles(self.__args.legacy)
+            module.write_makefiles(
+                self.__args.legacy,
+                self.__args.extract_factory,
+            )
 
     def run(self):
         extract_fns = {}
         extract_partitions = set()
         firmware_partitions = set()
+        factory_files = set()
         firmware_files = set()
 
         self.parse_modules()
@@ -148,6 +153,9 @@ class ExtractUtils:
                 firmware_files.update(
                     module.get_firmware_files(),
                 )
+                factory_files.update(
+                    module.get_factory_files(),
+                )
 
             extract_ctx = ExtractCtx(
                 self.__args.keep_dump,
@@ -155,6 +163,7 @@ class ExtractUtils:
                 list(extract_partitions),
                 list(firmware_partitions),
                 list(firmware_files),
+                list(factory_files),
             )
 
             with create_source(self.__args.source, extract_ctx) as source:
