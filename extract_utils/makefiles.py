@@ -784,3 +784,13 @@ def write_mk_guard_begin(name: str, value: str, mk_out: TextIO, invert=False):
 
 def write_mk_guard_end(mk_out: TextIO):
     mk_out.write('\nendif\n')
+
+
+def write_board_info_file(
+    rel_path: str,
+    rel_sub_path: str,
+    board_config_mk_out: TextIO,
+):
+    board_config_mk_out.write(
+        f'\nTARGET_BOARD_INFO_FILE := {rel_path}/{rel_sub_path}/android-info.txt\n',
+    )

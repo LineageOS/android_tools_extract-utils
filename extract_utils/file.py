@@ -441,6 +441,9 @@ class SimpleFileList:
     def __iter__(self) -> Iterator[File]:
         return iter(self.__files.values())
 
+    def __contains__(self, key: str):
+        return key in self.__files
+
     def add(self, file: File):
         self.__files[file.dst] = file
 
