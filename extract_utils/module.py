@@ -184,7 +184,11 @@ class FirmwareProprietaryFile(ProprietaryFile):
         vendor_rel_sub_path: str = 'radio',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
     ):
-        super().__init__(file_list_path, vendor_rel_sub_path, fix_file_list)
+        super().__init__(
+            file_list_path,
+            vendor_rel_sub_path=vendor_rel_sub_path,
+            fix_file_list=fix_file_list,
+        )
 
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
         write_mk_firmware_ab_partitions(
@@ -230,9 +234,13 @@ class GeneratedProprietaryFile(ProprietaryFile):
         regex: Optional[str] = None,
         skip_file_list_name: Optional[str] = None,
         vendor_rel_sub_path: str = 'proprietary',
-        fix_file_list_fn: Optional[fix_file_list_fn_type] = None,
+        fix_file_list: Optional[fix_file_list_fn_type] = None,
     ):
-        super().__init__(file_list_name, vendor_rel_sub_path, fix_file_list_fn)
+        super().__init__(
+            file_list_name,
+            vendor_rel_sub_path=vendor_rel_sub_path,
+            fix_file_list=fix_file_list,
+        )
 
         self.partition = partition
         self.rel_path = rel_path
