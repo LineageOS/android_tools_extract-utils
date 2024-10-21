@@ -173,6 +173,14 @@ class ProprietaryFile:
     def parse(self):
         self.file_list.add_from_file(self.file_list_path)
 
+    def get_source_files(self) -> Set[str]:
+        files = set()
+
+        for file in self.file_list.files:
+            files.add(file.src)
+
+        return files
+
     def get_partitions(self) -> Set[str]:
         return self.file_list.partitions
 
@@ -206,14 +214,6 @@ class FirmwareProprietaryFile(ProprietaryFile):
         )
 
         write_mk_guard_end(ctx.mk_out)
-
-    def get_files(self) -> Set[str]:
-        files = set()
-
-        for file in self.file_list.files:
-            files.add(file.src)
-
-        return files
 
     def get_partitions(self) -> Set[str]:
         files = set()
@@ -344,14 +344,14 @@ class ExtractUtilsModule:
         if not skip_main_proprietary_file:
             self.add_proprietary_file('proprietary-files.txt')
 
-    def get_partitions(self, for_firmware=False):
+    def get_partitions(
+        self,
+        proprietary_file_types: List[type[ProprietaryFile]],
+    ):
         partitions = []
 
         for proprietary_file in self.proprietary_files:
-            if for_firmware != isinstance(
-                proprietary_file,
-                FirmwareProprietaryFile,
-            ):
+            if type(proprietary_file) not in proprietary_file_types:
                 continue
 
             partitions.extend(
@@ -361,23 +361,29 @@ class ExtractUtilsModule:
         return partitions
 
     def get_extract_partitions(self):
-        return self.get_partitions(for_firmware=False)
+        return self.get_partitions([ProprietaryFile, GeneratedProprietaryFile])
 
     def get_firmware_partitions(self):
-        return self.get_partitions(for_firmware=True)
+        return self.get_partitions([FirmwareProprietaryFile])
 
-    def get_firmware_files(self):
+    def get_source_files(
+        self,
+        proprietary_file_types: List[type[ProprietaryFile]],
+    ):
         files = []
 
         for proprietary_file in self.proprietary_files:
-            if not isinstance(proprietary_file, FirmwareProprietaryFile):
+            if type(proprietary_file) not in proprietary_file_types:
                 continue
 
             files.extend(
-                proprietary_file.get_files(),
+                proprietary_file.get_source_files(),
             )
 
         return files
+
+    def get_firmware_files(self):
+        return self.get_source_files([FirmwareProprietaryFile])
 
     def proprietary_file_vendor_path(self, proprietary_file: ProprietaryFile):
         return path.join(self.vendor_path, proprietary_file.vendor_rel_sub_path)
