@@ -74,12 +74,14 @@ class ExtractCtx:
         extract_partitions: List[str],
         firmware_partitions: List[str],
         firmware_files: List[str],
+        factory_files: List[str],
     ):
         self.keep_dump = keep_dump
         self.extract_fns = extract_fns
         self.extract_partitions = extract_partitions
         self.firmware_partitions = firmware_partitions
         self.firmware_files = firmware_files
+        self.factory_files = factory_files
 
 
 def should_extract_partition_file_name(
@@ -453,7 +455,8 @@ def should_extract_file_path(
     ):
         return True
 
-    if file_name in ctx.firmware_files + extract_file_names:
+    files = ctx.firmware_files + ctx.factory_files + extract_file_names
+    if file_name in files:
         return True
 
     for extract_pattern in ctx.extract_fns:
