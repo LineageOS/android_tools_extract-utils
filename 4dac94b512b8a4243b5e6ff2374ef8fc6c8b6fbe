@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf5ed3f7_e92542b6",
+        "filename": "extract_utils/module.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 381,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-10-21T19:09:22Z",
+      "side": 1,
+      "message": "remove `,` and reformat into single line",
+      "revId": "4dac94b512b8a4243b5e6ff2374ef8fc6c8b6fbe",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
