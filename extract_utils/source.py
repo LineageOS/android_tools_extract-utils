@@ -95,11 +95,14 @@ class Source(ABC):
     def find_sub_dir_files(
         self,
         sub_path: str,
-        regex: str,
+        regex: str | None,
         skipped_file_rel_paths: List[str],
     ) -> List[str]:
         skipped_file_rel_paths_set = set(skipped_file_rel_paths)
-        compiled_regex = re.compile(regex)
+
+        compiled_regex = None
+        if regex is not None:
+            compiled_regex = re.compile(regex)
 
         file_srcs = []
 
@@ -108,7 +111,10 @@ class Source(ABC):
         file_rel_paths.sort()
 
         for file_rel_path in file_rel_paths:
-            if compiled_regex.search(file_rel_path) is None:
+            if (
+                compiled_regex is not None
+                and compiled_regex.search(file_rel_path) is None
+            ):
                 continue
 
             if file_rel_path in skipped_file_rel_paths_set:
@@ -201,11 +207,12 @@ class DiskSource(Source):
         return False
 
     def _list_sub_path_file_rel_paths(self, source_sub_path: str) -> List[str]:
-        source_sub_path_len = len(source_sub_path)
         file_rel_paths = []
 
         for dir_path, _, file_names in os.walk(source_sub_path):
-            dir_rel_path = dir_path[source_sub_path_len:]
+            dir_rel_path = path.relpath(dir_path, source_sub_path)
+            if dir_rel_path == '.':
+                dir_rel_path = ''
 
             for file_name in file_names:
                 if dir_rel_path:
