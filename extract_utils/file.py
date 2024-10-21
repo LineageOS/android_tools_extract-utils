@@ -53,6 +53,7 @@ class FileArgs(str, Enum):
     OVERRIDES = 'OVERRIDES'
     PRESIGNED = 'PRESIGNED'
     REQUIRED = 'REQUIRED'
+    SKIP_MAKEFILES = 'SKIP_MAKEFILES'
     SYMLINK = 'SYMLINK'
 
 
@@ -69,6 +70,7 @@ FILE_ARGS_TYPE_MAP = {
     FileArgs.OVERRIDES: list,
     FileArgs.PRESIGNED: True,
     FileArgs.REQUIRED: list,
+    FileArgs.SKIP_MAKEFILES: True,
     FileArgs.SYMLINK: list,
 }
 
