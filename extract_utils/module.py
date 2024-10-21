@@ -69,11 +69,13 @@ class ProprietaryFile:
         file_list_path: str,
         vendor_rel_sub_path: str = 'proprietary',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
+        use_firmware_copy=False,
     ):
         self.file_list_path = file_list_path
         self.root_path = path.relpath(self.file_list_path, android_root)
         self.vendor_rel_sub_path = vendor_rel_sub_path
         self.file_list = FileList()
+        self.use_firmware_copy = use_firmware_copy
 
         self.__fix_file_list = fix_file_list
 
@@ -83,8 +85,6 @@ class ProprietaryFile:
         self.post_makefile_generation_fns: List[
             pre_post_makefile_generation_fn_type
         ] = []
-
-        self.is_firmware = isinstance(self, FirmwareProprietaryFile)
 
     def fix_file_list(self, file_list: FileList):
         if self.__fix_file_list is not None:
@@ -191,11 +191,13 @@ class FirmwareProprietaryFile(ProprietaryFile):
         file_list_path: str,
         vendor_rel_sub_path: str = 'radio',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
+        use_firmware_copy=True,
     ):
         super().__init__(
             file_list_path,
             vendor_rel_sub_path=vendor_rel_sub_path,
             fix_file_list=fix_file_list,
+            use_firmware_copy=use_firmware_copy,
         )
 
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
@@ -876,7 +878,6 @@ class ExtractUtilsModule:
         for proprietary_file in self.proprietary_files:
             print(f'Processing {proprietary_file.root_path}')
 
-            is_firmware = proprietary_file.is_firmware
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
 
             for file in proprietary_file.file_list.files:
@@ -885,7 +886,7 @@ class ExtractUtilsModule:
                     source,
                     backup_source,
                     vendor_path,
-                    is_firmware,
+                    proprietary_file.use_firmware_copy,
                     kang,
                 )
 
