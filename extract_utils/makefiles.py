@@ -27,7 +27,6 @@ from extract_utils.file import (
 from extract_utils.fixups_lib import lib_fixups_type, run_libs_fixup
 from extract_utils.utils import file_path_sha1
 
-# TODO: find out if partition-less files are a thing
 ALL_PARTITIONS = ['system', 'vendor', 'product', 'system_ext', 'odm']
 APEX_PARTITIONS = ['system', 'vendor', 'system_ext']
 RFSA_PARTITIONS = ['vendor', 'odm']
@@ -533,7 +532,6 @@ def write_symlink_package(
     encoder: JSONEncoder,
 ):
     symlink_target = f'/{file.dst}'
-    # TODO: symlinks outside of partitions?
     part, location = symlink.split('/', 1)
     package_name = symlink.replace('/', '_').replace('.', '_')
 
