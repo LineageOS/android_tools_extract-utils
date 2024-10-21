@@ -646,7 +646,7 @@ def write_xml_header(out: TextIO):
 
 def write_mk_local_path(out: TextIO):
     out.write(
-        f"""
+        """
 LOCAL_PATH := $(call my-dir)
 """
     )
