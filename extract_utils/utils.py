@@ -10,7 +10,6 @@ import importlib.util
 import os
 import shutil
 from enum import Enum
-from os import path
 from subprocess import PIPE, Popen, run
 from typing import Iterable, List, Tuple
 
