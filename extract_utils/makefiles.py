@@ -399,7 +399,12 @@ def write_common_packages_group(
     **kwargs,
 ):
     for files in file_tree:
-        builder = create_builder(ctx, file_tree, files[0], encoder)
+        file = files[0]
+
+        if FileArgs.SKIP_MAKEFILES in file.args:
+            continue
+
+        builder = create_builder(ctx, file_tree, file, encoder)
         package_name = fn(files, builder, *args, **kwargs)
         builder.write(out)
         package_names.append(package_name)
@@ -416,6 +421,9 @@ def write_packages_group(
     **kwargs,
 ):
     for file in file_tree:
+        if FileArgs.SKIP_MAKEFILES in file.args:
+            continue
+
         builder = create_builder(ctx, file_tree, file, encoder)
         package_name = fn(file, builder, *args, **kwargs)
         builder.write(out)
@@ -511,18 +519,25 @@ def write_product_packages(
 
 
 def write_product_copy_files(rel_path: str, files: SimpleFileList, out: TextIO):
-    if not files:
-        return
-
-    out.write('\nPRODUCT_COPY_FILES +=')
+    is_first = True
 
     for file in files:
+        if FileArgs.SKIP_MAKEFILES in file.args:
+            continue
+
+        if is_first:
+            out.write('\nPRODUCT_COPY_FILES +=')
+            is_first = False
+
         target = f'$(TARGET_COPY_OUT_{file.partition.upper()})'
         # Remove partition from destination, keeping the slash after it
         rel_dst = file.dst[len(file.partition) :]
         line = f' \\\n    {rel_path}/{file.dst}:{target}{rel_dst}'
 
         out.write(line)
+
+    if is_first:
+        return
 
     out.write('\n')
 
@@ -560,6 +575,9 @@ def write_symlink_packages(
     package_names = []
 
     for file in files:
+        if FileArgs.SKIP_MAKEFILES in file.args:
+            continue
+
         symlinks = file.symlinks
         assert isinstance(symlinks, list)
 
@@ -576,20 +594,21 @@ def write_symlink_packages(
 
 
 def write_mk_firmware_ab_partitions(files: SimpleFileList, out: TextIO):
-    has_ab = False
-    for file in files:
-        if FileArgs.AB in file.args:
-            has_ab = True
-            break
-
-    if not has_ab:
-        return
-
-    out.write('\nAB_OTA_PARTITIONS +=')
+    is_first = True
 
     for file in files:
+        if FileArgs.AB not in file.args:
+            continue
+
+        if is_first:
+            out.write('\nAB_OTA_PARTITIONS +=')
+            is_first = False
+
         line = f' \\\n    {file.root}'
         out.write(line)
+
+    if is_first:
+        return
 
     out.write('\n')
 
@@ -601,6 +620,9 @@ def write_mk_firmware(
     out: TextIO,
 ):
     for file in files:
+        if FileArgs.SKIP_MAKEFILES in file.args:
+            continue
+
         file_path = f'{vendor_path}/{rel_sub_path}/{file.dst}'
         hash = file_path_sha1(file_path)
 
