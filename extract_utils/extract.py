@@ -613,6 +613,8 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
             dump_dir,
         )
 
+    run_extract_fns(ctx, dump_dir)
+
     payload_bin_path = find_payload_path(dump_dir)
     if payload_bin_path:
         print_file_paths([payload_bin_path], 'payload.bin')
@@ -671,6 +673,12 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
         extract_ext4(ext4_paths, dump_dir)
         remove_file_paths(ext4_paths)
 
+    run_extract_fns(ctx, dump_dir)
+
+    move_alternate_partition_paths(dump_dir)
+
+
+def run_extract_fns(ctx: ExtractCtx, dump_dir: str):
     # Match leftover files with extract functions
     for file in os.scandir(dump_dir):
         for extract_pattern, extract_fn in ctx.extract_fns.items():
@@ -683,8 +691,6 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
             processed_file = extract_fn(ctx, file.path, dump_dir)
             if processed_file is not None:
                 remove_file_paths([processed_file])
-
-    move_alternate_partition_paths(dump_dir)
 
 
 def move_alternate_partition_paths(dump_dir: str):
