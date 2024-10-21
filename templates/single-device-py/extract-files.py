@@ -63,7 +63,7 @@ blob_fixups: blob_fixups_user_type = {
     'vendor/app/Test.apk': blob_fixup()
         .apktool_patch('blob-patches/TestApk.patch', '-s'),
     'vendor/etc/test.conf': blob_fixup()
-        .patch('blob-patches/TestConf.patch')
+        .patch_file('blob-patches/TestConf.patch')
         .regex_replace('(LOG_.*_ENABLED)=1', '\\1=0')
         .add_line_if_missing('DEBUG=0'),
     'vendor/etc/test.xml': blob_fixup()
