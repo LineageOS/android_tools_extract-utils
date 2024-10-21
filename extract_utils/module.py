@@ -226,8 +226,8 @@ class GeneratedProprietaryFile(ProprietaryFile):
         self,
         file_list_name: str,
         partition: str,
-        rel_path: str,
-        regex: str,
+        rel_path: Optional[str] = None,
+        regex: Optional[str] = None,
         skip_file_list_name: Optional[str] = None,
         vendor_rel_sub_path: str = 'proprietary',
         fix_file_list_fn: Optional[fix_file_list_fn_type] = None,
@@ -253,8 +253,12 @@ class GeneratedProprietaryFile(ProprietaryFile):
             with open(skip_file_list_path, 'r') as f:
                 skipped_file_rel_paths = parse_lines(f)
 
+        partition_rel_path = self.partition
+        if self.rel_path is not None:
+            partition_rel_path = path.join(partition_rel_path, self.rel_path)
+
         file_srcs = source.find_sub_dir_files(
-            f'{self.partition}/{self.rel_path}',
+            partition_rel_path,
             self.regex,
             skipped_file_rel_paths,
         )
