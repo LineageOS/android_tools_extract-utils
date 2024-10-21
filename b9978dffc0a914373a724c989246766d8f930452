@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8929d99_3a25fb1a",
+        "filename": "extract_utils/module.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-10-21T19:41:35Z",
+      "side": 1,
+      "message": "here too",
+      "revId": "b9978dffc0a914373a724c989246766d8f930452",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
