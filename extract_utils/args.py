@@ -23,6 +23,11 @@ group.add_argument(
     action='store_true',
     help='only extract target module',
 )
+group.add_argument(
+    '--extract-factory',
+    action='store_true',
+    help='extract factory files',
+)
 # TODO: --only-firmware
 
 parser.add_argument(
@@ -84,6 +89,7 @@ class Args:
         # Wrap to provide type hints
         self.only_common: bool = args.only_common
         self.only_target: bool = args.only_target
+        self.extract_factory: bool = args.extract_factory
         self.regenerate_makefiles: bool = args.regenerate_makefiles
         self.regenerate: bool = args.regenerate
         self.legacy: bool = args.legacy
@@ -98,6 +104,9 @@ class Args:
 
         if self.section is not None and self.regenerate:
             raise ValueError('Cannot use --section with --regenerate')
+
+        if self.extract_factory and self.source == ArgsSource.ADB:
+            raise ValueError('Cannot use --extract-factory with ADB')
 
 
 def parse_args():
