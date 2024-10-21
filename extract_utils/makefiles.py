@@ -594,6 +594,23 @@ def write_mk_firmware_ab_partitions(files: SimpleFileList, out: TextIO):
     out.write('\n')
 
 
+def write_mk_firmware_file(
+    vendor_path: str,
+    rel_sub_path: str,
+    file: File,
+    out: TextIO,
+):
+    file_path = f'{vendor_path}/{rel_sub_path}/{file.dst}'
+    hash = file_path_sha1(file_path)
+
+    line = (
+        f'\n$(call add-radio-file-sha1-checked,'
+        f'{rel_sub_path}/{file.dst},{hash})'
+    )
+
+    out.write(line)
+
+
 def write_mk_firmware(
     vendor_path: str,
     rel_sub_path: str,
@@ -601,14 +618,7 @@ def write_mk_firmware(
     out: TextIO,
 ):
     for file in files:
-        file_path = f'{vendor_path}/{rel_sub_path}/{file.dst}'
-        hash = file_path_sha1(file_path)
-
-        line = (
-            f'\n$(call add-radio-file-sha1-checked,'
-            f'{rel_sub_path}/{file.dst},{hash})'
-        )
-        out.write(line)
+        write_mk_firmware_file(vendor_path, rel_sub_path, file, out)
 
     out.write('\n')
 
@@ -762,3 +772,14 @@ def write_mk_guard_begin(name: str, value: str, mk_out: TextIO, invert=False):
 
 def write_mk_guard_end(mk_out: TextIO):
     mk_out.write('\nendif\n')
+
+
+def write_board_info_file(
+    rel_path: str,
+    rel_sub_path: str,
+    file: File,
+    board_config_mk_out: TextIO,
+):
+    board_config_mk_out.write(
+        f'\nTARGET_BOARD_INFO_FILE := {rel_path}/{rel_sub_path}/{file.dst}\n',
+    )
