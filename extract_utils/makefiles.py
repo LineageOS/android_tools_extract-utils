@@ -160,8 +160,11 @@ def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> str | None:
     return remaining
 
 
-def write_sh_package(file: File, builder: FileBpBuilder):
-    stem, package_name = file_stem_package_name(file)
+def write_sh_package(file: File, builder: FileBpBuilder, any_extension=False):
+    stem, package_name = file_stem_package_name(
+        file,
+        any_extension=any_extension,
+    )
 
     (
         builder.set_rule_name('sh_binary')
@@ -191,7 +194,7 @@ def write_elfs_package(
     deps = remove_libs_so_ending(libs)
 
     if is_bin and (machine is None or bits is None):
-        return write_sh_package(files[0], builder)
+        return write_sh_package(files[0], builder, any_extension=True)
 
     assert machine is not None
     assert bits is not None
