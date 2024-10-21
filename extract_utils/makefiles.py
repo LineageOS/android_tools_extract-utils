@@ -8,7 +8,6 @@ from __future__ import annotations
 import os
 from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
-from os import path
 from typing import List, Protocol, TextIO
 
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
