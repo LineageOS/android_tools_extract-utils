@@ -227,6 +227,20 @@ class FirmwareProprietaryFile(ProprietaryFile):
         return files
 
 
+class FactoryFirmwareProprietaryFile(FirmwareProprietaryFile):
+    def __init__(
+        self,
+        file_list_path: str,
+        vendor_rel_sub_path: str = 'factory',
+        fix_file_list: Optional[fix_file_list_fn_type] = None,
+    ):
+        super().__init__(
+            file_list_path,
+            vendor_rel_sub_path=vendor_rel_sub_path,
+            fix_file_list=fix_file_list,
+        )
+
+
 class GeneratedProprietaryFile(ProprietaryFile):
     def __init__(
         self,
@@ -309,6 +323,7 @@ class ExtractUtilsModule:
         extract_fns: Optional[extract_fns_user_type] = None,
         check_elf=False,
         add_firmware_proprietary_file=False,
+        add_factory_proprietary_file=False,
         add_generated_carriersettings=False,
         skip_main_proprietary_file=False,
     ):
@@ -339,6 +354,9 @@ class ExtractUtilsModule:
 
         if add_firmware_proprietary_file:
             self.add_firmware_proprietary_file()
+
+        if add_factory_proprietary_file:
+            self.add_factory_proprietary_file()
 
         if add_generated_carriersettings:
             self.add_generated_carriersettings()
@@ -387,6 +405,9 @@ class ExtractUtilsModule:
     def get_firmware_files(self):
         return self.get_source_files([FirmwareProprietaryFile])
 
+    def get_factory_files(self):
+        return self.get_source_files([FactoryFirmwareProprietaryFile])
+
     def proprietary_file_vendor_path(self, proprietary_file: ProprietaryFile):
         return path.join(self.vendor_path, proprietary_file.vendor_rel_sub_path)
 
@@ -426,6 +447,14 @@ class ExtractUtilsModule:
     def add_firmware_proprietary_file(self):
         file_list_path = self.proprietary_file_path('proprietary-firmware.txt')
         proprietary_file = FirmwareProprietaryFile(file_list_path)
+        self.proprietary_files.append(proprietary_file)
+        return proprietary_file
+
+    def add_factory_proprietary_file(self):
+        file_list_path = self.proprietary_file_path(
+            'proprietary-firmware-factory.txt'
+        )
+        proprietary_file = FactoryFirmwareProprietaryFile(file_list_path)
         self.proprietary_files.append(proprietary_file)
         return proprietary_file
 
@@ -480,7 +509,7 @@ class ExtractUtilsModule:
                 rro_package.partition,
             )
 
-    def write_makefiles(self, legacy: bool):
+    def write_makefiles(self, legacy: bool, extract_factory: bool):
         bp_path = path.join(self.vendor_path, 'Android.bp')
         mk_path = path.join(self.vendor_path, 'Android.mk')
         product_mk_path = path.join(
@@ -510,6 +539,12 @@ class ExtractUtilsModule:
             self.write_rro_makefiles(ctx)
 
             for proprietary_file in self.proprietary_files:
+                if not extract_factory and isinstance(
+                    proprietary_file,
+                    FactoryFirmwareProprietaryFile,
+                ):
+                    continue
+
                 proprietary_file.write_makefiles(self, ctx)
 
     def write_updated_proprietary_file(
@@ -876,10 +911,17 @@ class ExtractUtilsModule:
         source: Source,
         backup_source: Source,
         kang: bool,
+        extract_factory: bool,
     ) -> bool:
         all_copied = True
 
         for proprietary_file in self.proprietary_files:
+            if not extract_factory and isinstance(
+                proprietary_file,
+                FactoryFirmwareProprietaryFile,
+            ):
+                continue
+
             print(f'Processing {proprietary_file.root_path}')
 
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
@@ -914,6 +956,7 @@ class ExtractUtilsModule:
         source: Source,
         kang: bool,
         no_cleanup: bool,
+        extract_factory: bool,
         section: Optional[str],
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
@@ -928,4 +971,9 @@ class ExtractUtilsModule:
 
             backup_source = DiskSource(backup_dir)
 
-            return self.process_proprietary_files(source, backup_source, kang)
+            return self.process_proprietary_files(
+                source,
+                backup_source,
+                kang,
+                extract_factory,
+            )
