@@ -24,10 +24,12 @@ from extract_utils.fixups_lib import lib_fixups_user_type
 from extract_utils.makefiles import (
     MakefilesCtx,
     ProductPackagesCtx,
+    write_board_info_file,
     write_bp_header,
     write_bp_soong_namespaces,
     write_mk_firmware,
     write_mk_firmware_ab_partitions,
+    write_mk_firmware_file,
     write_mk_guard_begin,
     write_mk_guard_end,
     write_mk_header,
@@ -62,6 +64,7 @@ class PinnedFileProcessResult(Enum):
 class ProprietaryFileType(Enum):
     BLOBS = 0
     FIRMWARE = 1
+    FACTORY = 2
 
 
 fix_file_list_fn_type = Callable[[FileList], None]
@@ -235,6 +238,46 @@ class FirmwareProprietaryFile(ProprietaryFile):
         return files
 
 
+class FactoryProprietaryFile(ProprietaryFile):
+    def __init__(
+        self,
+        file_list_path: str,
+        vendor_rel_sub_path: str = 'factory',
+        fix_file_list: Optional[fix_file_list_fn_type] = None,
+        type=ProprietaryFileType.FACTORY,
+    ):
+        super().__init__(
+            file_list_path,
+            vendor_rel_sub_path=vendor_rel_sub_path,
+            fix_file_list=fix_file_list,
+            type=type,
+        )
+
+    def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
+        write_mk_guard_begin('TARGET_DEVICE', module.device, ctx.mk_out)
+
+        for file in self.file_list.files:
+            if file.basename == 'android-info.txt':
+                write_board_info_file(
+                    module.vendor_rel_path,
+                    self.vendor_rel_sub_path,
+                    file,
+                    ctx.board_config_mk_out,
+                )
+                continue
+
+            write_mk_firmware_file(
+                module.vendor_path,
+                self.vendor_rel_sub_path,
+                file,
+                ctx.mk_out,
+            )
+
+        ctx.mk_out.write('\n')
+
+        write_mk_guard_end(ctx.mk_out)
+
+
 class GeneratedProprietaryFile(ProprietaryFile):
     def __init__(
         self,
@@ -319,6 +362,7 @@ class ExtractUtilsModule:
         extract_fns: Optional[extract_fns_user_type] = None,
         check_elf=False,
         add_firmware_proprietary_file=False,
+        add_factory_proprietary_file=False,
         add_generated_carriersettings=False,
         skip_main_proprietary_file=False,
     ):
@@ -349,6 +393,9 @@ class ExtractUtilsModule:
 
         if add_firmware_proprietary_file:
             self.add_firmware_proprietary_file()
+
+        if add_factory_proprietary_file:
+            self.add_factory_proprietary_file()
 
         if add_generated_carriersettings:
             self.add_generated_carriersettings()
@@ -391,6 +438,9 @@ class ExtractUtilsModule:
     def get_firmware_files(self):
         return self.get_files(ProprietaryFileType.FIRMWARE)
 
+    def get_factory_files(self):
+        return self.get_files(ProprietaryFileType.FACTORY)
+
     def proprietary_file_vendor_path(self, proprietary_file: ProprietaryFile):
         return path.join(self.vendor_path, proprietary_file.vendor_rel_sub_path)
 
@@ -430,6 +480,14 @@ class ExtractUtilsModule:
     def add_firmware_proprietary_file(self):
         file_list_path = self.proprietary_file_path('proprietary-firmware.txt')
         proprietary_file = FirmwareProprietaryFile(file_list_path)
+        self.proprietary_files.append(proprietary_file)
+        return proprietary_file
+
+    def add_factory_proprietary_file(self):
+        file_list_path = self.proprietary_file_path(
+            'proprietary-firmware-factory.txt'
+        )
+        proprietary_file = FactoryProprietaryFile(file_list_path)
         self.proprietary_files.append(proprietary_file)
         return proprietary_file
 
@@ -480,7 +538,7 @@ class ExtractUtilsModule:
                 rro_package.partition,
             )
 
-    def write_makefiles(self, legacy: bool):
+    def write_makefiles(self, legacy: bool, extract_factory: bool):
         bp_path = path.join(self.vendor_path, 'Android.bp')
         mk_path = path.join(self.vendor_path, 'Android.mk')
         product_mk_path = path.join(
@@ -510,6 +568,12 @@ class ExtractUtilsModule:
             self.write_rro_makefiles(ctx)
 
             for proprietary_file in self.proprietary_files:
+                if (
+                    not extract_factory
+                    and proprietary_file.type is ProprietaryFileType.FACTORY
+                ):
+                    continue
+
                 proprietary_file.write_makefiles(self, ctx)
 
     def write_updated_proprietary_file(
@@ -876,10 +940,17 @@ class ExtractUtilsModule:
         source: Source,
         backup_source: Source,
         kang: bool,
+        extract_factory: bool,
     ) -> bool:
         all_copied = True
 
         for proprietary_file in self.proprietary_files:
+            if (
+                not extract_factory
+                and proprietary_file.type is ProprietaryFileType.FACTORY
+            ):
+                continue
+
             print(f'Processing {proprietary_file.root_path}')
 
             is_firmware = proprietary_file.type is ProprietaryFileType.FIRMWARE
@@ -915,6 +986,7 @@ class ExtractUtilsModule:
         source: Source,
         kang: bool,
         no_cleanup: bool,
+        extract_factory: bool,
         section: Optional[str],
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
@@ -929,4 +1001,9 @@ class ExtractUtilsModule:
 
             backup_source = DiskSource(backup_dir)
 
-            return self.process_proprietary_files(source, backup_source, kang)
+            return self.process_proprietary_files(
+                source,
+                backup_source,
+                kang,
+                extract_factory,
+            )
