@@ -148,10 +148,12 @@ def split_lines_into_sections(lines: Iterable[str]) -> List[List[str]]:
 
 
 def parse_lines(lines: Iterable[str]) -> List[str]:
-    lines = []
+    valid_lines = []
 
     for line in lines:
-        if is_valid_line(line):
-            lines.append(line)
+        line = line.strip()
 
-    return lines
+        if is_valid_line(line):
+            valid_lines.append(line)
+
+    return valid_lines
