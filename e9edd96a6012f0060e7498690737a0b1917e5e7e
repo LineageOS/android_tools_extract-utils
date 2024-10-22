@@ -16,6 +16,24 @@
       "message": "with suppress(Exception):",
       "revId": "e9edd96a6012f0060e7498690737a0b1917e5e7e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d2ab350_f8f4014e",
+        "filename": "extract_utils/fixups_blob.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-22T10:02:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c9a94440_fe0b7c21",
+      "revId": "e9edd96a6012f0060e7498690737a0b1917e5e7e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
