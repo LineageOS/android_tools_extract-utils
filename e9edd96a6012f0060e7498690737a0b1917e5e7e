@@ -51,6 +51,24 @@
       "message": "dir_path: str",
       "revId": "e9edd96a6012f0060e7498690737a0b1917e5e7e",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c04372b6_6eb96d8d",
+        "filename": "extract_utils/utils.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-22T10:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03594874_4a07ba3d",
+      "revId": "e9edd96a6012f0060e7498690737a0b1917e5e7e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
