@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import importlib.util
 import os
@@ -99,7 +100,9 @@ def run_cmd(cmd: List[str], shell=False):
     proc = run(cmd, stdout=PIPE, stderr=PIPE, text=True, shell=shell)
     if proc.returncode != 0:
         cmd_str = ' '.join(cmd)
-        s = f'Failed to run command "{cmd_str}": {proc.stderr}'
+        s = f'Failed to run command "{cmd_str}":\n'
+        s += f'stdout:\n{proc.stdout}\n'
+        s += f'stderr:\n{proc.stderr}\n'
         raise ValueError(s)
     return proc.stdout
 
@@ -156,3 +159,15 @@ def parse_lines(lines: Iterable[str]) -> List[str]:
             valid_lines.append(line)
 
     return valid_lines
+
+
+@contextlib.contextmanager
+def TemporaryWorkingDirectory(dir):
+    cwd = os.getcwd()
+
+    os.chdir(dir)
+
+    try:
+        yield
+    finally:
+        os.chdir(cwd)

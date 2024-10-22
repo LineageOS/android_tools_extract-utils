@@ -24,7 +24,7 @@ from extract_utils.tools import (
     patchelf_version_path_map,
     stripzip_path,
 )
-from extract_utils.utils import run_cmd
+from extract_utils.utils import TemporaryWorkingDirectory, run_cmd
 
 
 class BlobFixupCtx:
@@ -173,16 +173,26 @@ class blob_fixup:
         patches = self.__get_patches(ctx, patches_path)
         assert tmp_dir is not None
 
-        base_cmd = ['git', 'apply', '--unsafe-path', '--directory', tmp_dir]
-
         # Try to apply the changes in reverse, so that they apply cleanly
         # forward
+        with TemporaryWorkingDirectory(tmp_dir):
+            run_cmd(['git', 'init'])
+            run_cmd(['git', 'add', '.'])
+            run_cmd(['git', 'commit', '-m', 'Initial commit'])
 
-        with suppress(Exception):
-            reversed_patches = list(reversed(patches))
-            run_cmd(base_cmd + ['--reverse'] + reversed_patches)
+            with suppress(Exception):
+                run_cmd(
+                    [
+                        'git',
+                        'apply',
+                        '--reverse',
+                        '--check',
+                    ]
+                    + patches[::-1]
+                )
+                return
 
-        run_cmd(base_cmd + patches)
+            run_cmd(['git', 'apply'] + patches)
 
     def patch_dir(self, patches_path: str) -> Self:
         impl = partial(self.patch_impl, patches_path)
