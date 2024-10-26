@@ -451,6 +451,7 @@ class FileList:
         self,
         section: Optional[str] = None,
         check_elf=False,
+        is_firmware=False,
     ):
         # These are filtered by section
         self.files = SimpleFileList()
@@ -464,6 +465,7 @@ class FileList:
         self.package_files = FileTree()
         self.package_symlinks = SimpleFileList()
         self.copy_files = SimpleFileList()
+        self.firmware_files = SimpleFileList()
 
         # Combination of normal lines and files, split into sections,
         # used while updating
@@ -471,6 +473,7 @@ class FileList:
 
         self.__section = section
         self.__check_elf = check_elf
+        self.__is_firmware = is_firmware
 
     def __is_file_package(self, file: File):
         if file.contains_path_parts(MANIFEST_PARTS):
@@ -530,6 +533,9 @@ class FileList:
             or FileArgs.MAKE_COPY_RULE_ONLY in file.args
         ):
             self.copy_files.add(file)
+
+        if (self.__is_firmware):
+            self.firmware_files.add(file)
 
     def __add_line(self, line: str):
         if not is_valid_line(line):
