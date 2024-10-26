@@ -455,7 +455,7 @@ def should_extract_file_path(
     file_name = path.basename(file_path)
 
     partitions = ctx.extract_partitions + extract_partitions
-    for partition in partitions:
+    for partition in partitions + ctx.firmware_partitions:
         if file_name.startswith(f'{partition}.'):
             return True
 
