@@ -168,6 +168,7 @@ class ProprietaryFile:
         self.file_list = FileList(
             section=section,
             check_elf=module.check_elf,
+            is_firmware=isinstance(self, FirmwareProprietaryFile)
         )
 
     def parse(self):
@@ -192,7 +193,7 @@ class FirmwareProprietaryFile(ProprietaryFile):
 
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
         write_mk_firmware_ab_partitions(
-            self.file_list.files,
+            self.file_list.firmware_files,
             ctx.board_config_mk_out,
         )
 
@@ -201,7 +202,7 @@ class FirmwareProprietaryFile(ProprietaryFile):
         write_mk_firmware(
             module.vendor_path,
             self.vendor_rel_sub_path,
-            self.file_list.files,
+            self.file_list.firmware_files,
             ctx.mk_out,
         )
 
