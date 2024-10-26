@@ -459,6 +459,10 @@ def should_extract_file_path(
         if file_name.startswith(f'{partition}.'):
             return True
 
+    for firmware_partition in ctx.firmware_partitions:
+        if file_name.startswith(f'{firmware_partition}.'):
+            return True
+
     if file_name in ctx.firmware_files + ctx.factory_files + extract_file_names:
         return True
 
