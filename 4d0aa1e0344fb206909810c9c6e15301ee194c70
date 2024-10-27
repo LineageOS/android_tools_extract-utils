@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "396efd72_4a07b1c8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 15
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-10-27T13:17:05Z",
+      "side": 1,
+      "message": "https://review.lineageos.org/c/LineageOS/android_device_google_akita/+/406981",
+      "revId": "4d0aa1e0344fb206909810c9c6e15301ee194c70",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
