@@ -402,6 +402,9 @@ def get_dump_dir(
     source: str,
     ctx: ExtractCtx,
 ) -> Generator[str, None, None]:
+    if not path.exists(source):
+        raise FileNotFoundError(f'File not found: {source}')
+
     if not path.isfile(source) and not path.isdir(source):
         raise ValueError(f'Unexpected file type at {source}')
 
