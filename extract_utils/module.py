@@ -59,6 +59,11 @@ class PinnedFileProcessResult(Enum):
     BAD_FIXUP = 2
 
 
+class ProprietaryFileType(Enum):
+    BLOBS = 0
+    FIRMWARE = 1
+
+
 fix_file_list_fn_type = Callable[[FileList], None]
 pre_post_makefile_generation_fn_type = Callable[[MakefilesCtx], None]
 
@@ -69,6 +74,7 @@ class ProprietaryFile:
         file_list_path: str,
         vendor_rel_sub_path: str = 'proprietary',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
+        type=ProprietaryFileType.BLOBS,
     ):
         self.file_list_path = file_list_path
         self.root_path = path.relpath(self.file_list_path, android_root)
@@ -84,7 +90,7 @@ class ProprietaryFile:
             pre_post_makefile_generation_fn_type
         ] = []
 
-        self.is_firmware = isinstance(self, FirmwareProprietaryFile)
+        self.type = type
 
     def fix_file_list(self, file_list: FileList):
         if self.__fix_file_list is not None:
@@ -173,6 +179,16 @@ class ProprietaryFile:
     def parse(self):
         self.file_list.add_from_file(self.file_list_path)
 
+    def get_files(self) -> Set[str]:
+        files = set()
+
+        for file in self.file_list.files:
+            files.add(file.src)
+            if file.has_dst:
+                files.add(file.dst)
+
+        return files
+
     def get_partitions(self) -> Set[str]:
         return self.file_list.partitions
 
@@ -183,11 +199,13 @@ class FirmwareProprietaryFile(ProprietaryFile):
         file_list_path: str,
         vendor_rel_sub_path: str = 'radio',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
+        type=ProprietaryFileType.FIRMWARE,
     ):
         super().__init__(
             file_list_path,
             vendor_rel_sub_path=vendor_rel_sub_path,
             fix_file_list=fix_file_list,
+            type=type,
         )
 
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
@@ -206,16 +224,6 @@ class FirmwareProprietaryFile(ProprietaryFile):
         )
 
         write_mk_guard_end(ctx.mk_out)
-
-    def get_files(self) -> Set[str]:
-        files = set()
-
-        for file in self.file_list.files:
-            files.add(file.src)
-            if file.has_dst:
-                files.add(file.dst)
-
-        return files
 
     def get_partitions(self) -> Set[str]:
         files = set()
@@ -237,11 +245,13 @@ class GeneratedProprietaryFile(ProprietaryFile):
         skip_file_list_name: Optional[str] = None,
         vendor_rel_sub_path: str = 'proprietary',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
+        type=ProprietaryFileType.BLOBS,
     ):
         super().__init__(
             file_list_name,
             vendor_rel_sub_path=vendor_rel_sub_path,
             fix_file_list=fix_file_list,
+            type=type,
         )
 
         self.partition = partition
@@ -346,14 +356,11 @@ class ExtractUtilsModule:
         if not skip_main_proprietary_file:
             self.add_proprietary_file('proprietary-files.txt')
 
-    def get_partitions(self, for_firmware=False):
+    def get_partitions(self, type: ProprietaryFileType):
         partitions = []
 
         for proprietary_file in self.proprietary_files:
-            if for_firmware != isinstance(
-                proprietary_file,
-                FirmwareProprietaryFile,
-            ):
+            if proprietary_file.type is not type:
                 continue
 
             partitions.extend(
@@ -362,17 +369,11 @@ class ExtractUtilsModule:
 
         return partitions
 
-    def get_extract_partitions(self):
-        return self.get_partitions(for_firmware=False)
-
-    def get_firmware_partitions(self):
-        return self.get_partitions(for_firmware=True)
-
-    def get_firmware_files(self):
+    def get_files(self, type: ProprietaryFileType):
         files = []
 
         for proprietary_file in self.proprietary_files:
-            if not isinstance(proprietary_file, FirmwareProprietaryFile):
+            if proprietary_file.type is not type:
                 continue
 
             files.extend(
@@ -380,6 +381,15 @@ class ExtractUtilsModule:
             )
 
         return files
+
+    def get_extract_partitions(self):
+        return self.get_partitions(ProprietaryFileType.BLOBS)
+
+    def get_firmware_partitions(self):
+        return self.get_partitions(ProprietaryFileType.FIRMWARE)
+
+    def get_firmware_files(self):
+        return self.get_files(ProprietaryFileType.FIRMWARE)
 
     def proprietary_file_vendor_path(self, proprietary_file: ProprietaryFile):
         return path.join(self.vendor_path, proprietary_file.vendor_rel_sub_path)
@@ -872,7 +882,7 @@ class ExtractUtilsModule:
         for proprietary_file in self.proprietary_files:
             print(f'Processing {proprietary_file.root_path}')
 
-            is_firmware = proprietary_file.is_firmware
+            is_firmware = proprietary_file.type is ProprietaryFileType.FIRMWARE
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
 
             for file in proprietary_file.file_list.files:
