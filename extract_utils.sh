@@ -74,7 +74,7 @@ function setup_vendor_deps() {
     export JAVA="$JDK_BINARIES_LOCATION"/java
     export APKTOOL="$COMMON_BINARIES_LOCATION"/apktool/apktool.jar
 
-    for VERSION in 0_8 0_9 0_17_2; do
+    for VERSION in 0_8 0_9 0_17_2 0_18; do
         export PATCHELF_${VERSION}="$BINARIES_LOCATION"/patchelf-"${VERSION}"
     done
 
