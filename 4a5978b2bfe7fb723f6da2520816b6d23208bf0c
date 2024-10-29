@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66399363_b8ff5c3e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 24442
+      },
+      "writtenOn": "2024-10-29T18:12:54Z",
+      "side": 1,
+      "message": "If this is about some camera blobs from OPlus camera stack, you can remove them. They aren\u0027t used on AOSP, they are for OPlus camera app. Beside, that\u0027s a really bad idea to do that if that\u0027s not the case. If the blob is 32bit, it stays 32bit",
+      "revId": "4a5978b2bfe7fb723f6da2520816b6d23208bf0c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
