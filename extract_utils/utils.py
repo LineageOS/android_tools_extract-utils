@@ -11,6 +11,7 @@ import importlib.util
 import os
 import shutil
 from enum import Enum
+from functools import cache
 from subprocess import PIPE, Popen, run
 from typing import Generator, Iterable, List, Tuple
 
@@ -78,11 +79,30 @@ def color_print(*args, color: Color, **kwargs):
 parallel_input_cmds = List[Tuple[str, List[str]]]
 
 
+@cache
+def executable_path(name: str) -> str:
+    path = shutil.which(
+        name,
+        path=os.pathsep.join(
+            [
+                os.environ.get('PATH', os.defpath),
+                '/usr/sbin',
+            ]
+        ),
+    )
+
+    if not path:
+        raise ValueError(f'Failed to find executable path for: {name}')
+
+    return path
+
+
 def process_cmds_in_parallel(input_cmds: parallel_input_cmds, fatal=False):
     input_procs: List[Tuple[str, Popen]] = []
 
     for input, cmd in input_cmds:
         print(f'Processing {input}')
+        cmd[0] = executable_path(cmd[0])
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE, text=True)
         input_procs.append((input, proc))
 
@@ -97,6 +117,7 @@ def process_cmds_in_parallel(input_cmds: parallel_input_cmds, fatal=False):
 
 
 def run_cmd(cmd: List[str], shell=False):
+    cmd[0] = executable_path(cmd[0])
     proc = run(cmd, stdout=PIPE, stderr=PIPE, text=True, shell=shell)
     if proc.returncode != 0:
         cmd_str = ' '.join(cmd)
