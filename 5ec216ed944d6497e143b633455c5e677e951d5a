@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d1a6840_d1f9b47e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-03T08:45:21Z",
+      "side": 1,
+      "message": "maybe kind instead of type to not shadow yet another python builtin?",
+      "revId": "5ec216ed944d6497e143b633455c5e677e951d5a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
