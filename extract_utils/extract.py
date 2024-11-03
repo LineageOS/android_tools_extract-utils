@@ -27,6 +27,8 @@ from extract_utils.tools import (
     simg2img_path,
 )
 from extract_utils.utils import (
+    Color,
+    color_print,
     parallel_input_cmds,
     process_cmds_in_parallel,
 )
@@ -668,6 +670,16 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
     run_extract_fns(ctx, dump_dir)
 
     move_alternate_partition_paths(dump_dir)
+
+    for partition in ctx.extract_partitions:
+        dump_partition_dir = path.join(dump_dir, partition)
+
+        if path.isdir(dump_partition_dir):
+            continue
+
+        color_print(f'Partition {partition} not extracted', color=Color.YELLOW)
+        # Create empty partition dir to prevent re-extraction
+        os.mkdir(dump_partition_dir)
 
 
 def run_extract_fns(ctx: ExtractCtx, dump_dir: str):
