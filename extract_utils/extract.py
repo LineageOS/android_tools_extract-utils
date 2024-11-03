@@ -375,6 +375,11 @@ def extract_erofs(file_paths: List[str], output_path: str):
 
 
 def extract_ext4(file_paths: List[str], output_path: str):
+    debugfs_path = shutil.which('debugfs')
+
+    if debugfs_path is None:
+        raise ValueError('debugfs executable not found')
+
     procs: parallel_input_cmds = []
     for file_path in file_paths:
         base_file_name = path.basename(file_path)
@@ -387,7 +392,7 @@ def extract_ext4(file_paths: List[str], output_path: str):
             (
                 base_file_name,
                 [
-                    'debugfs',
+                    debugfs_path,
                     '-R',
                     f'rdump / {partition_output_path}',
                     file_path,
