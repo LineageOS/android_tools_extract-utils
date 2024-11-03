@@ -16,6 +16,24 @@
       "message": "maybe kind instead of type to not shadow yet another python builtin?",
       "revId": "5ec216ed944d6497e143b633455c5e677e951d5a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "96afa52d_9d055dd5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-11-03T10:09:25Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "4d1a6840_d1f9b47e",
+      "revId": "5ec216ed944d6497e143b633455c5e677e951d5a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
