@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from contextlib import suppress
 from enum import Enum
 from typing import Optional
@@ -63,6 +64,7 @@ parser.add_argument(
 )
 parser.add_argument(
     '--keep-dump',
+    default=bool(os.getenv('KEEP_DUMP')),
     action='store_true',
     help='keep the dump directory',
 )
