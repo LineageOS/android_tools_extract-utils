@@ -45,7 +45,7 @@ def lib_fixup_remove_proto_version_suffix(lib: str, *args, **kwargs):
     return lib.rsplit('-', 1)[0]
 
 
-lib_fixups = {
+lib_fixups: lib_fixups_user_type = {
     libs_clang_rt_ubsan: lib_fixup_remove_arch_suffix,
     libs_proto_3_9_1: lib_fixup_vendorcompat,
     libs_proto_21_12: lib_fixup_remove_proto_version_suffix,
