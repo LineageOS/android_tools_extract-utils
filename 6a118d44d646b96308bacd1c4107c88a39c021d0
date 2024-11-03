@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a58fc44a_721e8eff",
+        "filename": "extract_utils/extract_pixel.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-03T10:16:21Z",
+      "side": 1,
+      "message": "```suggestion\n    simple_file_root, _ \u003d file_root.split(\u0027-\u0027, 1)\n```",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 49
+      },
+      "revId": "6a118d44d646b96308bacd1c4107c88a39c021d0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
