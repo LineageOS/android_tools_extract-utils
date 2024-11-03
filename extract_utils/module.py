@@ -320,6 +320,7 @@ class ExtractUtilsModule:
         check_elf=False,
         add_firmware_proprietary_file=False,
         add_generated_carriersettings=False,
+        extract_carriersettings=False,
         skip_main_proprietary_file=False,
     ):
         self.device = device
@@ -351,7 +352,7 @@ class ExtractUtilsModule:
             self.add_firmware_proprietary_file()
 
         if add_generated_carriersettings:
-            self.add_generated_carriersettings()
+            self.add_generated_carriersettings(extract_carriersettings)
 
         if not skip_main_proprietary_file:
             self.add_proprietary_file('proprietary-files.txt')
@@ -433,7 +434,7 @@ class ExtractUtilsModule:
         self.proprietary_files.append(proprietary_file)
         return proprietary_file
 
-    def add_generated_carriersettings(self):
+    def add_generated_carriersettings(self, extract_carriersettings: bool):
         pb_partition = 'product'
         pb_dir_rel_path = 'etc/CarrierSettings'
         package_name = 'CarrierConfigOverlay'
@@ -448,26 +449,27 @@ class ExtractUtilsModule:
             r'\.pb$',
         )
         self.proprietary_files.append(proprietary_file)
-        self.add_rro_package(
-            package_name,
-            'com.android.carrierconfig',
-            pb_partition,
-        )
+        if extract_carriersettings:
+            self.add_rro_package(
+                package_name,
+                'com.android.carrierconfig',
+                pb_partition,
+            )
 
-        vendor_path = self.proprietary_file_vendor_path(proprietary_file)
-        pb_dir_path = path.join(vendor_path, pb_partition, pb_dir_rel_path)
-        rro_xml_dir_path = path.join(
-            self.vendor_rro_path,
-            package_name,
-            'res/xml',
-        )
+            vendor_path = self.proprietary_file_vendor_path(proprietary_file)
+            pb_dir_path = path.join(vendor_path, pb_partition, pb_dir_rel_path)
+            rro_xml_dir_path = path.join(
+                self.vendor_rro_path,
+                package_name,
+                'res/xml',
+            )
 
-        postprocess_fn = partial(
-            postprocess_carriersettings_fn_impl,
-            pb_dir_path,
-            rro_xml_dir_path,
-        )
-        self.add_postprocess_fn(postprocess_fn)
+            postprocess_fn = partial(
+                postprocess_carriersettings_fn_impl,
+                pb_dir_path,
+                rro_xml_dir_path,
+            )
+            self.add_postprocess_fn(postprocess_fn)
         return proprietary_file
 
     def write_rro_makefiles(self, ctx: MakefilesCtx):
