@@ -7,6 +7,17 @@ from __future__ import annotations
 from contextlib import suppress
 from typing import Generator, Iterable, List, Optional, Tuple
 
+# Check pyelftools and install if not installed
+import pkg_resources, subprocess, sys
+
+required  = {'pyelftools'}
+installed = {pkg.key for pkg in pkg_resources.working_set}
+missing   = required - installed
+
+if missing:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--upgrade', 'pip'])
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', *missing])
+
 from elftools.common.exceptions import ELFError
 from elftools.elf.dynamic import DynamicSection
 from elftools.elf.elffile import ELFFile
