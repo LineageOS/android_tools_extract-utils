@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a708a0e9_1b021490",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33800
+      },
+      "writtenOn": "2024-11-04T12:29:48Z",
+      "side": 1,
+      "message": "It is working for me and installing pyelftools if not installed. But why i can\u0027t pass github actions tests?",
+      "revId": "1261897823f48aead460d8d11ad0c41ec8f55764",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
