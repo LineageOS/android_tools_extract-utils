@@ -100,16 +100,16 @@ def executable_path(name: str) -> str:
 def process_cmds_in_parallel(input_cmds: parallel_input_cmds, fatal=False):
     input_procs: List[Tuple[str, Popen]] = []
 
-    for input, cmd in input_cmds:
-        print(f'Processing {input}')
+    for input_id, cmd in input_cmds:
+        print(f'Processing {input_id}')
         cmd[0] = executable_path(cmd[0])
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE, text=True)
-        input_procs.append((input, proc))
+        input_procs.append((input_id, proc))
 
-    for input, proc in input_procs:
+    for input_id, proc in input_procs:
         _, stderr = proc.communicate()
         if proc.returncode != 0:
-            s = f'Failed to process {input}: {stderr.strip()}'
+            s = f'Failed to process {input_id}: {stderr.strip()}'
             if fatal:
                 raise ValueError(s)
             else:

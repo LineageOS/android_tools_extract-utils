@@ -603,11 +603,11 @@ def write_mk_firmware(
 ):
     for file in files:
         file_path = f'{vendor_path}/{rel_sub_path}/{file.dst}'
-        hash = file_path_sha1(file_path)
+        file_hash = file_path_sha1(file_path)
 
         line = (
             f'\n$(call add-radio-file-sha1-checked,'
-            f'{rel_sub_path}/{file.dst},{hash})'
+            f'{rel_sub_path}/{file.dst},{file_hash})'
         )
         out.write(line)
 

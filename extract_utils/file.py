@@ -144,15 +144,15 @@ class File:
         if hashes_len > 2:
             raise ValueError(f'Unexpected {hashes_len} hashes in {line}')
 
-        hash = None
-        fixup_hash = None
+        file_hash = None
+        file_fixup_hash = None
         if hashes_len >= 1:
-            hash = hashes[0]
+            file_hash = hashes[0]
         if hashes_len == 2:
-            fixup_hash = hashes[1]
+            file_fixup_hash = hashes[1]
 
-        self.set_hash(hash)
-        self.set_fixup_hash(fixup_hash)
+        self.set_hash(file_hash)
+        self.set_fixup_hash(file_fixup_hash)
 
     def contains_path_parts(self, path_parts):
         path_parts_len = len(path_parts)
@@ -217,12 +217,12 @@ class File:
 
         return self
 
-    def set_hash(self, hash: str | None):
-        self.hash = hash
+    def set_hash(self, file_hash: str | None):
+        self.hash = file_hash
         return self
 
-    def set_fixup_hash(self, hash: str | None):
-        self.fixup_hash = hash
+    def set_fixup_hash(self, file_fixup_hash: str | None):
+        self.fixup_hash = file_fixup_hash
         return self
 
     def __str__(self) -> str:
@@ -247,9 +247,9 @@ class File:
                 line += ','.join(v)
             else:
                 assert False
-        for hash in [self.hash, self.fixup_hash]:
-            if hash is not None:
-                line += f'|{hash}'
+        for file_hash in [self.hash, self.fixup_hash]:
+            if file_hash is not None:
+                line += f'|{file_hash}'
         return line
 
     @property
@@ -361,7 +361,6 @@ class FileTree:
         self,
         subtree: file_tree_dict,
         parts: List[str],
-        filter=True,
     ) -> Optional[file_tree_dict | List[File]]:
         for k, v in subtree.items():
             if parts and k != parts[0]:
@@ -369,8 +368,7 @@ class FileTree:
 
             remaining_parts = parts[1:]
             if not remaining_parts and v is not None:
-                if filter:
-                    subtree[k] = None
+                subtree[k] = None
                 return v
 
             if isinstance(v, dict):
