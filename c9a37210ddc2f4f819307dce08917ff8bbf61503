@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "6ac0d0a5_062bbb46",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-05T18:16:32Z",
+      "side": 1,
+      "message": "that\u0027s probably impossible? can you have enum name that starts with a number?",
+      "parentUuid": "4da20033_a73cb684",
+      "range": {
+        "startLine": 16,
+        "startChar": 4,
+        "endLine": 16,
+        "endChar": 7
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3a7e59af_6cd77a6e",
         "filename": "extract_utils/elf_parser.py",
         "patchSetId": 6
