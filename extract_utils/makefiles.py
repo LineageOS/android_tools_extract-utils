@@ -389,6 +389,36 @@ def create_builder(
     ).set_owner(ctx.vendor)
 
 
+def write_modules_packages_group(
+    ctx: ProductPackagesCtx,
+    file_tree: FileTree,
+    package_names: List[str],
+    out: TextIO,
+    encoder: JSONEncoder,
+):
+    for subdir, files_dict in file_tree.tree.items():
+        assert isinstance(files_dict, dict)
+
+        builder = BpBuilder(encoder)
+
+        srcs = []
+        for files in files_dict.values():
+            assert isinstance(files, list)
+            file = files[0]
+            srcs.append(file.dst)
+
+        package_name = '_'.join(file_tree.parts + [subdir])
+        (
+            builder.set_rule_name('prebuilt_kernel_modules')
+            .name(package_name)
+            .set('srcs', srcs)
+            .set('kernel_version', subdir)
+            .set('enabled', True)
+            .write(out)
+        )
+        package_names.append(package_name)
+
+
 def write_common_packages_group(
     ctx: ProductPackagesCtx,
     file_tree: CommonFileTree,
@@ -468,6 +498,15 @@ def write_product_packages(
             lib_rfsa_tree = base_file_tree.filter_prefixed(
                 [part, 'lib', 'rfsa']
             )
+
+        modules_tree = base_file_tree.filter_prefixed([part, 'lib', 'modules'])
+        write_modules_packages_group(
+            packages_ctx,
+            modules_tree,
+            package_names,
+            ctx.bp_out,
+            encoder,
+        )
 
         lib32_tree = base_file_tree.filter_prefixed([part, 'lib'])
         lib64_tree = base_file_tree.filter_prefixed([part, 'lib64'])

@@ -34,6 +34,7 @@ SEPARATORS = ';:|'
 SRC_REGEX = re.compile(rf'^([^{SEPARATORS}]+)')
 EXTRA_REGEX = re.compile(rf'([{SEPARATORS}])([^{SEPARATORS}]+)')
 
+LIB_MODULES_PARTS = ['lib', 'modules']
 LIB_PARTS = ['lib']
 LIB_RFSA_PARTS = ['lib', 'rfsa']
 LIB64_PARTS = ['lib64']
@@ -496,6 +497,9 @@ class FileList:
             if file.contains_path_parts(LIB_PARTS) or file.contains_path_parts(
                 LIB64_PARTS
             ):
+                return True
+        elif ext == '.ko':
+            if file.contains_path_parts(LIB_MODULES_PARTS):
                 return True
 
         if file.contains_path_parts(BIN_PARTS) or file.contains_path_parts(
