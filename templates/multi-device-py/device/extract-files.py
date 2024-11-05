@@ -17,7 +17,6 @@ module = ExtractUtilsModule(
     'example_plus',
     'lineage',
     namespace_imports=namespace_imports,
-    check_elf=True,
     add_firmware_proprietary_file=True,
     add_generated_carriersettings=True,
 )
