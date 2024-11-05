@@ -375,6 +375,22 @@ def write_etc_package(file: File, builder: FileBpBuilder):
     return package_name
 
 
+def write_firmware_package(file: File, builder: FileBpBuilder):
+    _, package_name = file_stem_package_name(file, any_extension=True)
+
+    (
+        builder.set_rule_name('prebuilt_firmware')
+        .name(package_name)
+        .owner()
+        .src()
+        .set('filename_from_src', True)
+        .sub_dir()
+        .specific()
+    )
+
+    return package_name
+
+
 def create_builder(
     ctx: ProductPackagesCtx,
     file_tree: FileTree,
@@ -505,6 +521,9 @@ def write_product_packages(
 
     for part in ALL_PARTITIONS:
         wp(write_bin_package, part, 'bin', packages_ctx)
+
+    for part in ALL_PARTITIONS:
+        wp(write_firmware_package, part, 'firmware')
 
     assert not list(base_file_tree)
 
