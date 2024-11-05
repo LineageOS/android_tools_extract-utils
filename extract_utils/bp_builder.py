@@ -9,14 +9,15 @@ from enum import Enum
 from json import JSONEncoder
 from typing import List, Optional, Self
 
+from extract_utils.elf_parser import EM
 from extract_utils.file import File
 
 MACHINE_TARGET_MAP = {
-    'EM_ARM': 'android_arm',
-    'EM_QDSP6': 'android_arm',
-    'EM_AARCH64': 'android_arm64',
-    'EM_386': 'android_x86',
-    'EM_X86_64': 'android_x86_64',
+    EM.ARM: 'android_arm',
+    EM.QDSP6: 'android_arm',
+    EM.AARCH64: 'android_arm64',
+    EM.X86: 'android_x86',
+    EM.X86_64: 'android_x86_64',
 }
 
 
@@ -204,7 +205,7 @@ class FileBpBuilder(BpBuilder):
             self.set('certificate', 'platform')
         return self
 
-    def target(self, f: File, machine: str, deps: Optional[List[str]]) -> Self:
+    def target(self, f: File, machine: EM, deps: Optional[List[str]]) -> Self:
         target = self.o.setdefault('target', {})
 
         rel_path = self.__file_rel_sub_path(f.dst)
@@ -219,7 +220,7 @@ class FileBpBuilder(BpBuilder):
     def targets(
         self,
         files: List[File],
-        machines: List[str],
+        machines: List[EM],
         deps: Optional[List[str]],
     ) -> Self:
         for f, machine in zip(files, machines):
