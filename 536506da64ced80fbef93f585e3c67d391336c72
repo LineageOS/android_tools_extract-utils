@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "24a983fa_84e47f0a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-05T18:05:55Z",
+      "side": 1,
+      "message": "seems to work fine, did `find -name setup-makefiles.py -execdir ./setup-makefiles.py \\;` for all devices I have and none of them had any blueprint changes.",
+      "revId": "536506da64ced80fbef93f585e3c67d391336c72",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
