@@ -48,6 +48,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1493b6bf_a5952cf0",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "6ac0d0a5_062bbb46",
+      "range": {
+        "startLine": 16,
+        "startChar": 4,
+        "endLine": 16,
+        "endChar": 7
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3a7e59af_6cd77a6e",
@@ -94,6 +118,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f3ef019_da8f6bc9",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7243e23_4d312f8a",
+      "range": {
+        "startLine": 69,
+        "startChar": 37,
+        "endLine": 69,
+        "endChar": 38
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "632c7e62_5cd1e616",
@@ -107,6 +155,30 @@
       "writtenOn": "2024-11-05T18:14:36Z",
       "side": 1,
       "message": "```suggestion\n        (\u0027e_ident\u0027, (ctypes.c_ubyte * EI_NIDENT)),\n```",
+      "range": {
+        "startLine": 76,
+        "startChar": 38,
+        "endLine": 76,
+        "endChar": 40
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eee948d5_884ec1b0",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "632c7e62_5cd1e616",
       "range": {
         "startLine": 76,
         "startChar": 38,
@@ -140,6 +212,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4d8aea2_b9cfb7ef",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e44a4989_71b10881",
+      "range": {
+        "startLine": 95,
+        "startChar": 38,
+        "endLine": 95,
+        "endChar": 40
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "00a8693f_1ac0dc0f",
@@ -153,6 +249,30 @@
       "writtenOn": "2024-11-05T18:14:36Z",
       "side": 1,
       "message": "```suggestion\n        if self.ident.ei_mag !\u003d MAG:\n```",
+      "range": {
+        "startLine": 192,
+        "startChar": 32,
+        "endLine": 192,
+        "endChar": 42
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f36f8e8_26ebcf0e",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "00a8693f_1ac0dc0f",
       "range": {
         "startLine": 192,
         "startChar": 32,
@@ -186,6 +306,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "323b4b00_1d9d1480",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "7938002a_5105ac83",
+      "range": {
+        "startLine": 200,
+        "startChar": 24,
+        "endLine": 200,
+        "endChar": 26
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "81bd3d44_6145841b",
@@ -199,6 +343,30 @@
       "writtenOn": "2024-11-05T18:14:36Z",
       "side": 1,
       "message": "```suggestion\n            self.bits \u003d BITS.64\n```",
+      "range": {
+        "startLine": 206,
+        "startChar": 24,
+        "endLine": 206,
+        "endChar": 26
+      },
+      "revId": "c9a37210ddc2f4f819307dce08917ff8bbf61503",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b93cab4d_32b215e5",
+        "filename": "extract_utils/elf_parser.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-05T19:23:58Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "81bd3d44_6145841b",
       "range": {
         "startLine": 206,
         "startChar": 24,
