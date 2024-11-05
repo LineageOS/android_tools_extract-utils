@@ -360,7 +360,7 @@ class ExtractUtilsModule:
         lib_fixups: Optional[lib_fixups_user_type] = None,
         namespace_imports: Optional[List[str]] = None,
         extract_fns: Optional[extract_fns_user_type] = None,
-        check_elf=False,
+        check_elf=True,
         add_firmware_proprietary_file=False,
         add_factory_proprietary_file=False,
         add_generated_carriersettings_file=False,
@@ -551,6 +551,12 @@ class ExtractUtilsModule:
             )
 
     def write_makefiles(self, legacy: bool, extract_factory: bool):
+        if not self.check_elf:
+            color_print(
+                'check_elf = False is deprecated and will be removed in Android 16',
+                color=Color.YELLOW,
+            )
+
         bp_path = path.join(self.vendor_path, 'Android.bp')
         mk_path = path.join(self.vendor_path, 'Android.mk')
         product_mk_path = path.join(
