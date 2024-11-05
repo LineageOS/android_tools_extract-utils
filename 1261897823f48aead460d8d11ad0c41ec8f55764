@@ -51,6 +51,23 @@
       "message": "let\u0027s not. also, use pyelftools from your distro repos.",
       "revId": "1261897823f48aead460d8d11ad0c41ec8f55764",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e1cffd9_6e8340a8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-05T07:38:42Z",
+      "side": 1,
+      "message": "btw you\u0027d be able to pass checks if you did pip install pre-commit ; pre-commit install ; git commit --amend.",
+      "revId": "1261897823f48aead460d8d11ad0c41ec8f55764",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
