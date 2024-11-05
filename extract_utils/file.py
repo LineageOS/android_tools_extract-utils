@@ -104,6 +104,18 @@ class File:
         if self.has_dst:
             self.src_parts = self.src.split('/')
 
+        if self.src_parts[0] in [
+            'app',
+            'bin',
+            'framework',
+            'etc',
+            'lib',
+            'lib64',
+        ]:
+            self.src = 'system/' + self.src
+            self.dst = 'system/' + self.dst
+            self.src_parts = ['system'] + self.src_parts
+
         self.partition = self.parts[0]
         self.src_partition = self.src_parts[0]
         self.basename = self.parts[-1]
