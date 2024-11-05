@@ -458,11 +458,13 @@ class ExtractUtilsModule:
         self.add_rro_package(
             package_name,
             'com.android.carrierconfig',
-            pb_partition,
+            proprietary_file.partition,
         )
 
         vendor_path = self.proprietary_file_vendor_path(proprietary_file)
-        pb_dir_path = path.join(vendor_path, pb_partition, pb_dir_rel_path)
+        pb_dir_path = path.join(
+            vendor_path, proprietary_file.partition, proprietary_file.rel_path
+        )
         rro_xml_dir_path = path.join(
             self.vendor_rro_path,
             package_name,
