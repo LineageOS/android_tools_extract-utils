@@ -39,6 +39,7 @@ LIB_RFSA_PARTS = ['lib', 'rfsa']
 LIB64_PARTS = ['lib64']
 BIN_PARTS = ['bin']
 FIRMWARE_PARTS = ['firmware']
+ETC_PARTS = ['etc']
 
 
 class FileArgs(str, Enum):
@@ -500,6 +501,9 @@ class FileList:
         if file.contains_path_parts(BIN_PARTS) or file.contains_path_parts(
             LIB_RFSA_PARTS
         ):
+            return True
+
+        if file.contains_path_parts(ETC_PARTS):
             return True
 
         if file.contains_path_parts(FIRMWARE_PARTS):
