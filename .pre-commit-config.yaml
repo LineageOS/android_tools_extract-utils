@@ -13,5 +13,5 @@ repos:
     rev: v0.7.0
     hooks:
       - id: ruff
-        args: [--select, I, --fix]
+        args: [--select, "F541,I", --fix]
       - id: ruff-format
