@@ -46,6 +46,30 @@
       },
       "revId": "6a118d44d646b96308bacd1c4107c88a39c021d0",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc09e745_605edd70",
+        "filename": "extract_utils/extract_pixel.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-11-05T22:43:21Z",
+      "side": 1,
+      "message": "Fix applied.",
+      "parentUuid": "a58fc44a_721e8eff",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 49
+      },
+      "revId": "6a118d44d646b96308bacd1c4107c88a39c021d0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
