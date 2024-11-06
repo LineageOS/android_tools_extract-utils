@@ -102,8 +102,8 @@ class Args:
         with suppress(ValueError):
             self.source = ArgsSource(args.source)
 
-        if self.section is not None and self.regenerate:
-            raise ValueError('Cannot use --section with --regenerate')
+        if self.section is not None:
+            self.regenerate = False
 
         if self.extract_factory and self.source == ArgsSource.ADB:
             raise ValueError('Cannot use --extract-factory with ADB')
