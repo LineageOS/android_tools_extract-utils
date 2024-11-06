@@ -13,7 +13,6 @@ from typing import List, Protocol, TextIO
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
 from extract_utils.bp_encoder import BpJSONEncoder
 from extract_utils.elf import (
-    get_file_machine_bits,
     get_file_machine_bits_libs,
     remove_libs_so_ending,
 )
@@ -191,7 +190,7 @@ def write_elfs_package(
     gen_deps, enable_check_elf = file_gen_deps_check_elf(ctx.check_elf, file)
     file_path = f'{ctx.vendor_prop_path}/{file.dst}'
     machine, bits, libs = get_file_machine_bits_libs(file_path, gen_deps)
-    deps = remove_libs_so_ending(libs)
+    libs = remove_libs_so_ending(libs)
 
     if is_bin and (machine is None or bits is None):
         return write_sh_package(files[0], builder, any_extension=True)
@@ -202,15 +201,17 @@ def write_elfs_package(
     bitses = [bits]
 
     partition = builder.get_partition()
-    deps = run_libs_fixup(ctx.lib_fixups, deps, partition)
+    deps = [run_libs_fixup(ctx.lib_fixups, libs, partition)]
 
     for f in files[1:]:
         f_path = f'{ctx.vendor_prop_path}/{f.dst}'
-        machine, bits = get_file_machine_bits(f_path)
+        machine, bits, libs = get_file_machine_bits_libs(f_path, gen_deps)
+        libs = remove_libs_so_ending(libs)
         assert machine is not None
         assert bits is not None
         machines.append(machine)
         bitses.append(bits)
+        deps.append(run_libs_fixup(ctx.lib_fixups, libs, partition))
 
     stem, package_name = file_stem_package_name(
         file, can_have_stem=True, any_extension=is_bin
