@@ -55,8 +55,3 @@ def get_file_machine_bits_libs(
             return machine, bits, libs
     except ELFError:
         return None, None, None
-
-
-def get_file_machine_bits(file_path):
-    arch, bits, _ = get_file_machine_bits_libs(file_path, False)
-    return arch, bits
