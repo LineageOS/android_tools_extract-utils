@@ -105,6 +105,9 @@ class Args:
         if self.section is not None:
             self.regenerate = False
 
+        if self.regenerate_makefiles is False:
+            self.regenerate = False
+
         if self.extract_factory and self.source == ArgsSource.ADB:
             raise ValueError('Cannot use --extract-factory with ADB')
 
