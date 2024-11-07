@@ -76,6 +76,7 @@ class ProductPackagesCtx:
         check_elf: bool,
         vendor: str,
         vendor_prop_path: str,
+        vendor_prop_rel_path: str,
         vendor_prop_rel_sub_path: str,
         lib_fixups: lib_fixups_type,
     ):
@@ -83,6 +84,8 @@ class ProductPackagesCtx:
         self.vendor = vendor
         # Absolute path of the vendor sub-directory
         self.vendor_prop_path = vendor_prop_path
+        # Path of the vendor sub-directory relative to android root
+        self.vendor_prop_rel_path = vendor_prop_rel_path
         # Path of the vendor sub-directory relative to the vendor path
         self.vendor_prop_rel_sub_path = vendor_prop_rel_sub_path
         self.lib_fixups = lib_fixups
