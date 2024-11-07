@@ -511,9 +511,16 @@ def write_product_packages(
     write_packages_inclusion(package_names, ctx.product_mk_out)
 
 
-def write_product_copy_files(rel_path: str, files: Iterable[File], out: TextIO):
+def write_product_copy_files(
+    ctx: MakefilesCtx,
+    packages_ctx: ProductPackagesCtx,
+    files: Iterable[File],
+):
     if not files:
         return
+
+    out = ctx.product_mk_out
+    rel_path = packages_ctx.vendor_prop_rel_path
 
     out.write('\nPRODUCT_COPY_FILES +=')
 
