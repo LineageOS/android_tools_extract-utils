@@ -200,9 +200,9 @@ class ProprietaryFile:
         self.run_pre_makefile_generation_fns(ctx, packages_ctx)
 
         write_product_copy_files(
-            vendor_rel_path,
+            ctx,
+            packages_ctx,
             self.file_list.copy_files,
-            ctx.product_mk_out,
         )
 
         write_product_packages(
