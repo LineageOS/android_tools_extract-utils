@@ -398,7 +398,7 @@ class blob_fixup:
         *args,
         **kargs,
     ):
-        lines = []
+        lines: list[str] = []
         with open(file_path, 'r', newline='') as f:
             for line in f:
                 if line.startswith('<?xml version'):
