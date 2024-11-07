@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4192f3a8_421fc180",
+        "filename": "extract_utils/module.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-07T18:23:54Z",
+      "side": 1,
+      "message": "```suggestion\n        add_generated_carriersettings_apns\u003dFalse,\n        add_generated_carriersettings_file\u003dFalse,\n        add_generated_carriersettings\u003dFalse,\n```",
+      "range": {
+        "startLine": 417,
+        "startChar": 0,
+        "endLine": 419,
+        "endChar": 49
+      },
+      "revId": "9294d1d5568532b14bfa5ed24d35c8ba0dfa84a0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
