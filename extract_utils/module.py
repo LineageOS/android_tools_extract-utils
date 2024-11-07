@@ -461,7 +461,7 @@ class ExtractUtilsModule:
             self.add_proprietary_file('proprietary-files.txt')
 
     def get_partitions(self, kind: ProprietaryFileType):
-        partitions = []
+        partitions: List[str] = []
 
         for proprietary_file in self.proprietary_files:
             if proprietary_file.kind is not kind:
@@ -474,7 +474,7 @@ class ExtractUtilsModule:
         return partitions
 
     def get_files(self, kind: ProprietaryFileType):
-        files = []
+        files: List[str] = []
 
         for proprietary_file in self.proprietary_files:
             if proprietary_file.kind is not kind:
