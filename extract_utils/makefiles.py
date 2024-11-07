@@ -81,7 +81,9 @@ class ProductPackagesCtx:
     ):
         self.check_elf = check_elf
         self.vendor = vendor
+        # Absolute path of the vendor sub-directory
         self.vendor_prop_path = vendor_prop_path
+        # Path of the vendor sub-directory relative to the vendor path
         self.vendor_prop_rel_sub_path = vendor_prop_rel_sub_path
         self.lib_fixups = lib_fixups
 
