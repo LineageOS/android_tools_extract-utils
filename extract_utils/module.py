@@ -341,7 +341,6 @@ class GeneratedProprietaryFile(ProprietaryFile):
         ]
 
         self.file_list.add_from_lines(header_lines + file_srcs)
-        self.fix_file_list()
 
     def get_partitions(self) -> Set[str]:
         return {self.partition}
@@ -659,6 +658,10 @@ class ExtractUtilsModule:
 
             proprietary_file.init_file_list(self, None)
             proprietary_file.regenerate(self, source)
+
+    def fix_proprietary_files(self):
+        for proprietary_file in self.proprietary_files:
+            proprietary_file.fix_file_list()
 
     def should_fixup_file(self, file: File):
         if FileArgs.FIX_XML in file.args:
