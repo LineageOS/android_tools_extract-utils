@@ -192,6 +192,7 @@ class ProprietaryFile:
             module.check_elf,
             module.vendor,
             vendor_path,
+            vendor_rel_path,
             self.vendor_rel_sub_path,
             module.lib_fixups,
         )
