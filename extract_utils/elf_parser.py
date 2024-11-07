@@ -195,6 +195,11 @@ class ELFFile:
         if self.ident.ei_mag != MAG:
             raise ELFError('Invalid file')
 
+        self.ehdr: Elf32_Ehdr | Elf64_Ehdr
+        self.shdr_cls: type[Elf32_Shdr | Elf64_Shdr]
+        self.phdr_cls: type[Elf32_Phdr | Elf64_Phdr]
+        self.dyn_cls: type[Elf32_Dyn | Elf64_Dyn]
+
         if self.ident.ei_class == ELFCLASS.CLASS_32:
             self.ehdr = Elf32_Ehdr.from_buffer(self.mm)
             self.shdr_cls = Elf32_Shdr
@@ -292,5 +297,5 @@ class ELFFile:
             if end == -1:
                 end = strtab_end
             lib = self.mm[start:end]
-            lib = lib.decode()
-            yield lib
+            decoded_lib = lib.decode()
+            yield decoded_lib

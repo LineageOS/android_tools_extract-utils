@@ -46,7 +46,7 @@ class blob_fixup_fn_impl_type(Protocol):
 
 class blob_fixup:
     def __init__(self):
-        self.__functions: List[blob_fixup_fn_impl_type] = []
+        self.__functions = []
         self.__create_tmp_dir = False
 
         self.__patchelf_path = patchelf_version_path_map[
@@ -398,7 +398,7 @@ class blob_fixup:
         *args,
         **kargs,
     ):
-        lines = []
+        lines: list[str] = []
         with open(file_path, 'r', newline='') as f:
             for line in f:
                 if line.startswith('<?xml version'):
