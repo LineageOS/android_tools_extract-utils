@@ -110,6 +110,10 @@ class ExtractUtils:
                 self.__args.regenerate,
             )
 
+    def fix_proprietary_files(self):
+        for module in self.__modules:
+            module.fix_proprietary_files()
+
     def write_updated_proprietary_files(self):
         for module in self.__modules:
             module.write_updated_proprietary_files(
@@ -179,5 +183,6 @@ class ExtractUtils:
 
             self.postprocess_modules()
 
+        self.fix_proprietary_files()
         self.write_updated_proprietary_files()
         self.write_makefiles()
