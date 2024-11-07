@@ -68,7 +68,10 @@ class ProprietaryFileType(Enum):
 
 
 fix_file_list_fn_type = Callable[[FileList], None]
-pre_post_makefile_generation_fn_type = Callable[[MakefilesCtx], None]
+pre_post_makefile_generation_fn_type = Callable[
+    [MakefilesCtx, ProductPackagesCtx],
+    None,
+]
 
 
 class ProprietaryFile:
@@ -159,13 +162,21 @@ class ProprietaryFile:
 
         return self
 
-    def run_pre_makefile_generation_fns(self, ctx: MakefilesCtx):
+    def run_pre_makefile_generation_fns(
+        self,
+        ctx: MakefilesCtx,
+        packages_ctx: ProductPackagesCtx,
+    ):
         for fn in self.pre_makefile_generation_fns:
-            fn(ctx)
+            fn(ctx, packages_ctx)
 
-    def run_post_makefile_generation_fns(self, ctx: MakefilesCtx):
+    def run_post_makefile_generation_fns(
+        self,
+        ctx: MakefilesCtx,
+        packages_ctx: ProductPackagesCtx,
+    ):
         for fn in reversed(self.post_makefile_generation_fns):
-            fn(ctx)
+            fn(ctx, packages_ctx)
 
     def write_makefiles(self, module: ExtractUtilsModule, ctx: MakefilesCtx):
         vendor_path = path.join(
@@ -185,7 +196,7 @@ class ProprietaryFile:
             module.lib_fixups,
         )
 
-        self.run_pre_makefile_generation_fns(ctx)
+        self.run_pre_makefile_generation_fns(ctx, packages_ctx)
 
         write_product_copy_files(
             vendor_rel_path,
@@ -204,7 +215,7 @@ class ProprietaryFile:
             self.file_list.package_symlinks,
         )
 
-        self.run_post_makefile_generation_fns(ctx)
+        self.run_post_makefile_generation_fns(ctx, packages_ctx)
 
     def write_to_file(self):
         self.file_list.write_to_file(self.file_list_path)
