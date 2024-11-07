@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
-from typing import List, Optional, Protocol, TextIO
+from typing import Iterable, List, Optional, Protocol, TextIO
 
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
 from extract_utils.bp_encoder import BpJSONEncoder
@@ -21,7 +21,6 @@ from extract_utils.file import (
     File,
     FileArgs,
     FileTree,
-    SimpleFileList,
 )
 from extract_utils.fixups_lib import lib_fixups_type, run_libs_fixup
 from extract_utils.utils import file_path_sha1
@@ -507,7 +506,7 @@ def write_product_packages(
     write_packages_inclusion(package_names, ctx.product_mk_out)
 
 
-def write_product_copy_files(rel_path: str, files: SimpleFileList, out: TextIO):
+def write_product_copy_files(rel_path: str, files: Iterable[File], out: TextIO):
     if not files:
         return
 
@@ -551,7 +550,7 @@ def write_symlink_package(
 
 def write_symlink_packages(
     ctx: MakefilesCtx,
-    files: SimpleFileList,
+    files: Iterable[File],
 ):
     encoder = BpJSONEncoder(legacy=ctx.legacy)
     package_names = []
@@ -572,7 +571,7 @@ def write_symlink_packages(
     write_packages_inclusion(package_names, ctx.product_mk_out)
 
 
-def write_mk_firmware_ab_partitions(files: SimpleFileList, out: TextIO):
+def write_mk_firmware_ab_partitions(files: Iterable[File], out: TextIO):
     has_ab = False
     for file in files:
         if FileArgs.AB in file.args:
@@ -611,7 +610,7 @@ def write_mk_firmware_file(
 def write_mk_firmware(
     vendor_path: str,
     rel_sub_path: str,
-    files: SimpleFileList,
+    files: Iterable[File],
     out: TextIO,
 ):
     for file in files:
