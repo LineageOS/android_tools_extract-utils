@@ -38,8 +38,8 @@ def lib_fixup_remove_arch_suffix(lib: str, *args, **kwargs):
     assert False
 
 
-def lib_fixup_vendorcompat(lib: str, *args, **kwargs):
-    return f'{lib}-vendorcompat'
+def lib_fixup_vendorcompat(lib: str, partition: str, *args, **kwargs):
+    return f'{lib}-vendorcompat' if partition in ['odm', 'vendor'] else lib
 
 
 def lib_fixup_remove_proto_version_suffix(lib: str, *args, **kwargs):
