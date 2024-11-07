@@ -59,12 +59,12 @@ PARTITION_SPECIFIC_MAP = {
 
 class BpBuilder:
     def __init__(self, encoder: JSONEncoder):
-        self.__owner = None
-        self.__partition = None
+        self.__owner: Optional[str] = None
+        self.__partition: Optional[str] = None
         self.__rule_name: Optional[str] = None
         self.__encoder = encoder
 
-        self.o = {}
+        self.o: dict = {}
 
     def set_owner(self, owner: str):
         self.__owner = owner
