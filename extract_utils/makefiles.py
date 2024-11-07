@@ -399,7 +399,7 @@ def write_common_packages_group(
     *args,
     **kwargs,
 ):
-    for files in file_tree:
+    for files in file_tree.common_files_iter():
         builder = create_builder(ctx, file_tree, files[0], encoder)
         package_name = fn(files, builder, *args, **kwargs)
         builder.write(out)
@@ -442,7 +442,7 @@ def write_product_packages(
     base_file_tree: FileTree,
 ):
     encoder = BpJSONEncoder(legacy=ctx.legacy)
-    package_names = []
+    package_names: List[str] = []
 
     def w(fn: write_package_fn, file_tree: FileTree, *args, **kwargs):
         return write_packages_group(
@@ -565,7 +565,7 @@ def write_symlink_packages(
     files: Iterable[File],
 ):
     encoder = BpJSONEncoder(legacy=ctx.legacy)
-    package_names = []
+    package_names: List[str] = []
 
     for file in files:
         symlinks = file.symlinks

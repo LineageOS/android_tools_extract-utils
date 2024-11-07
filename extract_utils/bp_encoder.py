@@ -89,5 +89,5 @@ class BpJSONEncoder(JSONEncoder):
     def indent_str(self) -> str:
         return self.__indent * self.__level
 
-    def iterencode(self, o, **kwargs) -> Iterator[str]:
+    def iterencode(self, o, _one_shot=False) -> Iterator[str]:
         return iter([self.encode(o)])
