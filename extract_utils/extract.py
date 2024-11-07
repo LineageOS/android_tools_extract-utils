@@ -222,26 +222,31 @@ def extract_payload_bin(ctx: ExtractCtx, file_path: str, output_dir: str):
     process_cmds_in_parallel(procs)
 
 
+def partition_chunk_index(file_path: str):
+    _, chunk_index = path.splitext(file_path)
+
+    if chunk_index:
+        return int(chunk_index[1:])
+
+    return 0
+
+
 def extract_sparse_raw_imgs(file_paths: List[str], output_dir: str):
     new_file_paths = []
 
-    partition_chunks_map = {}
+    partition_chunks_map: dict[str, List[str]] = {}
     for file_path in file_paths:
         file_name = path.basename(file_path)
 
-        # Split extension to get chunk index x from
+        # Split extension to remove chunk index x from
         # partition.img_sparsechunk.x files
-        base_file_name, chunk_index = path.splitext(file_name)
+        base_file_name, _ = path.splitext(file_name)
 
-        if base_file_name.endswith(SPARSE_CHUNK_SUFFIX) and chunk_index:
-            # Sparse chunk, remove the suffix to get the partition name
+        if base_file_name.endswith(SPARSE_CHUNK_SUFFIX):
+            # Sparse chunk, remove _sparsechunk to get the partition name
             output_file_name = base_file_name[: -len(SPARSE_CHUNK_SUFFIX)]
-            # Remove dot from extension and cast to int find chunk index
-            chunk_index = int(chunk_index[1:])
         else:
             output_file_name = file_name
-            chunk_index = 0
-
             # Rename single sparse image to .sparse to avoid naming conflicts
             sparse_file_path = f'{file_path}.sparse'
             os.rename(file_path, sparse_file_path)
@@ -249,22 +254,14 @@ def extract_sparse_raw_imgs(file_paths: List[str], output_dir: str):
 
         new_file_paths.append(file_path)
 
-        # Create a sparse list of the chunks, should be completely filled
-        # after iterating over all the file paths
-        # Do this to avoid splitting the file paths again to sort at the end
-        partition_chunks_map.setdefault(output_file_name, [])
-        partition_chunks = partition_chunks_map[output_file_name]
-        assert isinstance(partition_chunks, list)
-
-        missing_indices = chunk_index - len(partition_chunks) + 1
-        partition_chunks.extend([None] * missing_indices)
-        assert partition_chunks[chunk_index] is None
-
-        partition_chunks[chunk_index] = file_path
+        partition_chunks = partition_chunks_map.setdefault(output_file_name, [])
+        partition_chunks.append(file_path)
 
     procs: parallel_input_cmds = []
     for output_file_name, partition_chunks in partition_chunks_map.items():
         output_file_path = path.join(output_dir, output_file_name)
+
+        partition_chunks.sort(key=partition_chunk_index)
 
         procs.append(
             (
