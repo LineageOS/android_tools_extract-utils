@@ -76,6 +76,7 @@ class ProprietaryFile:
         self,
         file_list_path: str,
         vendor_rel_sub_path: str = 'proprietary',
+        fix_file_list_fns: Optional[List[fix_file_list_fn_type]] = None,
         fix_file_list: Optional[fix_file_list_fn_type] = None,
         kind=ProprietaryFileType.BLOBS,
     ):
@@ -84,7 +85,12 @@ class ProprietaryFile:
         self.vendor_rel_sub_path = vendor_rel_sub_path
         self.file_list = FileList()
 
-        self.__fix_file_list = fix_file_list
+        if fix_file_list_fns is None:
+            fix_file_list_fns = []
+        self.__fix_file_list_fns = fix_file_list_fns
+
+        if fix_file_list is not None:
+            self.add_fix_file_list_fn(fix_file_list)
 
         self.pre_makefile_generation_fns: List[
             pre_post_makefile_generation_fn_type
@@ -96,8 +102,11 @@ class ProprietaryFile:
         self.kind = kind
 
     def fix_file_list(self, file_list: FileList):
-        if self.__fix_file_list is not None:
-            self.__fix_file_list(file_list)
+        for fix_file_list_fn in self.__fix_file_list_fns:
+            fix_file_list_fn(file_list)
+
+    def add_fix_file_list_fn(self, fix_file_list_fn: fix_file_list_fn_type):
+        self.__fix_file_list_fns.append(fix_file_list_fn)
 
     def add_pre_post_makefile_generation_fn(
         self,
