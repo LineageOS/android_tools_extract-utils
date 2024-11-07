@@ -39,6 +39,12 @@ apktool_path = path.join(common_binaries_dir, 'apktool/apktool.jar')
 jdk_binaries_dir = path.join(android_root, 'prebuilts/jdk/jdk21/linux-x86/bin')
 java_path = path.join(jdk_binaries_dir, 'java')
 
+llvm_binaries_dir = path.join(
+    android_root,
+    'prebuilts/clang/host/linux-x86/llvm-binutils-stable',
+)
+llvm_objdump_path = path.join(llvm_binaries_dir, 'llvm-objdump')
+
 lineage_scripts_dir = path.join(android_root, 'lineage/scripts')
 carriersettings_extractor_path = path.join(
     lineage_scripts_dir,
