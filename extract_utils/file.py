@@ -503,7 +503,7 @@ class FileList:
 
         return False
 
-    def __add_file(self, file: File, section: str | None):
+    def add_file(self, file: File, section: str | None):
         if FileArgs.SYMLINK in file.args:
             self.package_symlinks.add(file)
 
@@ -572,7 +572,7 @@ class FileList:
         files.sort(key=lambda f_s: f_s[1].dst)
 
         for section, file in files:
-            self.__add_file(file, section)
+            self.add_file(file, section)
 
     def add_from_file(self, file_path: str):
         with open(file_path, 'r') as f:
