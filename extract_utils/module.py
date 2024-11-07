@@ -149,10 +149,10 @@ class ProprietaryFile:
         return self
 
     def add_copy_files_guard(self, name: str, value: str, invert=False) -> Self:
-        def guard_begin_fn(ctx: MakefilesCtx):
+        def guard_begin_fn(ctx: MakefilesCtx, *args, **kwargs):
             write_mk_guard_begin(name, value, ctx.product_mk_out, invert=invert)
 
-        def guard_end_fn(ctx: MakefilesCtx):
+        def guard_end_fn(ctx: MakefilesCtx, *args, **kwargs):
             write_mk_guard_end(ctx.product_mk_out)
 
         self.add_pre_post_makefile_generation_fn(guard_begin_fn, guard_end_fn)
