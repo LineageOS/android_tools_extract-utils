@@ -105,7 +105,7 @@ class Args:
         if self.section is not None:
             self.regenerate = False
 
-        if self.regenerate_makefiles is False:
+        if self.regenerate_makefiles is True:
             self.regenerate = False
 
         if self.extract_factory and self.source == ArgsSource.ADB:
