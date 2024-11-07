@@ -101,9 +101,9 @@ class ProprietaryFile:
 
         self.kind = kind
 
-    def fix_file_list(self, file_list: FileList):
+    def fix_file_list(self):
         for fix_file_list_fn in self.__fix_file_list_fns:
-            fix_file_list_fn(file_list)
+            fix_file_list_fn(self.file_list)
 
     def add_fix_file_list_fn(self, fix_file_list_fn: fix_file_list_fn_type):
         self.__fix_file_list_fns.append(fix_file_list_fn)
@@ -341,7 +341,7 @@ class GeneratedProprietaryFile(ProprietaryFile):
         ]
 
         self.file_list.add_from_lines(header_lines + file_srcs)
-        self.fix_file_list(self.file_list)
+        self.fix_file_list()
 
     def get_partitions(self) -> Set[str]:
         return {self.partition}
