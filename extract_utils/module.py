@@ -360,6 +360,7 @@ class ExtractUtilsModule:
         lib_fixups: Optional[lib_fixups_user_type] = None,
         namespace_imports: Optional[List[str]] = None,
         extract_fns: Optional[extract_fns_user_type] = None,
+        patchelf_version='0_9',
         check_elf=True,
         add_firmware_proprietary_file=False,
         add_factory_proprietary_file=False,
@@ -376,6 +377,8 @@ class ExtractUtilsModule:
         self.blob_fixups = flatten_fixups(blob_fixups)
         self.lib_fixups = flatten_fixups(lib_fixups)
         self.extract_fns = flatten_fixups(extract_fns)
+
+        self.patchelf_version = patchelf_version
 
         if namespace_imports is None:
             namespace_imports = []
@@ -668,7 +671,7 @@ class ExtractUtilsModule:
 
     def fixup_module_file(self, file: File, file_path: str):
         # device path is needed for reading patches
-        ctx = BlobFixupCtx(self.device_path)
+        ctx = BlobFixupCtx(self.device_path, self.patchelf_version)
 
         if FileArgs.FIX_XML in file.args:
             blob_fixup().fix_xml().run(ctx, file, file_path)

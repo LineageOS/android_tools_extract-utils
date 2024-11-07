@@ -18,7 +18,6 @@ from extract_utils.elf import file_needs_lib
 from extract_utils.file import File
 from extract_utils.fixups import fixups_type, fixups_user_type
 from extract_utils.tools import (
-    DEFAULT_PATCHELF_VERSION,
     apktool_path,
     java_path,
     patchelf_version_path_map,
@@ -28,8 +27,9 @@ from extract_utils.utils import TemporaryWorkingDirectory, run_cmd
 
 
 class BlobFixupCtx:
-    def __init__(self, module_dir: str):
+    def __init__(self, module_dir: str, patchelf_version: str):
         self.module_dir = module_dir
+        self.patchelf_version = patchelf_version
 
 
 class blob_fixup_fn_impl_type(Protocol):
@@ -49,9 +49,7 @@ class blob_fixup:
         self.__functions: List[blob_fixup_fn_impl_type] = []
         self.__create_tmp_dir = False
 
-        self.__patchelf_path = patchelf_version_path_map[
-            DEFAULT_PATCHELF_VERSION
-        ]
+        self.__patchelf_version = None
 
     def call(
         self,
@@ -64,8 +62,13 @@ class blob_fixup:
         return self
 
     def patchelf_version(self, version: str) -> Self:
-        self.__patchelf_path = patchelf_version_path_map[version]
+        self.__patchelf_version = version
         return self
+
+    def __patchelf_path(self, ctx: BlobFixupCtx) -> str:
+        if self.__patchelf_version is not None:
+            return patchelf_version_path_map[self.__patchelf_version]
+        return patchelf_version_path_map[ctx.patchelf_version]
 
     def replace_needed_impl(
         self,
@@ -79,7 +82,7 @@ class blob_fixup:
     ):
         run_cmd(
             [
-                self.__patchelf_path,
+                self.__patchelf_path(ctx),
                 '--replace-needed',
                 from_lib,
                 to_lib,
@@ -112,7 +115,7 @@ class blob_fixup:
         if file_needs_lib(file_path, lib):
             return
 
-        run_cmd([self.__patchelf_path, '--add-needed', lib, file_path])
+        run_cmd([self.__patchelf_path(ctx), '--add-needed', lib, file_path])
 
     def add_needed(self, lib: str) -> Self:
         impl = partial(self.add_needed_impl, lib)
@@ -127,7 +130,7 @@ class blob_fixup:
         *args,
         **kargs,
     ):
-        run_cmd([self.__patchelf_path, '--remove-needed', lib, file_path])
+        run_cmd([self.__patchelf_path(ctx), '--remove-needed', lib, file_path])
 
     def remove_needed(self, lib: str) -> Self:
         impl = partial(self.remove_needed_impl, lib)
@@ -137,7 +140,12 @@ class blob_fixup:
         self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kargs
     ):
         run_cmd(
-            [self.__patchelf_path, '--set-soname', file.basename, file_path]
+            [
+                self.__patchelf_path(ctx),
+                '--set-soname',
+                file.basename,
+                file_path,
+            ]
         )
 
     def fix_soname(self) -> Self:
