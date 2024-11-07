@@ -373,6 +373,7 @@ class ExtractUtilsModule:
         add_factory_proprietary_file=False,
         add_generated_carriersettings_file=False,
         add_generated_carriersettings=False,
+        add_generated_carriersettings_apns=False,
         skip_main_proprietary_file=False,
     ):
         self.device = device
@@ -408,6 +409,8 @@ class ExtractUtilsModule:
 
         if add_generated_carriersettings:
             self.add_generated_carriersettings()
+        elif add_generated_carriersettings_apns:
+            self.add_generated_carriersettings(extract_apns=True)
         elif add_generated_carriersettings_file:
             self.add_generated_carriersettings_file()
 
@@ -518,7 +521,7 @@ class ExtractUtilsModule:
         self.proprietary_files.append(proprietary_file)
         return proprietary_file
 
-    def add_generated_carriersettings(self):
+    def add_generated_carriersettings(self, extract_apns=False):
         package_name = 'CarrierConfigOverlay'
         proprietary_file = self.add_generated_carriersettings_file()
         self.add_rro_package(
@@ -540,10 +543,33 @@ class ExtractUtilsModule:
             'res/xml',
         )
 
+        apn_xml_dir = None
+        if extract_apns:
+            apn_xml_dir = path.join(
+                vendor_path,
+                proprietary_file.partition,
+                'etc',
+            )
+
+            apn_xml_rel_file_path = path.join(
+                proprietary_file.partition,
+                'etc',
+                'apns-conf.xml',
+            )
+
+            def add_apn_copy_fn(file_list: FileList):
+                file_list.add_file(
+                    File(apn_xml_rel_file_path),
+                    None,
+                )
+
+            proprietary_file.add_fix_file_list_fn(add_apn_copy_fn)
+
         postprocess_fn = partial(
             postprocess_carriersettings_fn_impl,
             pb_dir_path,
             rro_xml_dir_path,
+            apn_output_path=apn_xml_dir,
         )
         self.add_postprocess_fn(postprocess_fn)
         return proprietary_file
