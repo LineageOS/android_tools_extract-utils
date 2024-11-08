@@ -46,7 +46,7 @@ class blob_fixup_fn_impl_type(Protocol):
 
 class blob_fixup:
     def __init__(self):
-        self.__functions: List[blob_fixup_fn_impl_type] = []
+        self.__functions: List[tuple[blob_fixup_fn_impl_type, tuple, dict]] = []
         self.__create_tmp_dir = False
 
         self.__patchelf_path = patchelf_version_path_map[
@@ -56,9 +56,11 @@ class blob_fixup:
     def call(
         self,
         fn: blob_fixup_fn_impl_type,
+        *args,
         need_tmp_dir=True,
+        **kargs,
     ) -> Self:
-        self.__functions.append(fn)
+        self.__functions.append((fn, args, kargs))
         if need_tmp_dir:
             self.__create_tmp_dir = True
         return self
@@ -436,8 +438,8 @@ class blob_fixup:
 
     def run(self, ctx: BlobFixupCtx, file: File, file_path: str) -> bool:
         def run(tmp_dir: str | None = None):
-            for function in self.__functions:
-                function(ctx, file, file_path, tmp_dir=tmp_dir)
+            for function, args, kargs in self.__functions:
+                function(ctx, file, file_path, *args, tmp_dir=tmp_dir, **kargs)
 
         if self.__create_tmp_dir:
             with tempfile.TemporaryDirectory() as tmp_dir:
