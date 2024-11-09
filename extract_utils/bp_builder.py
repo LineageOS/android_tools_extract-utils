@@ -217,6 +217,10 @@ class FileBpBuilder(BpBuilder):
 
         rel_path = self.__file_rel_sub_path(f.dst)
         arch = MACHINE_TARGET_MAP[machine]
+        if machine == EM.QDSP6 and rel_path.split('/')[2] == 'lib64':
+            # If QDSP6 lib is installed to {}/lib64, let's honor that by
+            # overriding target to android_arm64.
+            arch = MACHINE_TARGET_MAP[EM.AARCH64]
         target[arch] = {'srcs': [rel_path]}
 
         if deps is not None:
