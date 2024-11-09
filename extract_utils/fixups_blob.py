@@ -58,9 +58,9 @@ class blob_fixup:
         fn: blob_fixup_fn_impl_type,
         *args,
         need_tmp_dir=True,
-        **kargs,
+        **kwargs,
     ) -> Self:
-        self.__functions.append((fn, args, kargs))
+        self.__functions.append((fn, args, kwargs))
         if need_tmp_dir:
             self.__create_tmp_dir = True
         return self
@@ -77,7 +77,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         run_cmd(
             [
@@ -109,7 +109,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         if file_needs_lib(file_path, lib):
             return
@@ -127,7 +127,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         run_cmd([self.__patchelf_path, '--remove-needed', lib, file_path])
 
@@ -136,7 +136,7 @@ class blob_fixup:
         return self.call(impl)
 
     def fix_soname_impl(
-        self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kargs
+        self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kwargs
     ):
         run_cmd(
             [self.__patchelf_path, '--set-soname', file.basename, file_path]
@@ -170,7 +170,7 @@ class blob_fixup:
         file_path: str,
         *args,
         tmp_dir=None,
-        **kargs,
+        **kwargs,
     ):
         patches = self.__get_patches(ctx, patches_path)
         assert tmp_dir is not None
@@ -207,7 +207,7 @@ class blob_fixup:
         file_path: str,
         *args,
         tmp_dir=None,
-        **kargs,
+        **kwargs,
     ):
         assert tmp_dir is not None
         shutil.copy(file_path, tmp_dir)
@@ -222,7 +222,7 @@ class blob_fixup:
         file_path: str,
         *args,
         tmp_dir=None,
-        **kargs,
+        **kwargs,
     ):
         assert tmp_dir is not None
         tmp_file_path = path.join(tmp_dir, file.basename)
@@ -245,7 +245,7 @@ class blob_fixup:
         file_path: str,
         *args,
         tmp_dir=None,
-        **kargs,
+        **kwargs,
     ):
         assert tmp_dir is not None
 
@@ -274,7 +274,7 @@ class blob_fixup:
         file_path: str,
         *args,
         tmp_dir=None,
-        **kargs,
+        **kwargs,
     ):
         assert tmp_dir is not None
 
@@ -294,7 +294,7 @@ class blob_fixup:
         return self.call(self.apktool_pack_impl, need_tmp_dir=True)
 
     def stripzip_impl(
-        self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kargs
+        self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kwargs
     ):
         run_cmd(
             [
@@ -321,7 +321,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         with open(file_path, 'r', newline='') as f:
             data = f.read()
@@ -343,7 +343,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         with open(file_path, 'rb') as f:
             data = f.read()
@@ -365,7 +365,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         with open(file_path, 'rb+') as f:
             data = f.read()
@@ -398,7 +398,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         lines: list[str] = []
         with open(file_path, 'r', newline='') as f:
@@ -422,7 +422,7 @@ class blob_fixup:
         file: File,
         file_path: str,
         *args,
-        **kargs,
+        **kwargs,
     ):
         with open(file_path, 'r+', newline='') as f:
             data = f.read()
@@ -438,8 +438,8 @@ class blob_fixup:
 
     def run(self, ctx: BlobFixupCtx, file: File, file_path: str) -> bool:
         def run(tmp_dir: str | None = None):
-            for function, args, kargs in self.__functions:
-                function(ctx, file, file_path, *args, tmp_dir=tmp_dir, **kargs)
+            for function, args, kwargs in self.__functions:
+                function(ctx, file, file_path, *args, tmp_dir=tmp_dir, **kwargs)
 
         if self.__create_tmp_dir:
             with tempfile.TemporaryDirectory() as tmp_dir:
