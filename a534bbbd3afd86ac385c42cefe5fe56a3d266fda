@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "682759e2_4c1eee90",
+        "filename": "extract_utils/fixups_blob.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-09T14:32:52Z",
+      "side": 0,
+      "message": "was showing that:\n\nextract_utils/fixups_blob.py:49: note: By default the bodies of untyped functions are not checked, consider using --check-untyped-defs  [annotation-unchecked]",
+      "revId": "a534bbbd3afd86ac385c42cefe5fe56a3d266fda",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
