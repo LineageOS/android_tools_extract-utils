@@ -81,8 +81,8 @@ assert len(FileArgs) == len(FILE_ARGS_TYPE_MAP)
 
 class File:
     def __init__(self, line: str):
-        self.fixup_hash: Optional[str] = None
-        self.hash: Optional[str] = None
+        self.fixup_hash = None
+        self.hash = None
         self.is_package = False
 
         line = line.strip()
@@ -129,7 +129,6 @@ class File:
             elif prefix == ';':
                 k_v = extra.split('=', 1)
                 k = k_v[0]
-                v: Literal[True] | str
                 if len(k_v) == 1:
                     v = True
                 else:
@@ -390,7 +389,7 @@ class CommonFileTree(FileTree):
     def __init__(self, parts: List[str]):
         super().__init__(parts=parts, common=True)
 
-    def common_files_iter(self) -> Iterator[List[File]]:
+    def __iter__(self) -> Iterator[List[File]]:
         return self._files_list(self.tree)
 
     @classmethod
@@ -462,7 +461,7 @@ class FileList:
         # These are filtered by section
         self.files = SimpleFileList()
         self.pinned_files = SimpleFileList()
-        self.partitions: set[str] = set()
+        self.partitions = set()
 
         # These are not filtered by section since makefile generation
         # cannot be done per-section

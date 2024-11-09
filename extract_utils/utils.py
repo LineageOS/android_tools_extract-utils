@@ -70,9 +70,10 @@ class Color(str, Enum):
 
 
 def color_print(*args, color: Color, **kwargs):
-    args_str = ' '.join(str(arg) for arg in args)
-    args_str = color.value + args_str + Color.END.value
-    print(args_str, **kwargs)
+    args = list(args)
+    args[0] = color.value + str(args[0])
+    args[-1] = str(args[-1]) + Color.END.value
+    print(*args, **kwargs)
 
 
 parallel_input_cmds = List[Tuple[str, List[str]]]
