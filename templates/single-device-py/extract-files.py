@@ -45,7 +45,7 @@ def blob_fixup_test_flag(
     file: File,
     file_path: str,
     *args,
-    **kargs,
+    **kwargs,
 ):
     with open(file_path, 'rb+') as f:
         f.seek(1337)
