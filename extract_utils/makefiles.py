@@ -8,7 +8,7 @@ from __future__ import annotations
 import os
 from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
-from typing import List, Protocol, TextIO
+from typing import List, Optional, Protocol, TextIO
 
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
 from extract_utils.bp_encoder import BpJSONEncoder
@@ -671,10 +671,10 @@ PRODUCT_SOONG_NAMESPACES += \\
     )
 
 
-def write_bp_soong_namespaces(ctx: MakefilesCtx, namespace_imports: List[str]):
-    if not namespace_imports:
-        return
-
+def write_bp_soong_namespaces(
+    ctx: MakefilesCtx,
+    namespace_imports: Optional[List[str]],
+):
     encoder = BpJSONEncoder(legacy=ctx.legacy)
 
     (

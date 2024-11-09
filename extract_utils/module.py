@@ -377,10 +377,7 @@ class ExtractUtilsModule:
         self.lib_fixups = flatten_fixups(lib_fixups)
         self.extract_fns = flatten_fixups(extract_fns)
 
-        if namespace_imports is None:
-            namespace_imports = []
         self.namespace_imports = namespace_imports
-
         self.check_elf = check_elf
 
         if device_rel_path is None:
