@@ -1031,6 +1031,7 @@ class ExtractUtilsModule:
         backup_source: Source,
         kang: bool,
         extract_factory: bool,
+        only_firmware: bool,
     ) -> bool:
         all_copied = True
 
@@ -1044,6 +1045,10 @@ class ExtractUtilsModule:
             print(f'Processing {proprietary_file.root_path}')
 
             is_firmware = proprietary_file.kind is ProprietaryFileType.FIRMWARE
+
+            if only_firmware and not is_firmware:
+                continue
+
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
 
             for file in proprietary_file.file_list.files:
@@ -1071,12 +1076,21 @@ class ExtractUtilsModule:
         if self.rro_packages:
             os.makedirs(self.vendor_rro_path)
 
+    def cleanup_firmware(self):
+        for proprietary_file in self.proprietary_files:
+            if proprietary_file.kind is ProprietaryFileType.FIRMWARE:
+                vendor_path = self.proprietary_file_vendor_path(
+                    proprietary_file
+                )
+                remove_dir_contents(vendor_path)
+
     def process(
         self,
         source: Source,
         kang: bool,
         no_cleanup: bool,
         extract_factory: bool,
+        only_firmware: bool,
         section: Optional[str],
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
@@ -1087,7 +1101,10 @@ class ExtractUtilsModule:
                 self.backup_pinned_files(backup_dir)
 
             if section is None and not no_cleanup:
-                self.cleanup()
+                if only_firmware:
+                    self.cleanup_firmware()
+                else:
+                    self.cleanup()
 
             backup_source = DiskSource(backup_dir)
 
@@ -1096,4 +1113,5 @@ class ExtractUtilsModule:
                 backup_source,
                 kang,
                 extract_factory,
+                only_firmware,
             )
