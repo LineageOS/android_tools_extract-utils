@@ -935,8 +935,14 @@ class ExtractUtilsModule:
 
         print(f'Backed up {file.dst}')
 
-    def backup_pinned_files(self, backup_dir: str):
+    def backup_pinned_files(self, backup_dir: str, only_firmware: bool):
         for proprietary_file in self.proprietary_files:
+            if (
+                only_firmware
+                and proprietary_file.kind is not ProprietaryFileType.FIRMWARE
+            ):
+                continue
+
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
             backup_source = DiskSource(vendor_path)
 
@@ -1031,6 +1037,7 @@ class ExtractUtilsModule:
         backup_source: Source,
         kang: bool,
         extract_factory: bool,
+        only_firmware: bool,
     ) -> bool:
         all_copied = True
 
@@ -1041,9 +1048,13 @@ class ExtractUtilsModule:
             ):
                 continue
 
+            is_firmware = proprietary_file.kind is ProprietaryFileType.FIRMWARE
+
+            if only_firmware and not is_firmware:
+                continue
+
             print(f'Processing {proprietary_file.root_path}')
 
-            is_firmware = proprietary_file.kind is ProprietaryFileType.FIRMWARE
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
 
             for file in proprietary_file.file_list.files:
@@ -1071,12 +1082,21 @@ class ExtractUtilsModule:
         if self.rro_packages:
             os.makedirs(self.vendor_rro_path)
 
+    def cleanup_firmware(self):
+        for proprietary_file in self.proprietary_files:
+            if proprietary_file.kind is ProprietaryFileType.FIRMWARE:
+                vendor_path = self.proprietary_file_vendor_path(
+                    proprietary_file
+                )
+                remove_dir_contents(vendor_path)
+
     def process(
         self,
         source: Source,
         kang: bool,
         no_cleanup: bool,
         extract_factory: bool,
+        only_firmware: bool,
         section: Optional[str],
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
@@ -1084,10 +1104,13 @@ class ExtractUtilsModule:
 
             # Kang is usually combined with section, but allow them separately
             if not kang:
-                self.backup_pinned_files(backup_dir)
+                self.backup_pinned_files(backup_dir, only_firmware)
 
             if section is None and not no_cleanup:
-                self.cleanup()
+                if only_firmware:
+                    self.cleanup_firmware()
+                else:
+                    self.cleanup()
 
             backup_source = DiskSource(backup_dir)
 
@@ -1096,4 +1119,5 @@ class ExtractUtilsModule:
                 backup_source,
                 kang,
                 extract_factory,
+                only_firmware,
             )
