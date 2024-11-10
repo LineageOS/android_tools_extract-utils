@@ -90,6 +90,7 @@ class ExtractUtils:
                 self.__args.kang,
                 self.__args.no_cleanup,
                 self.__args.extract_factory,
+                self.__args.only_firmware,
                 self.__args.section,
             )
             if not copied:

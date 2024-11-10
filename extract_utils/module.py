@@ -947,8 +947,10 @@ class ExtractUtilsModule:
 
         print(f'Backed up {file.dst}')
 
-    def backup_pinned_files(self, backup_dir: str):
-        for proprietary_file in self.proprietary_files():
+    def backup_pinned_files(
+        self, backup_dir: str, kind: Optional[ProprietaryFileType]
+    ):
+        for proprietary_file in self.proprietary_files(kind):
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
             backup_source = DiskSource(vendor_path)
 
@@ -1067,8 +1069,9 @@ class ExtractUtilsModule:
 
         return all_copied
 
-    def cleanup(self):
-        remove_dir_contents(self.vendor_path)
+    def cleanup(self, kind: Optional[ProprietaryFileType]):
+        if kind is None:
+            remove_dir_contents(self.vendor_path)
 
         for proprietary_file in self.proprietary_files():
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
@@ -1083,10 +1086,13 @@ class ExtractUtilsModule:
         kang: bool,
         no_cleanup: bool,
         extract_factory: bool,
+        only_firmware: bool,
         section: Optional[str],
     ):
         if extract_factory:
             kind = ProprietaryFileType.FACTORY
+        elif only_firmware:
+            kind = ProprietaryFileType.FIRMWARE
         else:
             kind = None
 
@@ -1095,10 +1101,10 @@ class ExtractUtilsModule:
 
             # Kang is usually combined with section, but allow them separately
             if not kang:
-                self.backup_pinned_files(backup_dir)
+                self.backup_pinned_files(backup_dir, kind)
 
             if section is None and not no_cleanup:
-                self.cleanup()
+                self.cleanup(kind)
 
             backup_source = DiskSource(backup_dir)
 

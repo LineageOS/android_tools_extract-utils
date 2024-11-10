@@ -24,11 +24,15 @@ group.add_argument(
     help='only extract target module',
 )
 group.add_argument(
+    '--only-firmware',
+    action='store_true',
+    help='only extract firmware',
+)
+group.add_argument(
     '--extract-factory',
     action='store_true',
     help='extract factory files',
 )
-# TODO: --only-firmware
 
 parser.add_argument(
     '-n',
@@ -89,6 +93,7 @@ class Args:
         # Wrap to provide type hints
         self.only_common: bool = args.only_common
         self.only_target: bool = args.only_target
+        self.only_firmware: bool = args.only_firmware
         self.extract_factory: bool = args.extract_factory
         self.regenerate_makefiles: bool = args.regenerate_makefiles
         self.regenerate: bool = args.regenerate
