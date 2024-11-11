@@ -413,7 +413,7 @@ class ExtractUtilsModule:
     ):
         self.device = device
         self.vendor = vendor
-        self.proprietary_files: List[ProprietaryFile] = []
+        self.__proprietary_files: List[ProprietaryFile] = []
         self.rro_packages: List[RuntimeResourceOverlay] = []
         self.postprocess_fns: List[postprocess_fn_type] = []
 
@@ -452,7 +452,7 @@ class ExtractUtilsModule:
     def get_partitions(self, kind: ProprietaryFileType):
         partitions: List[str] = []
 
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             if proprietary_file.kind is not kind:
                 continue
 
@@ -465,7 +465,7 @@ class ExtractUtilsModule:
     def get_files(self, kind: ProprietaryFileType):
         files: List[str] = []
 
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             if proprietary_file.kind is not kind:
                 continue
 
@@ -493,6 +493,19 @@ class ExtractUtilsModule:
     def proprietary_file_path(self, file_list_name: str):
         return path.join(self.device_path, file_list_name)
 
+    def proprietary_files(
+        self, kind: Optional[ProprietaryFileType] = None
+    ) -> List[ProprietaryFile]:
+        proprietary_files = []
+
+        for proprietary_file in self.__proprietary_files:
+            if kind is not None and proprietary_file.kind is not kind:
+                continue
+
+            proprietary_files.append(proprietary_file)
+
+        return proprietary_files
+
     def add_postprocess_fn(self, fn: postprocess_fn_type) -> Self:
         self.postprocess_fns.append(fn)
         return self
@@ -505,7 +518,7 @@ class ExtractUtilsModule:
     def add_proprietary_file(self, file_list_name: str, *args, **kwargs):
         file_list_path = self.proprietary_file_path(file_list_name)
         proprietary_file = ProprietaryFile(file_list_path, *args, **kwargs)
-        self.proprietary_files.append(proprietary_file)
+        self.__proprietary_files.append(proprietary_file)
         return proprietary_file
 
     def add_generated_proprietary_file(
@@ -520,13 +533,13 @@ class ExtractUtilsModule:
             *args,
             **kwargs,
         )
-        self.proprietary_files.append(proprietary_file)
+        self.__proprietary_files.append(proprietary_file)
         return proprietary_file
 
     def add_firmware_proprietary_file(self):
         file_list_path = self.proprietary_file_path('proprietary-firmware.txt')
         proprietary_file = FirmwareProprietaryFile(file_list_path)
-        self.proprietary_files.append(proprietary_file)
+        self.__proprietary_files.append(proprietary_file)
         return proprietary_file
 
     def add_factory_proprietary_file(self):
@@ -534,7 +547,7 @@ class ExtractUtilsModule:
             'proprietary-firmware-factory.txt'
         )
         proprietary_file = FactoryProprietaryFile(file_list_path)
-        self.proprietary_files.append(proprietary_file)
+        self.__proprietary_files.append(proprietary_file)
         return proprietary_file
 
     def add_generated_carriersettings_file(self):
@@ -550,7 +563,7 @@ class ExtractUtilsModule:
             pb_dir_rel_path,
             r'\.pb$',
         )
-        self.proprietary_files.append(proprietary_file)
+        self.__proprietary_files.append(proprietary_file)
         return proprietary_file
 
     def add_generated_carriersettings(self, extract_apns=False):
@@ -638,6 +651,11 @@ class ExtractUtilsModule:
             self.vendor_path, 'BoardConfigVendor.mk'
         )
 
+        if extract_factory:
+            kind = ProprietaryFileType.FACTORY
+        else:
+            kind = None
+
         with MakefilesCtx.from_paths(
             legacy,
             bp_path,
@@ -657,13 +675,7 @@ class ExtractUtilsModule:
 
             self.write_rro_makefiles(ctx)
 
-            for proprietary_file in self.proprietary_files:
-                if (
-                    not extract_factory
-                    and proprietary_file.kind is ProprietaryFileType.FACTORY
-                ):
-                    continue
-
+            for proprietary_file in self.proprietary_files(kind):
                 proprietary_file.write_makefiles(self, ctx)
 
     def write_updated_proprietary_file(
@@ -684,7 +696,7 @@ class ExtractUtilsModule:
         proprietary_file.write_to_file()
 
     def write_updated_proprietary_files(self, kang: bool, regenerate: bool):
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             self.write_updated_proprietary_file(
                 proprietary_file, kang, regenerate
             )
@@ -694,7 +706,7 @@ class ExtractUtilsModule:
         regenerate: bool,
         section: Optional[str],
     ):
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             if regenerate and isinstance(
                 proprietary_file,
                 GeneratedProprietaryFile,
@@ -714,7 +726,7 @@ class ExtractUtilsModule:
         if not regenerate:
             return
 
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             if not isinstance(
                 proprietary_file,
                 GeneratedProprietaryFile,
@@ -936,7 +948,7 @@ class ExtractUtilsModule:
         print(f'Backed up {file.dst}')
 
     def backup_pinned_files(self, backup_dir: str):
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
             backup_source = DiskSource(vendor_path)
 
@@ -1030,17 +1042,11 @@ class ExtractUtilsModule:
         source: Source,
         backup_source: Source,
         kang: bool,
-        extract_factory: bool,
+        kind: Optional[ProprietaryFileType],
     ) -> bool:
         all_copied = True
 
-        for proprietary_file in self.proprietary_files:
-            if (
-                not extract_factory
-                and proprietary_file.kind is ProprietaryFileType.FACTORY
-            ):
-                continue
-
+        for proprietary_file in self.proprietary_files(kind):
             print(f'Processing {proprietary_file.root_path}')
 
             is_firmware = proprietary_file.kind is ProprietaryFileType.FIRMWARE
@@ -1064,7 +1070,7 @@ class ExtractUtilsModule:
     def cleanup(self):
         remove_dir_contents(self.vendor_path)
 
-        for proprietary_file in self.proprietary_files:
+        for proprietary_file in self.proprietary_files():
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
             os.makedirs(vendor_path, exist_ok=True)
 
@@ -1079,6 +1085,11 @@ class ExtractUtilsModule:
         extract_factory: bool,
         section: Optional[str],
     ):
+        if extract_factory:
+            kind = ProprietaryFileType.FACTORY
+        else:
+            kind = None
+
         with tempfile.TemporaryDirectory() as backup_dir:
             os.makedirs(self.vendor_path, exist_ok=True)
 
@@ -1095,5 +1106,5 @@ class ExtractUtilsModule:
                 source,
                 backup_source,
                 kang,
-                extract_factory,
+                kind,
             )
