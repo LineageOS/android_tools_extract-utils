@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "950c5646_5c6ffe33",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-11T16:41:00Z",
+      "side": 1,
+      "message": "make it ascii?\n\nif the the txt has non ascii text there\u0027s something off probably?",
+      "revId": "c542df5c90432665874cf68bf748f2f796976533",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
