@@ -64,7 +64,7 @@ class MakefilesCtx:
 
         with ExitStack() as stack:
             files = [
-                stack.enter_context(open(file_path, 'w'))
+                stack.enter_context(open(file_path, 'w', encoding='utf-8'))
                 for file_path in file_paths
             ]
             yield MakefilesCtx(legacy, *files)
@@ -760,10 +760,10 @@ def write_rro_package(
 
     os.makedirs(package_path, exist_ok=True)
 
-    with open(rro_bp_path, 'w') as rro_bp_out:
+    with open(rro_bp_path, 'w', encoding='utf-8') as rro_bp_out:
         write_bp_rro(package_name, partition, rro_bp_out, encoder)
 
-    with open(rro_manifest_path, 'w') as rro_manifest_out:
+    with open(rro_manifest_path, 'w', encoding='utf-8') as rro_manifest_out:
         write_androidmanifest_rro(
             target_package_name,
             partition,

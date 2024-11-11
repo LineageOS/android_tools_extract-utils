@@ -356,7 +356,7 @@ class GeneratedProprietaryFile(ProprietaryFile):
                 module.device_path,
                 self.skip_file_list_name,
             )
-            with open(skip_file_list_path, 'r') as f:
+            with open(skip_file_list_path, 'r', encoding='utf-8') as f:
                 skipped_file_rel_paths = parse_lines(f)
 
         partition_rel_path = self.partition

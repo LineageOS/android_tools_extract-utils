@@ -323,12 +323,12 @@ class blob_fixup:
         *args,
         **kwargs,
     ):
-        with open(file_path, 'r', newline='') as f:
+        with open(file_path, 'r', newline='', encoding='utf-8') as f:
             data = f.read()
 
         data = re.sub(pattern, replacement, data)
 
-        with open(file_path, 'w', newline='') as f:
+        with open(file_path, 'w', newline='', encoding='utf-8') as f:
             f.write(data)
 
     def regex_replace(self, search: str, replace: str) -> Self:
@@ -401,7 +401,7 @@ class blob_fixup:
         **kwargs,
     ):
         lines: list[str] = []
-        with open(file_path, 'r', newline='') as f:
+        with open(file_path, 'r', newline='', encoding='utf-8') as f:
             for line in f:
                 if line.startswith('<?xml version'):
                     lines.insert(0, line)
@@ -409,7 +409,7 @@ class blob_fixup:
 
                 lines.append(line)
 
-        with open(file_path, 'w', newline='') as f:
+        with open(file_path, 'w', newline='', encoding='utf-8') as f:
             f.writelines(lines)
 
     def fix_xml(self) -> Self:
@@ -424,7 +424,7 @@ class blob_fixup:
         *args,
         **kwargs,
     ):
-        with open(file_path, 'r+', newline='') as f:
+        with open(file_path, 'r+', newline='', encoding='utf-8') as f:
             data = f.read()
             if text not in data.splitlines():
                 if data[-1] == '\n':

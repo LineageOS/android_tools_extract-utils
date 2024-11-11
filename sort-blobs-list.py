@@ -87,7 +87,7 @@ if __name__ == '__main__':
             print(f'File {file} not found')
             continue
 
-        with open(file, 'r') as f:
+        with open(file, 'r', encoding='utf-8') as f:
             sections = f.read().split('\n\n')
 
         ordered_sections = []
@@ -96,5 +96,5 @@ if __name__ == '__main__':
             section_list.sort(key=sort_key)
             ordered_sections.append('\n'.join(section_list))
 
-        with open(file, 'w') as f:
+        with open(file, 'w', encoding='utf-8') as f:
             f.write('\n\n'.join(ordered_sections).strip() + '\n')

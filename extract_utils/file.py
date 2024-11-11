@@ -576,11 +576,11 @@ class FileList:
             self.__add_file(file, section)
 
     def add_from_file(self, file_path: str):
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             self.add_from_lines(f)
 
     def write_to_file(self, file_path: str):
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w', encoding='utf-8') as f:
             for line_or_file in self.__lines_or_files:
                 f.write(f'{line_or_file}')
                 if isinstance(line_or_file, File):
