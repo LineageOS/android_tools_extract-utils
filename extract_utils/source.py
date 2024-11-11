@@ -35,7 +35,7 @@ class Source(ABC):
     @abstractmethod
     def _copy_file_path(
         self,
-        file_rel_path: str,
+        file_path: str,
         target_file_path: str,
     ) -> bool: ...
 
@@ -147,7 +147,7 @@ class AdbSource(Source):
         try:
             run_cmd(['adb', 'pull', file_path, target_file_path])
             return True
-        except Exception:
+        except ValueError:
             return False
 
     def _list_sub_path_file_rel_paths(self, source_path: str) -> List[str]:
@@ -179,14 +179,11 @@ class AdbSource(Source):
                 ]
             )
             return True
-        except Exception:
+        except ValueError:
             return False
 
 
 class DiskSource(Source):
-    def __init__(self, source_path: str):
-        super().__init__(source_path)
-
     def _copy_firmware(self, file: File, target_file_path: str) -> bool:
         return self._copy_file_to_path(file, target_file_path)
 
@@ -206,11 +203,11 @@ class DiskSource(Source):
 
         return False
 
-    def _list_sub_path_file_rel_paths(self, source_sub_path: str) -> List[str]:
+    def _list_sub_path_file_rel_paths(self, source_path: str) -> List[str]:
         file_rel_paths = []
 
-        for dir_path, _, file_names in os.walk(source_sub_path):
-            dir_rel_path = path.relpath(dir_path, source_sub_path)
+        for dir_path, _, file_names in os.walk(source_path):
+            dir_rel_path = path.relpath(dir_path, source_path)
             if dir_rel_path == '.':
                 dir_rel_path = ''
 
