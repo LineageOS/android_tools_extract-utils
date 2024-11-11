@@ -111,13 +111,20 @@ def process_cmds_in_parallel(input_cmds: parallel_input_cmds, fatal=False):
             s = f'Failed to process {input_id}: {stderr.strip()}'
             if fatal:
                 raise ValueError(s)
-            else:
-                print(s)
+
+            print(s)
 
 
 def run_cmd(cmd: List[str], shell=False):
     cmd[0] = executable_path(cmd[0])
-    proc = run(cmd, stdout=PIPE, stderr=PIPE, text=True, shell=shell)
+    proc = run(
+        cmd,
+        stdout=PIPE,
+        stderr=PIPE,
+        text=True,
+        shell=shell,
+        check=False,
+    )
     if proc.returncode != 0:
         cmd_str = ' '.join(cmd)
         s = f'Failed to run command "{cmd_str}":\n'

@@ -11,7 +11,7 @@ import shutil
 import tarfile
 import tempfile
 from concurrent.futures import ProcessPoolExecutor
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from functools import partial
 from os import path
 from tarfile import TarFile
@@ -421,7 +421,10 @@ def get_dump_dir(
         # and use a temporary directory to extract
         with tempfile.TemporaryDirectory() as dump_dir:
             print(f'Extracting to temporary dump dir {dump_dir}')
-            yield dump_dir
+
+            with suppress(GeneratorExit):
+                yield dump_dir
+
             return
 
     # Remove the extension from the file and use it as a dump dir
