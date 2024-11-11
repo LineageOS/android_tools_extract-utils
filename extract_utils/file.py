@@ -121,7 +121,7 @@ class File:
             assert isinstance(prefix, str)
             assert isinstance(extra, str)
 
-            if not len(extra):
+            if not extra:
                 raise ValueError(f'Unexpected empty extra in {line}')
 
             if prefix == ':':
@@ -300,7 +300,7 @@ class FileTree:
         self.__common = common
 
         self.parts = parts
-        self.parts_prefix_len = sum([len(p) + 1 for p in parts])
+        self.parts_prefix_len = sum(len(p) + 1 for p in parts)
 
         if tree is not None:
             self.__tree = tree
@@ -544,7 +544,7 @@ class FileList:
     def __add_line(self, line: str):
         if not is_valid_line(line):
             self.__lines_or_files.append(line)
-            return
+            return None
 
         # Postpone adding the files to be able to sort them based on dst
         file = File(line)

@@ -397,7 +397,12 @@ def get_dump_dir(
         # and use a temporary directory to extract
         with tempfile.TemporaryDirectory() as dump_dir:
             print(f'Extracting to temporary dump dir {dump_dir}')
-            yield dump_dir
+
+            try:
+                yield dump_dir
+            except GeneratorExit:
+                pass
+
             return
 
     # Remove the extension from the file and use it as a dump dir
