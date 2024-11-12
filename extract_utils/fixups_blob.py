@@ -387,7 +387,8 @@ class blob_fixup:
             if len(byte_str) != 2:
                 raise ValueError(f'Bad byte string length at {byte_str}')
 
-            pattern += bytes.fromhex(byte_str)
+            byte = bytes.fromhex(byte_str)
+            pattern += re.escape(byte)
 
         fn = partial(self.sig_replace_impl, pattern, replacement)
         return self.call(fn)
