@@ -50,13 +50,6 @@ ALTERNATE_PARTITION_PATH_MAP = {
 }
 
 
-DEFAULT_EXTRACTED_PARTITIONS = [
-    'system',
-    'odm',
-    'product',
-    'system_ext',
-    'vendor',
-]
 BROTLI_EXT = '.new.dat.br'
 SPARSE_DATA_EXT = '.new.dat'
 TRANSFER_LIST_EXT = '.transfer.list'
