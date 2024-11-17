@@ -18,12 +18,12 @@ from typing import Callable, Generator, Iterable, List, Optional, Set, Union
 from zipfile import ZipFile
 
 from extract_utils.fixups import fixups_type, fixups_user_type
+from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
 from extract_utils.tools import (
     brotli_path,
     lpunpack_path,
     ota_extractor_path,
     sdat2img_path,
-    simg2img_path,
 )
 from extract_utils.utils import (
     Color,
@@ -266,7 +266,7 @@ def update_extract_partitions(ctx: ExtractCtx, input_path: str):
 
 
 def find_sparse_raw_paths(extract_partitions: List[str], input_path: str):
-    magic = 0xED26FF3A.to_bytes(4, 'little')
+    magic = SPARSE_HEADER_MAGIC.to_bytes(4, 'little')
     return find_files(extract_partitions + ['super'], input_path, magic)
 
 
@@ -396,20 +396,12 @@ def extract_sparse_raw_imgs(file_paths: List[str], output_dir: str):
         partition_chunks = partition_chunks_map.setdefault(output_file_name, [])
         partition_chunks.append(file_path)
 
-    procs: parallel_input_cmds = []
     for output_file_name, partition_chunks in partition_chunks_map.items():
         output_file_path = path.join(output_dir, output_file_name)
 
         partition_chunks.sort(key=partition_chunk_index)
 
-        procs.append(
-            (
-                output_file_name,
-                [simg2img_path] + partition_chunks + [output_file_path],
-            )
-        )
-
-    process_cmds_in_parallel(procs, fatal=True)
+        unsparse_images(partition_chunks, output_file_path)
 
     return new_file_paths
 

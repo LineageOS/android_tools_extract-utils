@@ -20,7 +20,6 @@ sdat2img_path = path.join(extract_utils_dir, 'sdat2img.py')
 binaries_dir = path.join(android_root, 'prebuilts/extract-tools/linux-x86/bin')
 ota_extractor_path = path.join(binaries_dir, 'ota_extractor')
 lpunpack_path = path.join(binaries_dir, 'lpunpack')
-simg2img_path = path.join(binaries_dir, 'simg2img')
 stripzip_path = path.join(binaries_dir, 'stripzip')
 
 patchelf_version_path_map: Dict[str, str] = {}
