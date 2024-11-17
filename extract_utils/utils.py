@@ -12,8 +12,10 @@ import os
 import shutil
 from enum import Enum
 from functools import cache
+from mmap import mmap
+from os import SEEK_CUR
 from subprocess import PIPE, Popen, run
-from typing import Generator, Iterable, List, Tuple
+from typing import BinaryIO, Generator, Iterable, List, Tuple
 
 
 def import_module(module_name, module_path):
@@ -207,3 +209,26 @@ def TemporaryWorkingDirectory(dir_path: str) -> Generator[None, None, None]:
         yield
     finally:
         os.chdir(cwd)
+
+
+def read_mmap_chunked(
+    mm: mmap,
+    size: int,
+    offset=0,
+    chunk_size=0x100000,
+):
+    while size > 0:
+        read_size = min(chunk_size, size)
+        data = mm[offset : offset + read_size]
+        offset += read_size
+
+        if not data:
+            raise ValueError('Size bigger than stream')
+
+        yield data
+        size -= len(data)
+
+
+def write_zero(f: BinaryIO, size: int):
+    f.seek(size - 1, SEEK_CUR)
+    f.write(b'\x00')
