@@ -16,12 +16,12 @@ from typing import Callable, Dict, Iterable, List, Optional, Union
 from zipfile import ZipFile, is_zipfile
 
 from extract_utils.file import File
+from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
 from extract_utils.tools import (
     brotli_path,
     lpunpack_path,
     ota_extractor_path,
     sdat2img_path,
-    simg2img_path,
 )
 from extract_utils.utils import Color, color_print, run_cmd, scan_tree
 
@@ -196,7 +196,7 @@ def find_alternate_partitions(
 
 
 def find_sparse_raw_paths(partition: str, input_path: str):
-    magic = 0xED26FF3A.to_bytes(4, 'little')
+    magic = SPARSE_HEADER_MAGIC.to_bytes(4, 'little')
     return find_files(input_path, partition, magic=magic)
 
 
@@ -307,13 +307,7 @@ def extract_sparse_raw_img(file_paths: List[str], output_dir: str):
     file_paths.sort(key=partition_chunk_index)
     output_file_path = path.join(output_dir, output_file_name)
 
-    run_cmd(
-        [
-            simg2img_path,
-            *file_paths,
-            output_file_path,
-        ]
-    )
+    unsparse_images(file_paths, output_file_path)
 
 
 def unslot_partition(partition_slot: str):
