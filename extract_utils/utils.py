@@ -12,9 +12,11 @@ import shutil
 from contextlib import contextmanager
 from enum import Enum
 from functools import lru_cache
+from io import SEEK_CUR
+from mmap import mmap
 from os import path
 from subprocess import PIPE, run
-from typing import Callable, Generator, Iterable, List, Optional
+from typing import BinaryIO, Callable, Generator, Iterable, List, Optional
 from urllib.request import Request, urlopen
 
 CHUNK_SIZE = 1024 * 1024
@@ -279,3 +281,26 @@ def urlretrieve_resume(
 
     if downloaded_size == 0:
         raise ValueError(f'Invalid file hash, expected {expected_sha256}')
+
+
+def read_mmap_chunked(
+    mm: mmap,
+    size: int,
+    offset=0,
+    chunk_size=0x100000,
+):
+    while size > 0:
+        read_size = min(chunk_size, size)
+        data = mm[offset : offset + read_size]
+        offset += read_size
+
+        if not data:
+            raise ValueError('Size bigger than stream')
+
+        yield data
+        size -= len(data)
+
+
+def write_zero(f: BinaryIO, size: int):
+    f.seek(size - 1, SEEK_CUR)
+    f.write(b'\x00')
