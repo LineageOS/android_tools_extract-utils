@@ -34,19 +34,10 @@ from extract_utils.utils import (
 )
 
 ALTERNATE_PARTITION_PATH_MAP = {
-    'product': [
-        'system/product',
-    ],
-    'system_ext': [
-        'system/system_ext',
-    ],
-    'odm': [
-        'vendor/odm',
-        'system/vendor/odm',
-    ],
-    'vendor': [
-        'system/vendor',
-    ],
+    'product': 'system/product',
+    'system_ext': 'system/system_ext',
+    'vendor': 'system/vendor',
+    'odm': 'vendor/odm',
 }
 
 
@@ -699,19 +690,18 @@ def move_alternate_partition_paths(dump_dir: str):
     # dump directory to simplify file copying
     for (
         partition,
-        alternate_partition_paths,
+        alternate_partition_path,
     ) in ALTERNATE_PARTITION_PATH_MAP.items():
         partition_path = path.join(dump_dir, partition)
         if path.isdir(partition_path):
             continue
 
-        for partition_sub_path in alternate_partition_paths:
-            partition_path = path.join(dump_dir, partition_sub_path)
+        partition_path = path.join(dump_dir, alternate_partition_path)
 
-            if not path.isdir(partition_path):
-                continue
+        if not path.isdir(partition_path):
+            continue
 
-            shutil.move(partition_path, dump_dir)
+        shutil.move(partition_path, dump_dir)
 
     # For System-as-Root, move system/ to system_root/ and system/system/
     # to system/
