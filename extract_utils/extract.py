@@ -119,9 +119,9 @@ def find_files(
     return file_paths
 
 
-def find_sparse_raw_image_paths(extract_partitions: List[str], input_path: str):
+def find_sparse_raw_image_paths(input_path: str):
     magic = 0xED26FF3A.to_bytes(4, 'little')
-    return find_files(extract_partitions, input_path, magic)
+    return find_files(['super'], input_path, magic)
 
 
 def find_erofs_paths(extract_partitions: List[str], input_path: str):
@@ -600,9 +600,9 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
         extract_payload_bin(ctx, payload_bin_paths[0], dump_dir)
         remove_file_paths(payload_bin_paths)
 
-    sparse_raw_paths = find_sparse_raw_image_paths(extract_partitions, dump_dir)
+    sparse_raw_paths = find_sparse_raw_image_paths(dump_dir)
     if sparse_raw_paths:
-        print_file_paths(sparse_raw_paths, 'sparse raw')
+        print_file_paths(sparse_raw_paths, 'sparse super.img')
         # Single sparse files are renamed to .sparse to avoid naming conflicts
         # Retrieve the updated file paths
         sparse_raw_paths = extract_sparse_raw_imgs(sparse_raw_paths, dump_dir)
