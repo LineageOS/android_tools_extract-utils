@@ -135,17 +135,17 @@ def find_files_with_ext(
 
 
 def find_sparse_raw_image_paths(extract_partitions: List[str], input_path: str):
-    magic = bytes([0x3A, 0xFF, 0x26, 0xED])
+    magic = 0xED26FF3A.to_bytes(4, 'little')
     return find_files_with_magic(extract_partitions, input_path, magic)
 
 
 def find_erofs_paths(extract_partitions: List[str], input_path: str):
-    magic = bytes([0xE2, 0xE1, 0xF5, 0xE0])
+    magic = 0xE0F5E1E2.to_bytes(4, 'little')
     return find_files_with_magic(extract_partitions, input_path, magic, 1024)
 
 
 def find_ext4_paths(extract_partitions: List[str], input_path: str):
-    magic = bytes([0x53, 0xEF])
+    magic = 0xEF53.to_bytes(2, 'little')
     return find_files_with_magic(extract_partitions, input_path, magic, 1080)
 
 
