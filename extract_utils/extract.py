@@ -134,8 +134,8 @@ def find_ext4_paths(extract_partitions: List[str], input_path: str):
     return find_files(extract_partitions, input_path, magic, 1080)
 
 
-def find_payload_paths(extract_partitions: List[str], input_path: str):
-    return find_files(extract_partitions, input_path, b'CrAU')
+def find_payload_paths(input_path: str):
+    return find_files(['payload.bin'], input_path, b'CrAU')
 
 
 def find_super_img_path(input_path: str) -> Optional[str]:
@@ -593,7 +593,7 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
 
     run_extract_fns(ctx, dump_dir)
 
-    payload_bin_paths = find_payload_paths(extract_file_names, dump_dir)
+    payload_bin_paths = find_payload_paths(dump_dir)
     if payload_bin_paths:
         assert len(payload_bin_paths) == 1
         print_file_paths(payload_bin_paths, 'payload.bin')
