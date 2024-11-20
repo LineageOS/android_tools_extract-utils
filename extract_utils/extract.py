@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from functools import partial
 from os import path
 from tarfile import TarFile
-from typing import Callable, Generator, List, Optional, Union
+from typing import Callable, Generator, Iterable, List, Optional, Union
 from zipfile import ZipFile
 
 from extract_utils.fixups import fixups_type, fixups_user_type
@@ -165,7 +165,7 @@ def print_file_paths(file_paths: List[str], file_type: str):
     print(f'Found {file_type} files: {file_names_str}')
 
 
-def remove_file_paths(file_paths: List[str]):
+def remove_file_paths(file_paths: Iterable[str]):
     if not file_paths:
         return
 
@@ -685,7 +685,7 @@ def run_extract_fns(ctx: ExtractCtx, dump_dir: str):
                 if processed_file is not None:
                     processed_files.add(processed_file)
 
-        remove_file_paths(list(processed_files))
+        remove_file_paths(processed_files)
 
 
 def move_alternate_partition_paths(dump_dir: str):
