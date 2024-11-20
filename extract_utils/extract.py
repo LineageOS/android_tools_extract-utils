@@ -664,24 +664,28 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
 
 
 def run_extract_fns(ctx: ExtractCtx, dump_dir: str):
-    for file in os.scandir(dump_dir):
-        for extract_pattern, extract_fns in ctx.extract_fns.items():
-            if not isinstance(extract_fns, list):
-                extract_fns = [extract_fns]
+    for extract_pattern, extract_fns in ctx.extract_fns.items():
+        if not isinstance(extract_fns, list):
+            extract_fns = [extract_fns]
 
-            processed_files = set()
+        found_files: List[str] = []
+        processed_files = set()
+        for file in os.scandir(dump_dir):
+            match = re.match(extract_pattern, file.name)
+            if match is not None:
+                found_files.append(file.path)
+
+        print_file_paths(found_files, f'pattern: "{extract_pattern}"')
+
+        for file_path in found_files:
+            file_name = path.basename(file_path)
+            print(f'Processing {file_name}')
             for extract_fn in extract_fns:
-                match = re.match(extract_pattern, file.name)
-                if match is None:
-                    continue
-
-                print_file_paths([file.path], f'pattern: "{extract_pattern}"')
-                print(f'Processing {file.name}')
-                processed_file = extract_fn(ctx, file.path, dump_dir)
+                processed_file = extract_fn(ctx, file_path, dump_dir)
                 if processed_file is not None:
                     processed_files.add(processed_file)
 
-            remove_file_paths(list(processed_files))
+        remove_file_paths(list(processed_files))
 
 
 def move_alternate_partition_paths(dump_dir: str):
