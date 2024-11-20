@@ -26,8 +26,6 @@ def extract_pixel_factory_image(
     extract_zip(
         file_path,
         ctx,
-        [],
-        [],
         work_dir,
     )
     return file_path
