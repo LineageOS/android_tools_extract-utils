@@ -86,11 +86,12 @@ def should_extract_partition_file_name(
     return root_rest[0] in extract_partitions
 
 
-def find_files_with_magic(
+def find_files(
     extract_partitions: Optional[List[str]],
     input_path: str,
-    magic: bytes,
-    position: int = 0,
+    magic: Optional[bytes] = None,
+    position=0,
+    ext: Optional[str] = None,
 ) -> List[str]:
     file_paths = []
     for file in os.scandir(input_path):
@@ -103,54 +104,38 @@ def find_files_with_magic(
         ):
             continue
 
-        with open(file, 'rb') as f:
-            f.seek(position)
-            file_magic = f.read(len(magic))
-            if file_magic == magic:
-                file_paths.append(file.path)
-
-    return file_paths
-
-
-def find_files_with_ext(
-    extract_partitions: List[str],
-    input_path: str,
-    ext: str,
-):
-    file_paths = []
-    for file in os.scandir(input_path):
-        if not file.is_file():
+        if ext is not None and not file.name.endswith(ext):
             continue
 
-        if not should_extract_partition_file_name(
-            extract_partitions,
-            file.name,
-        ):
-            continue
+        if magic is not None:
+            with open(file, 'rb') as f:
+                f.seek(position)
+                file_magic = f.read(len(magic))
+                if file_magic != magic:
+                    continue
 
-        if file.name.endswith(ext):
-            file_paths.append(file.path)
+        file_paths.append(file.path)
 
     return file_paths
 
 
 def find_sparse_raw_image_paths(extract_partitions: List[str], input_path: str):
     magic = 0xED26FF3A.to_bytes(4, 'little')
-    return find_files_with_magic(extract_partitions, input_path, magic)
+    return find_files(extract_partitions, input_path, magic)
 
 
 def find_erofs_paths(extract_partitions: List[str], input_path: str):
     magic = 0xE0F5E1E2.to_bytes(4, 'little')
-    return find_files_with_magic(extract_partitions, input_path, magic, 1024)
+    return find_files(extract_partitions, input_path, magic, 1024)
 
 
 def find_ext4_paths(extract_partitions: List[str], input_path: str):
     magic = 0xEF53.to_bytes(2, 'little')
-    return find_files_with_magic(extract_partitions, input_path, magic, 1080)
+    return find_files(extract_partitions, input_path, magic, 1080)
 
 
 def find_payload_paths(extract_partitions: List[str], input_path: str):
-    return find_files_with_magic(extract_partitions, input_path, b'CrAU')
+    return find_files(extract_partitions, input_path, b'CrAU')
 
 
 def find_super_img_path(input_path: str) -> Optional[str]:
@@ -159,6 +144,14 @@ def find_super_img_path(input_path: str) -> Optional[str]:
         return super_img_path
 
     return None
+
+
+def find_brotli_paths(extract_partitions: List[str], input_path: str):
+    return find_files(extract_partitions, input_path, ext=BROTLI_EXT)
+
+
+def find_sparse_data_paths(extract_partitions: List[str], input_path: str):
+    return find_files(extract_partitions, input_path, ext=SPARSE_DATA_EXT)
 
 
 def print_file_paths(file_paths: List[str], file_type: str):
@@ -621,21 +614,13 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
         extract_super_img(ctx, super_img_path, dump_dir)
         remove_file_paths([super_img_path])
 
-    brotli_paths = find_files_with_ext(
-        ctx.extract_partitions,
-        dump_dir,
-        BROTLI_EXT,
-    )
+    brotli_paths = find_brotli_paths(ctx.extract_partitions, dump_dir)
     if brotli_paths:
         print_file_paths(brotli_paths, 'brotli')
         extract_brotli_imgs(brotli_paths, dump_dir)
         remove_file_paths(brotli_paths)
 
-    sparse_data_paths = find_files_with_ext(
-        ctx.extract_partitions,
-        dump_dir,
-        SPARSE_DATA_EXT,
-    )
+    sparse_data_paths = find_sparse_data_paths(ctx.extract_partitions, dump_dir)
     if sparse_data_paths:
         print_file_paths(sparse_data_paths, 'sparse data')
         extract_sparse_data_imgs(sparse_data_paths, dump_dir)
