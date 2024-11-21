@@ -57,13 +57,24 @@ extract_fns_type = fixups_type[extract_fns_value_type]
 class ExtractCtx:
     def __init__(
         self,
-        keep_dump: bool,
-        extract_fns: extract_fns_type,
-        extract_partitions: List[str],
-        firmware_partitions: List[str],
-        firmware_files: List[str],
-        factory_files: List[str],
+        keep_dump=False,
+        extract_fns: Optional[extract_fns_type] = None,
+        extract_partitions: Optional[List[str]] = None,
+        firmware_partitions: Optional[List[str]] = None,
+        firmware_files: Optional[List[str]] = None,
+        factory_files: Optional[List[str]] = None,
     ):
+        if extract_fns is None:
+            extract_fns = {}
+        if extract_partitions is None:
+            extract_partitions = []
+        if firmware_partitions is None:
+            firmware_partitions = []
+        if firmware_files is None:
+            firmware_files = []
+        if factory_files is None:
+            factory_files = []
+
         self.keep_dump = keep_dump
         # Files for extract functions are extracted if their name
         # matches the regex
