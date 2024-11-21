@@ -43,6 +43,7 @@ args = parser.parse_args()
 ctx = ExtractCtx(
     keep_dump=True,
     extract_partitions=args.partitions,
+    extract_all=True,
 )
 
 with get_dump_dir(args.source, ctx) as dump_dir:
