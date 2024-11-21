@@ -16,10 +16,10 @@ from typing import Callable, Dict, Iterable, List, Optional, Union
 from zipfile import ZipFile, is_zipfile
 
 from extract_utils.file import File
+from extract_utils.lp import LpImage
 from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
 from extract_utils.tools import (
     brotli_path,
-    lpunpack_path,
     ota_extractor_path,
     sdat2img_path,
 )
@@ -310,49 +310,11 @@ def extract_sparse_raw_img(file_paths: List[str], output_dir: str):
     unsparse_images(file_paths, output_file_path)
 
 
-def unslot_partition(partition_slot: str):
-    return re.sub(r'_[abc]$', '', partition_slot)
-
-
-def extract_super_img_slot(
-    partition: str,
-    slot: str,
-    file_path: str,
-    output_dir: str,
-):
-    partition_slot = f'{partition}{slot}'
-
-    print(f'Extracting {partition_slot}')
-
-    run_cmd(
-        [
-            lpunpack_path,
-            '--partition',
-            partition_slot,
-            file_path,
-            output_dir,
-        ],
-    )
-
-    if not slot:
-        return
-
-    # Rename slotted partition to unslotted one
-    partition_path = path.join(output_dir, f'{partition}.img')
-    partition_slot_path = path.join(output_dir, f'{partition_slot}.img')
-    os.rename(partition_slot_path, partition_path)
-
-
 def extract_super_img(partition: str, file_path: str, output_dir: str):
-    # TODO: switch to python lpunpack to be able to detect partition
-    # names to make this process fatal on failure
-
-    for slot in ['', '_a']:
-        try:
-            extract_super_img_slot(partition, slot, file_path, output_dir)
-            return
-        except ValueError:
-            pass
+    with open(file_path, 'rb') as i:
+        output_file_path = path.join(output_dir, f'{partition}.img')
+        image = LpImage(i)
+        image.extract_partition(partition, output_file_path)
 
 
 def extract_brotli_img(file_path: str, output_path: str):
