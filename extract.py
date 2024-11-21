@@ -30,6 +30,11 @@ parser.add_argument(
     help='Partitions to extract',
     default=DEFAULT_EXTRACTED_PARTITIONS,
 )
+parser.add_argument(
+    '--all',
+    action='store_true',
+    help='Extract all files from archive',
+)
 
 parser.add_argument(
     'source',
@@ -44,6 +49,7 @@ if __name__ == '__main__':
     ctx = ExtractCtx(
         keep_dump=True,
         extract_partitions=args.partitions,
+        extract_all=args.all,
     )
 
     with get_dump_dir(args.source, ctx) as dump_dir:
