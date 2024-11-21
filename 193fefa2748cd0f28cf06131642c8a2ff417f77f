@@ -16,6 +16,24 @@
       "message": "`with suppress(GeneratorExit):`",
       "revId": "193fefa2748cd0f28cf06131642c8a2ff417f77f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2ded5583_110a14be",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 424,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-21T08:51:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22c650c1_1069dd9f",
+      "revId": "193fefa2748cd0f28cf06131642c8a2ff417f77f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
