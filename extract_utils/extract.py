@@ -64,6 +64,7 @@ class ExtractCtx:
         firmware_partitions: Optional[List[str]] = None,
         firmware_files: Optional[List[str]] = None,
         factory_files: Optional[List[str]] = None,
+        extract_all=False,
     ):
         if extract_fns is None:
             extract_fns = {}
@@ -89,6 +90,8 @@ class ExtractCtx:
         self.firmware_files = firmware_files
         self.factory_files = factory_files
         self.extra_files: List[str] = []
+
+        self.extract_all = extract_all
 
 
 def file_name_to_partition(file_name: str):
@@ -238,6 +241,9 @@ def filter_extract_file_paths(
     ctx: ExtractCtx,
     file_paths: List[str],
 ):
+    if ctx.extract_all:
+        return file_paths
+
     return filter_files(
         [
             ctx.extract_partitions,
