@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3a9c4c4d_21974896",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 21290
+      },
+      "writtenOn": "2024-11-21T21:57:31Z",
+      "side": 1,
+      "message": "patchelf 0.9 seems to have a lot of problems on modern platforms. On Xiaomi 8450 it breaks camera blobs just by modifying the soname.\nnewer patchelf versions don\u0027t seem to break any of my older targets.",
+      "revId": "23747159774482c689327dc2a2c6c8895a6e94ef",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
