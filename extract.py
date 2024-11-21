@@ -4,19 +4,49 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import tempfile
+import argparse
 
-from extract_utils.args import parse_args
-from extract_utils.extract import ExtractCtx, extract_image, get_dump_dir
-
-args = parse_args()
-
-ctx = ExtractCtx(
-    args.source,
-    args.keep_dump,
+from extract_utils.extract import (
+    ExtractCtx,
+    extract_image,
+    filter_already_extracted_partitions,
+    get_dump_dir,
 )
 
-with get_dump_dir(ctx) as (dump_dir, extract):
-    if extract:
-        with tempfile.TemporaryDirectory() as work_dir:
-            extract_image(ctx, dump_dir, work_dir)
+DEFAULT_EXTRACTED_PARTITIONS = [
+    'system',
+    'odm',
+    'product',
+    'system_ext',
+    'vendor',
+]
+
+parser = argparse.ArgumentParser(description='Extract')
+
+parser.add_argument(
+    '--partitions',
+    nargs='+',
+    type=str,
+    help='Partitions to extract',
+    default=DEFAULT_EXTRACTED_PARTITIONS,
+)
+
+parser.add_argument(
+    'source',
+    default='adb',
+    help='sources from which to extract',
+    nargs='?',
+)
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+
+    ctx = ExtractCtx(
+        keep_dump=True,
+        extract_partitions=args.partitions,
+    )
+
+    with get_dump_dir(args.source, ctx) as dump_dir:
+        filter_already_extracted_partitions(dump_dir, ctx)
+        if ctx.extract_partitions:
+            extract_image(args.source, ctx, dump_dir)
