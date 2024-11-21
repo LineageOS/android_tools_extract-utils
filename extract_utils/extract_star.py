@@ -12,6 +12,8 @@ from typing import BinaryIO
 
 from extract_utils.extract import ExtractCtx
 
+star_firmware_regex = r'(bootloader|radio)\.img'
+
 
 def get_string(f: BinaryIO, length: int):
     data = f.read(length)
