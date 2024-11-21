@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2055e221_dd8ec836",
+        "filename": "extract_utils/lp.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-21T15:21:38Z",
+      "side": 1,
+      "message": "move that outside the loop?\nnot needed",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 235,
+        "endChar": 0
+      },
+      "revId": "7fc8d1cef51e0bce19a52a2dea7e85e013847896",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
