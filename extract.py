@@ -8,9 +8,20 @@ import argparse
 
 from extract_utils.extract import (
     ExtractCtx,
+    extract_fns_type,
     extract_image,
     filter_already_extracted_partitions,
     get_dump_dir,
+)
+from extract_utils.extract_pixel import (
+    extract_pixel_factory_image,
+    extract_pixel_firmware,
+    pixel_factory_image_regex,
+    pixel_firmware_regex,
+)
+from extract_utils.extract_star import (
+    extract_star_firmware,
+    star_firmware_regex,
 )
 
 DEFAULT_EXTRACTED_PARTITIONS = [
@@ -30,6 +41,24 @@ parser.add_argument(
     help='Partitions to extract',
     default=DEFAULT_EXTRACTED_PARTITIONS,
 )
+parser.add_argument(
+    '--extract-star-firmware',
+    nargs='*',
+    type=str,
+    help='Files to extract as star firmware',
+)
+parser.add_argument(
+    '--extract-pixel-firmware',
+    nargs='*',
+    type=str,
+    help='Files to extract as pixel firmware',
+)
+parser.add_argument(
+    '--extract-pixel-factory',
+    nargs='*',
+    type=str,
+    help='Files to extract as pixel factory image',
+)
 
 parser.add_argument(
     'source',
@@ -40,8 +69,38 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+if args.extract_star_firmware is not None and not args.extract_star_firmware:
+    args.extract_star_firmware = [star_firmware_regex]
+
+if args.extract_pixel_factory is not None and not args.extract_pixel_factory:
+    args.extract_pixel_factory = [pixel_factory_image_regex]
+
+if args.extract_pixel_firmware is not None and not args.extract_pixel_firmware:
+    args.extract_pixel_firmware = [pixel_firmware_regex]
+
+extract_fns: extract_fns_type = {}
+
+if args.extract_star_firmware:
+    for extract_pattern in args.extract_star_firmware:
+        extract_fns.setdefault(extract_pattern, []).append(
+            extract_star_firmware,
+        )
+
+if args.extract_pixel_firmware:
+    for extract_pattern in args.extract_pixel_firmware:
+        extract_fns.setdefault(extract_pattern, []).append(
+            extract_pixel_firmware,
+        )
+
+if args.extract_pixel_factory:
+    for extract_pattern in args.extract_pixel_factory:
+        extract_fns.setdefault(extract_pattern, []).append(
+            extract_pixel_factory_image,
+        )
+
 ctx = ExtractCtx(
     keep_dump=True,
+    extract_fns=extract_fns,
     extract_partitions=args.partitions,
     extract_all=True,
 )
