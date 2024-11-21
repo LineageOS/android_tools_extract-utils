@@ -164,6 +164,7 @@ class ExtractUtils:
                 list(firmware_partitions),
                 list(firmware_files),
                 list(factory_files),
+                self.__args.extract_all,
             )
 
             with create_source(self.__args.source, extract_ctx) as source:
