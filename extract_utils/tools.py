@@ -9,7 +9,7 @@ from os import path
 from typing import Dict
 
 patchelf_versions = ['0_8', '0_9', '0_17_2', '0_18']
-DEFAULT_PATCHELF_VERSION = '0_9'
+DEFAULT_PATCHELF_VERSION = '0_18'
 
 script_dir = path.dirname(path.realpath(__file__))
 android_root = path.realpath(path.join(script_dir, '..', '..', '..'))
