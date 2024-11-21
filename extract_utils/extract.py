@@ -10,7 +10,7 @@ import re
 import shutil
 import tarfile
 import tempfile
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from contextlib import contextmanager
 from os import path
 from tarfile import TarFile
@@ -18,10 +18,10 @@ from typing import Callable, Generator, Iterable, List, Optional, Set, Union
 from zipfile import ZipFile
 
 from extract_utils.fixups import fixups_type, fixups_user_type
+from extract_utils.lp import LpImage
 from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
 from extract_utils.tools import (
     brotli_path,
-    lpunpack_path,
     ota_extractor_path,
     sdat2img_path,
 )
@@ -410,65 +410,31 @@ def unslot_partition(partition_slot: str):
     return partition_slot.rsplit('_', 1)[0]
 
 
-def _extract_super_img(
+def extract_super_img(
     extract_partitions: List[str],
     file_path: str,
     output_dir: str,
 ):
-    # TODO: switch to python lpunpack to be able to detect partition
-    # names to make this process fatal on failure
-    procs: parallel_input_cmds = []
+    with open(file_path, 'rb') as i:
+        image = LpImage(i)
 
-    for partition in extract_partitions:
-        for slot in ['', '_a']:
-            partition_slot = f'{partition}{slot}'
-            procs.append(
-                (
-                    partition_slot,
-                    [
-                        lpunpack_path,
-                        '--partition',
-                        partition_slot,
-                        file_path,
-                        output_dir,
-                    ],
+        partition_names = image.get_partition_names()
+        extract_partition_names = filter_extract_partitions(
+            extract_partitions,
+            partition_names,
+        )
+
+        with ThreadPoolExecutor(len(extract_partition_names)) as exe:
+            for partition_name in extract_partition_names:
+                output_file_path = path.join(
+                    output_dir,
+                    f'{partition_name}.img',
                 )
-            )
-
-    _, ret_success = process_cmds_in_parallel(procs)
-
-    # Make sure that there are no duplicates
-    assert len(ret_success) == len(set(ret_success))
-
-    found_partitions = []
-    for partition_slot in ret_success:
-        partition = unslot_partition(partition_slot)
-        found_partitions.append(partition)
-
-        if partition == partition_slot:
-            continue
-
-        partition_path = path.join(output_dir, f'{partition}.img')
-        partition_slot_path = path.join(output_dir, f'{partition_slot}.img')
-
-        os.rename(partition_slot_path, partition_path)
-
-    return found_partitions
-
-
-def extract_super_img(ctx: ExtractCtx, file_path: str, output_dir: str):
-    extract_partitions = ctx.extract_partitions
-    while extract_partitions:
-        found_partitions = _extract_super_img(
-            extract_partitions,
-            file_path,
-            output_dir,
-        )
-
-        extract_partitions = find_alternate_partitions(
-            extract_partitions,
-            found_partitions,
-        )
+                exe.submit(
+                    image.extract_partition,
+                    partition_name,
+                    output_file_path,
+                )
 
 
 def extract_brotli_imgs(file_paths: List[str], output_path: str):
@@ -719,7 +685,7 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
     if super_img_paths:
         assert len(super_img_paths) == 1
         print_file_paths(super_img_paths, 'super.img')
-        extract_super_img(ctx, super_img_paths[0], dump_dir)
+        extract_super_img(ctx.extract_partitions, super_img_paths[0], dump_dir)
         remove_file_paths(super_img_paths)
 
     # Now that all partitions that could have been unpacked from their
