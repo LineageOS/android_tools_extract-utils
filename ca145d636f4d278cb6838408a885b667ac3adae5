@@ -18,6 +18,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "53f4e5fb_396bbff0",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-21T10:12:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de009dd9_525167b2",
+      "revId": "ca145d636f4d278cb6838408a885b667ac3adae5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "34c0c66a_b0d3cbd6",
@@ -31,6 +49,30 @@
       "writtenOn": "2024-11-21T08:51:04Z",
       "side": 1,
       "message": "```suggestion\n    ctx.extra_partitions.append(\u0027super\u0027)\n    ctx.extra_files.append(payload.bin\u0027)\n```",
+      "range": {
+        "startLine": 697,
+        "startChar": 0,
+        "endLine": 698,
+        "endChar": 38
+      },
+      "revId": "ca145d636f4d278cb6838408a885b667ac3adae5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19e58271_9534949b",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-21T10:12:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34c0c66a_b0d3cbd6",
       "range": {
         "startLine": 697,
         "startChar": 0,
