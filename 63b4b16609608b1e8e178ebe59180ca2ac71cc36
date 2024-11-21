@@ -16,6 +16,24 @@
       "message": "extact_fns \u003d extract_fns or {}\nand so on?",
       "revId": "63b4b16609608b1e8e178ebe59180ca2ac71cc36",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ed0eb00_638a6f10",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-21T17:56:28Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "0e972a2f_ef098c41",
+      "revId": "63b4b16609608b1e8e178ebe59180ca2ac71cc36",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
