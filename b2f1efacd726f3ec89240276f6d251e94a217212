@@ -36,6 +36,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec3330b4_edaab79a",
+        "filename": "extract_utils/sparse_img.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-11-21T17:49:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "799ca8dd_4059cdda",
+      "revId": "b2f1efacd726f3ec89240276f6d251e94a217212",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a7d214a6_802b7b6d",
@@ -64,6 +82,24 @@
         "id": 11883
       },
       "writtenOn": "2024-11-21T17:37:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7d214a6_802b7b6d",
+      "revId": "b2f1efacd726f3ec89240276f6d251e94a217212",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d43c2c06_b69027e3",
+        "filename": "extract_utils/sparse_img.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-11-21T17:49:35Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "a7d214a6_802b7b6d",
@@ -106,6 +142,24 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1aa0f6de_f8e43ee5",
+        "filename": "extract_utils/sparse_img.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-11-21T17:49:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5df21cb8_8595f040",
+      "revId": "b2f1efacd726f3ec89240276f6d251e94a217212",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b08385b4_55e07023",
@@ -140,6 +194,30 @@
         "id": 11883
       },
       "writtenOn": "2024-11-21T17:37:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b08385b4_55e07023",
+      "range": {
+        "startLine": 121,
+        "startChar": 46,
+        "endLine": 121,
+        "endChar": 61
+      },
+      "revId": "b2f1efacd726f3ec89240276f6d251e94a217212",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ea22a98_ba30e834",
+        "filename": "extract_utils/sparse_img.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-11-21T17:49:35Z",
       "side": 1,
       "message": "Done",
       "parentUuid": "b08385b4_55e07023",
