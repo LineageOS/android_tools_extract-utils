@@ -378,6 +378,9 @@ class GeneratedProprietaryFile(ProprietaryFile):
         self.fix_file_list()
 
     def get_partitions(self) -> Set[str]:
+        if not self.file_list.all_files:
+            return set()
+
         return {self.partition}
 
 
@@ -695,6 +698,11 @@ class ExtractUtilsModule:
         section: Optional[str],
     ):
         for proprietary_file in self.proprietary_files:
+            if section is not None and isinstance(
+                proprietary_file, GeneratedProprietaryFile
+            ):
+                continue
+
             if regenerate and isinstance(
                 proprietary_file,
                 GeneratedProprietaryFile,
