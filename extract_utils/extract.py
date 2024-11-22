@@ -650,6 +650,8 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
 
     run_extract_fns(ctx, dump_dir)
 
+    move_sar_system_paths(dump_dir)
+
     move_alternate_partition_paths(dump_dir)
 
     for partition in ctx.extract_partitions:
@@ -697,12 +699,13 @@ def move_alternate_partition_paths(dump_dir: str):
             continue
 
         partition_path = path.join(dump_dir, alternate_partition_path)
-
         if not path.isdir(partition_path):
             continue
 
         shutil.move(partition_path, dump_dir)
 
+
+def move_sar_system_paths(dump_dir: str):
     # For System-as-Root, move system/ to system_root/ and system/system/
     # to system/
     system_dir = path.join(dump_dir, 'system')
