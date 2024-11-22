@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "97c0e013_035a8720",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-11-22T16:40:54Z",
+      "side": 1,
+      "message": "Then you can remove those",
+      "revId": "33fedf98d9697cf8f7913742c3af742b0f9e191e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "defca856_bd95de8e",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-11-22T16:40:54Z",
+      "side": 1,
+      "message": "There\u0027s a little nicer way to do this: e.g.\n`self.extract_fns \u003d extract_fns or {}`",
+      "revId": "33fedf98d9697cf8f7913742c3af742b0f9e191e",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
