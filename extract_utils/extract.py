@@ -240,8 +240,8 @@ def extract_sparse_raw_imgs(file_paths: List[str], output_dir: str):
             output_file_name = base_file_name[: -len(SPARSE_CHUNK_SUFFIX)]
         else:
             output_file_name = file_name
-            # Rename single sparse image to .sparse to avoid naming conflicts
-            sparse_file_path = f'{file_path}.sparse'
+            # Rename single sparse image to .0 to avoid naming conflicts
+            sparse_file_path = f'{file_path}.0'
             os.rename(file_path, sparse_file_path)
             file_path = sparse_file_path
 
@@ -617,7 +617,7 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
     sparse_raw_paths = find_sparse_raw_image_paths(extract_partitions, dump_dir)
     if sparse_raw_paths:
         print_file_paths(sparse_raw_paths, 'sparse raw')
-        # Single sparse files are renamed to .sparse to avoid naming conflicts
+        # Single sparse files are renamed to .0 to avoid naming conflicts
         # Retrieve the updated file paths
         sparse_raw_paths = extract_sparse_raw_imgs(sparse_raw_paths, dump_dir)
         remove_file_paths(sparse_raw_paths)
