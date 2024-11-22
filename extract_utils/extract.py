@@ -254,7 +254,8 @@ def extract_sparse_raw_imgs(file_paths: List[str], output_dir: str):
     for output_file_name, partition_chunks in partition_chunks_map.items():
         output_file_path = path.join(output_dir, output_file_name)
 
-        partition_chunks.sort(key=partition_chunk_index)
+        if len(partition_chunks) > 1:
+            partition_chunks.sort(key=partition_chunk_index)
 
         procs.append(
             (
