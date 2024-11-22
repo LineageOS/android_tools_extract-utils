@@ -24,6 +24,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7e212bf_dfdc5c8c",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-22T17:16:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4824e8da_7aeb0e89",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 124,
+        "endChar": 72
+      },
+      "revId": "0038ceb6bd5c447a05db3efce69d4e3b1a8291dc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f3285350_161fd845",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-11-22T17:01:33Z",
       "side": 1,
       "message": "```suggestion\n    sparse_raw_paths \u003d find_sparse_raw_paths(ctx.extract_partitions + extract_partitions, dump_dir)\n```",
+      "range": {
+        "startLine": 600,
+        "startChar": 45,
+        "endLine": 600,
+        "endChar": 67
+      },
+      "revId": "0038ceb6bd5c447a05db3efce69d4e3b1a8291dc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f57f2efc_f2ad04ba",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2024-11-22T17:16:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3285350_161fd845",
       "range": {
         "startLine": 600,
         "startChar": 45,
