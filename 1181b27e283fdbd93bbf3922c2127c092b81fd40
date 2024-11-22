@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea58d57e_7f43c2e4",
+        "filename": "extract_utils/extract.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-22T10:13:11Z",
+      "side": 1,
+      "message": "_sparsechunk.0?",
+      "revId": "1181b27e283fdbd93bbf3922c2127c092b81fd40",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
