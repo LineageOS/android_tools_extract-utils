@@ -619,9 +619,9 @@ def extract_zip(
     with ZipFile(source) as zip_file:
         file_paths = zip_file.namelist()
 
-    print_file_paths(file_paths, 'in zip')
-
     file_paths = filter_extract_file_paths(ctx, file_paths)
+
+    print_file_paths(file_paths, 'in zip')
 
     with ProcessPoolExecutor(len(file_paths)) as exe:
         for file_path in file_paths:
