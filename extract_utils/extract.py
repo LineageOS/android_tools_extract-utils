@@ -616,8 +616,6 @@ def extract_zip(
     with ZipFile(source) as zip_file:
         file_paths = zip_file.namelist()
 
-    print_file_paths(file_paths, 'in zip')
-
     file_paths = filter_extract_file_paths(ctx, file_paths)
 
     with ProcessPoolExecutor(len(file_paths)) as exe:
@@ -640,13 +638,11 @@ def extract_tar(source: str, ctx: ExtractCtx, dump_dir: str):
         file_paths = tar.getnames()
         file_paths = filter_extract_file_paths(ctx, file_paths)
 
-        print_file_paths(file_paths, 'in tar')
-
         for file_path in file_paths:
             file_name = path.basename(file_path)
             output_file_path = path.join(dump_dir, file_name)
 
-            print(f'Processing {file_path}')
+            print(f'Extracting {file_path}')
 
             t = tar.extractfile(file_path)
             if t is None:
