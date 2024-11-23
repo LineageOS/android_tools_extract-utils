@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ceb0ce3e_2355cf1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-11-23T20:29:00Z",
+      "side": 1,
+      "message": "`dump dumps/motorola/troika/full-package/TROIKA_RETAIL_11_RSBS31.Q1-48-36-26_subsidy-DEFAULT_regulatory-DEFAULT_CFC.xml.zip --all --extra-partitions oem oem_other system_other` does exactly what I want",
+      "revId": "4e2598c56d42b0cb947ea79d4a2a5a5b99e3acdd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
