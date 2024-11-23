@@ -30,6 +30,12 @@ parser.add_argument(
     help='Partitions to extract',
     default=DEFAULT_EXTRACTED_PARTITIONS,
 )
+parser.add_argument(
+    '--extra-partitions',
+    nargs='+',
+    type=str,
+    help='Extra partitions to extract',
+)
 
 parser.add_argument(
     'source',
@@ -41,9 +47,13 @@ parser.add_argument(
 if __name__ == '__main__':
     args = parser.parse_args()
 
+    extract_partitions = args.partitions
+    if args.extra_partitions is not None:
+        extract_partitions += args.extra_partitions
+
     ctx = ExtractCtx(
         keep_dump=True,
-        extract_partitions=args.partitions,
+        extract_partitions=extract_partitions,
     )
 
     with get_dump_dir(args.source, ctx) as dump_dir:
