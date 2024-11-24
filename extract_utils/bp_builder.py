@@ -201,6 +201,8 @@ class FileBpBuilder(BpBuilder):
         if self.__file.presigned:
             self.set('preprocessed', True)
             self.set('presigned', True)
+        elif self.__file.certificate:
+            self.set('certificate', self.__file.certificate)
         else:
             self.set('certificate', 'platform')
         return self

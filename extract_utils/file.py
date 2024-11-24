@@ -42,6 +42,7 @@ BIN_PARTS = ['bin']
 
 class FileArgs(str, Enum):
     AB = 'AB'
+    CERTIFICATE = 'CERTIFICATE'
     MAKE_COPY_RULE = 'MAKE_COPY_RULE'
     MAKE_COPY_RULE_ONLY = 'MAKE_COPY_RULE_ONLY'
     MODULE = 'MODULE'
@@ -60,6 +61,7 @@ class FileArgs(str, Enum):
 
 FILE_ARGS_TYPE_MAP = {
     FileArgs.AB: True,
+    FileArgs.CERTIFICATE: str,
     FileArgs.MAKE_COPY_RULE: True,
     FileArgs.MAKE_COPY_RULE_ONLY: True,
     FileArgs.MODULE: str,
@@ -264,6 +266,11 @@ class File:
     @property
     def required(self):
         return self.args.get(FileArgs.REQUIRED)
+
+    @property
+    def certificate(self):
+        certificate = self.args.get(FileArgs.CERTIFICATE)
+        return f':{certificate}' if certificate else None
 
     @property
     def presigned(self):
