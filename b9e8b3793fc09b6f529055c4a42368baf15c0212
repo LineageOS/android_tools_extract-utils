@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "682bd8e5_920a8147",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-25T08:48:24Z",
+      "side": 1,
+      "message": "maybe expecting typing_extensions or providing our own \"Self\" is nicer.",
+      "revId": "b9e8b3793fc09b6f529055c4a42368baf15c0212",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
