@@ -55,7 +55,7 @@ lib_fixups: lib_fixups_user_type = {
 
 
 def run_lib_fixup(
-    fixups: lib_fixups_type | None, lib: str, partition: str
+    fixups: Optional[lib_fixups_type], lib: str, partition: str
 ) -> str:
     if fixups is None:
         return lib
@@ -73,7 +73,7 @@ def run_lib_fixup(
 
 def run_libs_fixup(
     fixups: lib_fixups_type,
-    libs: List[str] | None,
+    libs: Optional[List[str]],
     partition: str,
 ):
     if libs is None:

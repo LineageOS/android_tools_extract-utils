@@ -12,7 +12,7 @@ import tempfile
 from contextlib import suppress
 from functools import partial
 from os import path
-from typing import List, Protocol, Self
+from typing import List, Optional, Protocol, Self
 
 from extract_utils.elf import file_needs_lib
 from extract_utils.file import File
@@ -39,7 +39,7 @@ class blob_fixup_fn_impl_type(Protocol):
         file: File,
         file_path: str,
         *args,
-        tmp_dir: str | None = None,
+        tmp_dir: Optional[str] = None,
         **kwargs,
     ): ...
 
@@ -438,7 +438,7 @@ class blob_fixup:
         return self.call(fn)
 
     def run(self, ctx: BlobFixupCtx, file: File, file_path: str) -> bool:
-        def run(tmp_dir: str | None = None):
+        def run(tmp_dir: Optional[str] = None):
             for function, args, kwargs in self.__functions:
                 function(ctx, file, file_path, *args, tmp_dir=tmp_dir, **kwargs)
 
