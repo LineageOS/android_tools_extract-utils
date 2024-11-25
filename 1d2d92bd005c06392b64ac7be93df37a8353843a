@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3da658c8_70148bef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2024-11-25T13:14:51Z",
+      "side": 1,
+      "message": "Example:\n\nsystem_ext/priv-app/UwbVendorService/UwbVendorService.apk;CERTIFICATE\u003dcom.qorvo.uwb.certificate\n\nresults in:\n\ncertificate: \":com.qorvo.uwb.certificate\"",
+      "revId": "1d2d92bd005c06392b64ac7be93df37a8353843a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
