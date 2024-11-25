@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18a339e8_7c47e420",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 17
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-25T15:11:15Z",
+      "side": 1,
+      "message": "?",
+      "revId": "e108e56c1ee12c29dcb5d9f6045fb1d3c72e5ef5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e1320d3_6ce86bed",
+        "filename": "extract.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-25T15:11:15Z",
+      "side": 1,
+      "message": "```suggestion\ngroup \u003d parser.add_mutually_exclusive_group()\ngroup.add_argument(\n    \u0027--pixel-factory\u0027,\n    nargs\u003d\u0027*\u0027,\n    type\u003dstr,\n    help\u003d\u0027Files to extract as pixel factory image\u0027,\n)\ngroup.add_argument(\n    \u0027--pixel-firmware\u0027,\n    nargs\u003d\u0027*\u0027,\n    type\u003dstr,\n    help\u003d\u0027Files to extract as pixel firmware\u0027,\n)\ngroup.add_argument(\n    \u0027--star-firmware\u0027,\n    nargs\u003d\u0027*\u0027,\n    type\u003dstr,\n    help\u003d\u0027Files to extract as star firmware\u0027,\n)\n```",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 1
+      },
+      "revId": "e108e56c1ee12c29dcb5d9f6045fb1d3c72e5ef5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3e5fbb22_9c23f2fb",
+        "filename": "extract.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2024-11-25T15:11:15Z",
+      "side": 1,
+      "message": "```suggestion\n    if args.pixel_factory is not None and not args.pixel_factory:\n        args.pixel_factory \u003d [pixel_factory_image_regex]\n    elif args.pixel_firmware is not None and not args.pixel_firmware:\n        args.pixel_firmware \u003d [pixel_firmware_regex]\n    elif args.star_firmware is not None and not args.star_firmware:\n        args.star_firmware \u003d [star_firmware_regex]\n\n    extract_fns: extract_fns_type \u003d {}\n\n    if args.pixel_factory:\n        for extract_pattern in args.pixel_factory:\n            extract_fns.setdefault(extract_pattern, []).append(\n                extract_pixel_factory_image,\n            )\n    elif args.pixel_firmware:\n        for extract_pattern in args.pixel_firmware:\n            extract_fns.setdefault(extract_pattern, []).append(\n                extract_pixel_firmware,\n            )\n    elif args.star_firmware:\n        for extract_pattern in args.star_firmware:\n            extract_fns.setdefault(extract_pattern, []).append(\n                extract_star_firmware,\n            )\n```",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 13
+      },
+      "revId": "e108e56c1ee12c29dcb5d9f6045fb1d3c72e5ef5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
