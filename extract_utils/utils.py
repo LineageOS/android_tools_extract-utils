@@ -11,7 +11,7 @@ import importlib.util
 import os
 import shutil
 from enum import Enum
-from functools import cache
+from functools import lru_cache
 from subprocess import PIPE, Popen, run
 from typing import Generator, Iterable, List, Optional, Tuple
 
@@ -80,7 +80,7 @@ parallel_input_cmds_ret_success = List[str]
 parallel_input_cmds_ret_fail = List[Tuple[str, int, str]]
 
 
-@cache
+@lru_cache(maxsize=None)
 def executable_path(name: str) -> str:
     path = shutil.which(
         name,
