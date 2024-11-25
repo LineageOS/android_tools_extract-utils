@@ -13,7 +13,7 @@ import shutil
 from enum import Enum
 from functools import cache
 from subprocess import PIPE, Popen, run
-from typing import Generator, Iterable, List, Tuple
+from typing import Generator, Iterable, List, Optional, Tuple
 
 
 def import_module(module_name, module_path):
@@ -143,7 +143,7 @@ def run_cmd(cmd: List[str], shell=False):
     return proc.stdout
 
 
-def uncomment_line(line: str) -> str | None:
+def uncomment_line(line: str) -> Optional[str]:
     line = line.strip()
 
     if not line.startswith('#'):

@@ -155,7 +155,7 @@ def file_stem_package_name(
     return stem, package_name
 
 
-def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> str | None:
+def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> Optional[str]:
     remaining = file.dirname[subtree_prefix_len:]
     if not remaining:
         return None

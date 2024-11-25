@@ -49,7 +49,7 @@ SUPER_PARTITION_NAME = 'super'
 SUPER_IMG_NAME = 'super.img'
 
 
-extract_fn_type = Callable[['ExtractCtx', str, str], str | None]
+extract_fn_type = Callable[['ExtractCtx', str, str], Optional[str]]
 extract_fns_value_type = Union[extract_fn_type, List[extract_fn_type]]
 extract_fns_user_type = fixups_user_type[extract_fns_value_type]
 extract_fns_type = fixups_type[extract_fns_value_type]

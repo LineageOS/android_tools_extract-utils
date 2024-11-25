@@ -208,7 +208,7 @@ class File:
 
         return self
 
-    def set_dst(self, dst: str | None):
+    def set_dst(self, dst: Optional[str]):
         if dst is None or dst == self.src:
             self.dst = self.src
             self.has_dst = False
@@ -218,11 +218,11 @@ class File:
 
         return self
 
-    def set_hash(self, file_hash: str | None):
+    def set_hash(self, file_hash: Optional[str]):
         self.hash = file_hash
         return self
 
-    def set_fixup_hash(self, file_fixup_hash: str | None):
+    def set_fixup_hash(self, file_fixup_hash: Optional[str]):
         self.fixup_hash = file_fixup_hash
         return self
 
@@ -504,7 +504,7 @@ class FileList:
 
         return False
 
-    def __add_file(self, file: File, section: str | None):
+    def __add_file(self, file: File, section: Optional[str]):
         if FileArgs.SYMLINK in file.args:
             self.package_symlinks.add(file)
 
@@ -555,7 +555,7 @@ class FileList:
     def add_from_lines(self, file_lines: Iterable[str]):
         sections_lines = split_lines_into_sections(file_lines)
 
-        files: List[Tuple[str | None, File]] = []
+        files: List[Tuple[Optional[str], File]] = []
 
         for lines in sections_lines:
             if not lines:

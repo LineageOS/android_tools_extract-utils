@@ -11,7 +11,7 @@ import shutil
 from abc import ABC, abstractmethod
 from contextlib import contextmanager, suppress
 from os import path
-from typing import List
+from typing import List, Optional
 
 from extract_utils.adb import init_adb_connection
 from extract_utils.args import ArgsSource
@@ -99,7 +99,7 @@ class Source(ABC):
     def find_sub_dir_files(
         self,
         sub_path: str,
-        regex: str | None,
+        regex: Optional[str],
         skipped_file_rel_paths: List[str],
     ) -> List[str]:
         skipped_file_rel_paths_set = set(skipped_file_rel_paths)
