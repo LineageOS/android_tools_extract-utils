@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from enum import Enum
 from json import JSONEncoder
-from typing import List, Optional, Self
+from typing import List, Optional
 
 from extract_utils.elf_parser import EM
 from extract_utils.file import File
@@ -82,23 +82,23 @@ class BpBuilder:
         self.__rule_name = rule_name
         return self
 
-    def set(self, k, v, optional=False) -> Self:
+    def set(self, k, v, optional=False) -> BpBuilder:
         assert v is not None or optional
         if v is not None:
             self.o[k] = v
         return self
 
-    def name(self, package_name: str) -> Self:
+    def name(self, package_name: str) -> BpBuilder:
         self.set('name', package_name)
         return self
 
-    def stem(self, stem: Optional[str]) -> Self:
+    def stem(self, stem: Optional[str]) -> BpBuilder:
         return self.set('stem', stem, optional=True)
 
-    def owner(self) -> Self:
+    def owner(self) -> BpBuilder:
         return self.set('owner', self.__owner)
 
-    def specific(self) -> Self:
+    def specific(self) -> BpBuilder:
         if self.__partition is None:
             return self
 
@@ -108,23 +108,23 @@ class BpBuilder:
 
         return self.set(f'{specific}_specific', True)
 
-    def __multilib(self, bits: Multilib) -> Self:
+    def __multilib(self, bits: Multilib) -> BpBuilder:
         return self.set('compile_multilib', bits)
 
-    def multilib(self, bits: int) -> Self:
+    def multilib(self, bits: int) -> BpBuilder:
         value = Multilib.from_int(bits)
         return self.__multilib(value)
 
-    def multilibs(self, bitses: List[int]) -> Self:
+    def multilibs(self, bitses: List[int]) -> BpBuilder:
         value = Multilib.from_int_list(bitses)
         return self.__multilib(value)
 
-    def check_elf(self, enable_checkelf: bool) -> Self:
+    def check_elf(self, enable_checkelf: bool) -> BpBuilder:
         if not enable_checkelf:
             self.set('check_elf_files', False)
         return self
 
-    def no_strip(self) -> Self:
+    def no_strip(self) -> BpBuilder:
         return self.set(
             'strip',
             {
@@ -132,7 +132,7 @@ class BpBuilder:
             },
         )
 
-    def prefer(self) -> Self:
+    def prefer(self) -> BpBuilder:
         return self.set('prefer', True)
 
     def write(self, out):
@@ -171,33 +171,33 @@ class FileBpBuilder(BpBuilder):
 
         return remaining
 
-    def relative_install_path(self) -> Self:
+    def relative_install_path(self) -> BpBuilder:
         p = self.__file_dir_without_prefix()
         return self.set('relative_install_path', p, optional=True)
 
-    def sub_dir(self) -> Self:
+    def sub_dir(self) -> BpBuilder:
         p = self.__file_dir_without_prefix()
         return self.set('sub_dir', p, optional=True)
 
     def __file_rel_sub_path(self, file_rel_path: str) -> str:
         return f'{self.__rel_sub_path}/{file_rel_path}'
 
-    def src(self) -> Self:
+    def src(self) -> BpBuilder:
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('src', rel_path)
 
-    def apk(self) -> Self:
+    def apk(self) -> BpBuilder:
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('apk', rel_path)
 
-    def jars(self) -> Self:
+    def jars(self) -> BpBuilder:
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('jars', [rel_path])
 
-    def filename(self) -> Self:
+    def filename(self) -> BpBuilder:
         return self.set('filename', self.__file.basename)
 
-    def signature(self) -> Self:
+    def signature(self) -> BpBuilder:
         if self.__file.presigned:
             self.set('preprocessed', True)
             self.set('presigned', True)
@@ -205,14 +205,16 @@ class FileBpBuilder(BpBuilder):
             self.set('certificate', 'platform')
         return self
 
-    def skip_preprocessed_apk_checks(self) -> Self:
+    def skip_preprocessed_apk_checks(self) -> BpBuilder:
         return self.set(
             'skip_preprocessed_apk_checks',
             self.__file.skip_preprocessed_apk_checks,
             optional=True,
         )
 
-    def target(self, f: File, machine: EM, deps: Optional[List[str]]) -> Self:
+    def target(
+        self, f: File, machine: EM, deps: Optional[List[str]]
+    ) -> BpBuilder:
         target = self.o.setdefault('target', {})
 
         rel_path = self.__file_rel_sub_path(f.dst)
@@ -229,7 +231,7 @@ class FileBpBuilder(BpBuilder):
         files: List[File],
         machines: List[EM],
         depses: List[Optional[List[str]]],
-    ) -> Self:
+    ) -> BpBuilder:
         for f, machine, deps in zip(files, machines, depses):
             self.target(f, machine, deps)
         return self

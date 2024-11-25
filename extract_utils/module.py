@@ -10,7 +10,7 @@ import tempfile
 from enum import Enum
 from functools import partial
 from os import path
-from typing import Callable, List, Optional, Self, Set
+from typing import Callable, List, Optional, Set
 
 from extract_utils.extract import extract_fns_user_type
 from extract_utils.file import File, FileArgs, FileList
@@ -137,12 +137,14 @@ class ProprietaryFile:
         self,
         pre_fn: pre_post_makefile_generation_fn_type,
         post_fn: pre_post_makefile_generation_fn_type,
-    ) -> Self:
+    ) -> ProprietaryFile:
         self.add_pre_makefile_generation_fn(pre_fn)
         self.add_post_makefile_generation_fn(post_fn)
         return self
 
-    def add_copy_files_guard(self, name: str, value: str, invert=False) -> Self:
+    def add_copy_files_guard(
+        self, name: str, value: str, invert=False
+    ) -> ProprietaryFile:
         def guard_begin_fn(ctx: MakefilesCtx, *args, **kwargs):
             write_mk_guard_begin(name, value, ctx.product_mk_out, invert=invert)
 
@@ -502,7 +504,7 @@ class ExtractUtilsModule:
     def proprietary_file_path(self, file_list_name: str):
         return path.join(self.device_path, file_list_name)
 
-    def add_postprocess_fn(self, fn: postprocess_fn_type) -> Self:
+    def add_postprocess_fn(self, fn: postprocess_fn_type) -> ExtractUtilsModule:
         self.postprocess_fns.append(fn)
         return self
 
