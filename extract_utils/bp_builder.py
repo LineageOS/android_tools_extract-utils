@@ -223,7 +223,7 @@ class FileBpBuilder(BpBuilder):
         arch = MACHINE_TARGET_MAP[machine]
         target[arch] = {'srcs': [rel_path]}
 
-        if deps is not None:
+        if deps:
             target[arch]['shared_libs'] = deps
 
         return self
