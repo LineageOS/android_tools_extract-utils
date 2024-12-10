@@ -135,6 +135,23 @@ class blob_fixup:
         impl = partial(self.remove_needed_impl, lib)
         return self.call(impl)
 
+    def clear_symbol_version_impl(
+        self,
+        symbol: str,
+        ctx: BlobFixupCtx,
+        file: File,
+        file_path: str,
+        *args,
+        **kwargs,
+    ):
+        run_cmd(
+            [self.__patchelf_path, '--clear-symbol-version', symbol, file_path]
+        )
+
+    def clear_symbol_version(self, lib: str) -> blob_fixup:
+        impl = partial(self.clear_symbol_version_impl, lib)
+        return self.call(impl)
+
     def fix_soname_impl(
         self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kwargs
     ):
