@@ -26,6 +26,8 @@ VENDOR_RADIO_STATE=-1
 COMMON=-1
 ARCHES=
 FULLY_DEODEXED=-1
+USE_ADB_PULL="true"
+USE_ADB_PULL_CHECKED="false"
 
 KEEP_DUMP=${KEEP_DUMP:-0}
 SKIP_CLEANUP=${SKIP_CLEANUP:-0}
@@ -581,7 +583,9 @@ function write_blueprint_packages() {
         # Add to final package list
         PACKAGE_LIST+=("$PKGNAME")
 
-        if [ "$CLASS" = "SHARED_LIBRARIES" ]; then
+        if [ "$CLASS" = "SHARED_LIBRARIES" ] && [! -f "$ANDROID_ROOT/$OUTDIR/$SRC/lib/$FILE" ] || [ ! -f "$ANDROID_ROOT/$OUTDIR/$SRC/lib64/$FILE" ]; then
+            continue;
+        elif [ "$CLASS" = "SHARED_LIBRARIES" ]; then
             printf 'cc_prebuilt_library_shared {\n'
             printf '\tname: "%s",\n' "$PKGNAME"
             if [ -n "$STEM" ]; then
@@ -1518,6 +1522,126 @@ function get_file_helper() {
     fi
 }
 
+
+#
+# get_file_evaluate_adb_pull_method
+#
+# This function evaluates if
+# a) adb shell returns a root login => use adb pull
+# b) adb shell returns a non-root login but su command is available => use pipe for copy files
+# b) adb shell returns a non-root login but su command is not available => use adb pull and print warning message
+# Please note that the USE_ADB_PULL variable defaults to true, i.e., adb pull command to be used
+#
+function get_file_evaluate_adb_pull_method() {
+    USE_ADB_PULL_CHECKED="true"
+    if [ $(adb shell whoami) != "root" ]
+    then
+        if [ $(adb shell 'command -v su >/dev/null ; echo $?') == 0 ]
+        then
+            colored_echo yellow "Switching to adb shell pipe method for file copies"
+            USE_ADB_PULL="false"
+        else
+            colored_echo yellow "ADB does not run with root privilegues and su command is not available"
+        fi
+    fi
+}
+
+
+#
+# get_file_adb_compare_hash_values:
+#
+# $1: input file/folder
+# $2: target file/folder
+#
+# Compares the hash values of a remote input file and the local target file
+#
+function get_file_adb_compare_hash_values() {
+    local SOURCE="$1"
+    local TARGET="$2"
+    local RETVAL=1 # Return error if hashes do not match
+    local HASH_LOCAL=""
+    local HASH_REMOTE=""
+    
+    HASH_LOCAL=$(sha256sum "$TARGET" | awk '{print $1}')
+    HASH_REMOTE=$(adb shell su -c sha256sum "$SOURCE" | awk '{print $1}')
+    
+    if [ "$HASH_LOCAL" = "$HASH_REMOTE" ]; then
+        RETVAL=0
+    else
+        echo "  SOURCE HASH: $HASH_REMOTE"
+        echo "  TARGET HASH: $HASH_LOCAL"
+    fi
+    
+    return $RETVAL
+}
+
+
+#
+# get_file_adb_pull:
+#
+# $1: input file/folder
+# $2: target file/folder
+#
+# Copies the remote input file to the local target file
+#
+function get_file_adb_pull() {
+    local SOURCE="$1"
+    local TARGET="$2"
+    local RETVAL=0
+    
+    if [ $USE_ADB_PULL = "false" ]
+    then
+        if adb shell su -c test -f "$SOURCE"; then
+            # Create TARGET directory
+            local TARGETDIR="$(dirname "${TARGET}")"
+            mkdir -p "$TARGETDIR"
+            
+            # Copy remote SOURCE file to local TARGET file
+            adb shell su -c dd status=none if="$SOURCE" > "$TARGET"
+        
+            # Check hashsums
+            if get_file_adb_compare_hash_values "$SOURCE" "$TARGET"; then
+                # Get file attributes
+                local FILE_PERMISSIONS=$(adb shell su -c stat -c '%a' "$SOURCE")
+                local FILE_UID=$(adb shell su -c stat -c '%u' "$SOURCE")
+                local FILE_GID=$(adb shell su -c stat -c '%g' "$SOURCE")  
+                
+                # Set file attributes
+                chmod "$FILE_PERMISSIONS" "$TARGET"
+                #chown $FILE_UID "$TARGET" # Don't set the proper user as this could hinder the android build scipts from reading the file
+                #chgrp $FILE_GID "$TARGET" # chown and chgrp throw errors if not in /etc/passwd or /etc/group"
+            else
+                RETVAL=1
+                colored_echo red "ERROR: Hashsum mismatch ($SOURCE vs. $TARGET)"
+            fi
+        elif adb shell su -c test -d "$SOURCE"; then
+            colored_echo yellow "Process source directory: $SOURCE"
+            local FILELIST=$(adb shell su -c ls "$SOURCE")
+            for F in $FILELIST; do
+                # Ignore current and parent directory
+                if [ "$F" = "." ] || [ "$F" = ".." ]; then
+                    continue
+                fi
+                
+                local NEWSOURCE="$SOURCE/$F"
+                local NEWTARGET="$TARGET/$F"
+                colored_echo yellow "$NEWSOURCE"
+                colored_echo yellow "$NEWTARGET"
+                get_file_adb_pull "$NEWSOURCE" "$NEWTARGET"
+            done
+        else
+            RETVAL=1
+            colored_echo red "ERROR: Remote file does not exist ($SOURCE)"
+        fi
+    else
+        adb pull "$SOURCE" "$TARGET" >/dev/null 2>&1
+        RETVAL=$?
+    fi
+
+    return $RETVAL
+}
+
+
 #
 # get_file:
 #
@@ -1532,9 +1656,13 @@ function get_file() {
     local SRC="$3"
     local SOURCES=("$1" "${1#/system}" "system/$1")
 
+    if [ "$USE_ADB_PULL_CHECKED" = "false" ]; then
+        get_file_evaluate_adb_pull_method
+    fi
+
     if [ "$SRC" = "adb" ]; then
         for SOURCE in "${SOURCES[@]}"; do
-            adb pull "$SOURCE" "$2" >/dev/null 2>&1 && return 0
+            get_file_adb_pull "$SOURCE" "$2" && return 0
         done
 
         return 1
@@ -2320,7 +2448,7 @@ function extract_firmware() {
                 PARTITION="${PARTITION}_${SLOT}"
             fi
 
-            if adb pull "/dev/block/by-name/${PARTITION}" "$OUTPUT_DIR/$DST_FILE"; then
+            if get_file_adb_pull "/dev/block/by-name/${PARTITION}" "$OUTPUT_DIR/$DST_FILE"; then
                 chmod 644 "$OUTPUT_DIR/$DST_FILE"
             else
                 colored_echo yellow "${DST_FILE} not found, skipping copy"
