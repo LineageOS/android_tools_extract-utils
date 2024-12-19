@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5f07282_ffb7b3a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34494
+      },
+      "writtenOn": "2024-12-19T16:13:45Z",
+      "side": 1,
+      "message": "Dear all\n\nI found that the extract scripts didn\u0027t worked well on my rooted Xiaomi phone as the adb daemon does not run as root user and therefore git pull cannot access all the files.\n\nTo solve this, I modified the extract utils to use the su command to dd the source file contents and pipe it to the local destination file.\n\nI would like to share this modifications as I belive others may also find them useful.\n\nAs this is my first contribution to LineageOS, I hope I meet the submission requirements.\n\nBest regards\nSascha",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
