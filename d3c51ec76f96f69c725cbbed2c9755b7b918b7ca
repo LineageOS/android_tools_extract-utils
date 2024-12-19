@@ -16,6 +16,23 @@
       "message": "Dear all\n\nI found that the extract scripts didn\u0027t worked well on my rooted Xiaomi phone as the adb daemon does not run as root user and therefore git pull cannot access all the files.\n\nTo solve this, I modified the extract utils to use the su command to dd the source file contents and pipe it to the local destination file.\n\nI would like to share this modifications as I belive others may also find them useful.\n\nAs this is my first contribution to LineageOS, I hope I meet the submission requirements.\n\nBest regards\nSascha",
       "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b24977d7_820f2b0c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-12-19T16:31:50Z",
+      "side": 1,
+      "message": "you don\u0027t need to do any of this... adb root works fine on Magisk, why not just use that?",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
