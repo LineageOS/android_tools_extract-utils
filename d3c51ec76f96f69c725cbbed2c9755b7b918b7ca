@@ -86,6 +86,23 @@
       "parentUuid": "6fb730c6_19cf7183",
       "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c41e1c99_735682ac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2024-12-21T14:30:34Z",
+      "side": 1,
+      "message": "Hi, pulling blobs from adb is only meant to be run on LineageOS builds, not from stock ROM\n\nSee: https://wiki.lineageos.org/extracting_blobs_from_zips",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
