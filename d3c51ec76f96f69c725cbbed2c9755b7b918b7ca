@@ -103,6 +103,42 @@
       "message": "Hi, pulling blobs from adb is only meant to be run on LineageOS builds, not from stock ROM\n\nSee: https://wiki.lineageos.org/extracting_blobs_from_zips",
       "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6fcd4f11_9dacf66f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-12-21T17:06:06Z",
+      "side": 1,
+      "message": "You shouldn’t be extracting from the stock OS on a device… you should be extracting from either a lineage device (which has ADB root) or via a prebuilt lineage zip.\n\nWe often :”Kang” files from other devices so extracting from stock won’t work direclty.",
+      "parentUuid": "23ca72fd_5ec8d0d6",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "72d7aa9f_fdec6d6e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2024-12-21T17:06:06Z",
+      "side": 1,
+      "message": "open the patch above, in gerrit UI, notice the large amount of pink, that\u0027s whitespace that has no text following it on that line.",
+      "parentUuid": "ad7ce10a_44976c1a",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
