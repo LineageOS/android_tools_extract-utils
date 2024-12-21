@@ -50,6 +50,24 @@
       "message": "plus you put random whitespaces everywhere",
       "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23ca72fd_5ec8d0d6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34494
+      },
+      "writtenOn": "2024-12-21T08:48:55Z",
+      "side": 1,
+      "message": "Thanks for your feedback.\n\nCan you explain me, how do you use adb root with the extract-utils?\n\nI try to extract the blobs from a Mi Note 10 with stock Xiaomi OS.\nThe adb root command is being quit with the error message \"adbd cannot\nrun as root in production builds\".\n\nAs far as I understood, the adbd of the stock OS does not support adb\nroot at all (i.e., it is build without adb root support).\n\nPlease see my patch as an proposal.\nIt is up to the more experienced LineageOS developers to decide if it is useful.",
+      "parentUuid": "b24977d7_820f2b0c",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
