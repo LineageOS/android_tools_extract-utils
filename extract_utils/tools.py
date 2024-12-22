@@ -44,6 +44,7 @@ llvm_binaries_dir = path.join(
     'prebuilts/clang/host/linux-x86/llvm-binutils-stable',
 )
 llvm_objdump_path = path.join(llvm_binaries_dir, 'llvm-objdump')
+llvm_strip_path = path.join(llvm_binaries_dir, 'llvm-strip')
 
 lineage_scripts_dir = path.join(android_root, 'lineage/scripts')
 carriersettings_extractor_path = path.join(
