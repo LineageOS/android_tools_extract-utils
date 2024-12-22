@@ -21,6 +21,7 @@ from extract_utils.tools import (
     DEFAULT_PATCHELF_VERSION,
     apktool_path,
     java_path,
+    llvm_strip_path,
     patchelf_version_path_map,
     stripzip_path,
 )
@@ -329,6 +330,20 @@ class blob_fixup:
         self.apktool_pack()
         self.stripzip()
         return self
+
+    def strip_debug_sections_impl(
+        self, ctx: BlobFixupCtx, file: File, file_path: str, *args, **kwargs
+    ):
+        run_cmd(
+            [
+                llvm_strip_path,
+                '--strip-debug',
+                file_path,
+            ]
+        )
+
+    def strip_debug_sections(self) -> blob_fixup:
+        return self.call(self.strip_debug_sections_impl)
 
     def regex_replace_impl(
         self,

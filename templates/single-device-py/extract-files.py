@@ -88,6 +88,7 @@ blob_fixups: blob_fixups_user_type = {
         .remove_needed('to_remove.so')
         .replace_needed('from.so', 'to.so')
         .clear_symbol_version('rpc_call_invoke')
+        .strip_debug_sections()
         .binary_regex_replace(b'\xFF\x00\x00\x94', b'\xFE\x00\x00\x94')
         .sig_replace('C0 03 5F D6 ?? ?? ?? ?? C0 03 5F D6', '1F 20 03 D5')
         .call(blob_fixup_return_1, 'license_check'),
