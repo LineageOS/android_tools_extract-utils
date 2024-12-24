@@ -41,6 +41,30 @@
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd4c34f0_451701b6",
+        "filename": "extract.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-12-24T19:56:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e1320d3_6ce86bed",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 1
+      },
+      "revId": "e108e56c1ee12c29dcb5d9f6045fb1d3c72e5ef5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3e5fbb22_9c23f2fb",
@@ -54,6 +78,30 @@
       "writtenOn": "2024-11-25T15:11:15Z",
       "side": 1,
       "message": "```suggestion\n    if args.pixel_factory is not None and not args.pixel_factory:\n        args.pixel_factory \u003d [pixel_factory_image_regex]\n    elif args.pixel_firmware is not None and not args.pixel_firmware:\n        args.pixel_firmware \u003d [pixel_firmware_regex]\n    elif args.star_firmware is not None and not args.star_firmware:\n        args.star_firmware \u003d [star_firmware_regex]\n\n    extract_fns: extract_fns_type \u003d {}\n\n    if args.pixel_factory:\n        for extract_pattern in args.pixel_factory:\n            extract_fns.setdefault(extract_pattern, []).append(\n                extract_pixel_factory_image,\n            )\n    elif args.pixel_firmware:\n        for extract_pattern in args.pixel_firmware:\n            extract_fns.setdefault(extract_pattern, []).append(\n                extract_pixel_firmware,\n            )\n    elif args.star_firmware:\n        for extract_pattern in args.star_firmware:\n            extract_fns.setdefault(extract_pattern, []).append(\n                extract_star_firmware,\n            )\n```",
+      "range": {
+        "startLine": 84,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 13
+      },
+      "revId": "e108e56c1ee12c29dcb5d9f6045fb1d3c72e5ef5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1cacc99b_6f403bc9",
+        "filename": "extract.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2024-12-24T19:56:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e5fbb22_9c23f2fb",
       "range": {
         "startLine": 84,
         "startChar": 0,
