@@ -435,7 +435,7 @@ def extract_sparse_raw_imgs(file_paths: List[str], output_dir: str):
 
 
 def unslot_partition(partition_slot: str):
-    return partition_slot.rsplit('_', 1)[0]
+    return re.sub(r'_[abc]$', '', partition_slot)
 
 
 def _extract_super_img(
