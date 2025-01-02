@@ -22,7 +22,7 @@ from extract_utils.extract import (
     get_dump_dir,
 )
 from extract_utils.file import File, FileArgs
-from extract_utils.utils import run_cmd
+from extract_utils.utils import copy_dir_contents, run_cmd
 
 
 class Source(ABC):
@@ -231,10 +231,13 @@ def create_source(source: str | ArgsSource, ctx: ExtractCtx):
 
     assert not isinstance(source, ArgsSource)
 
-    with get_dump_dir(source, ctx) as dump_dir:
+    with get_dump_dir(source, ctx) as result:
+        dump_dir = result.dump_dir
         filter_already_extracted_partitions(dump_dir, ctx)
         # TODO: filter already extracted firmware
         if ctx.extract_partitions:
+            if result.copy_source_dir_to_dump_dir:
+                copy_dir_contents(source, dump_dir)
             extract_image(source, ctx, dump_dir)
 
         yield DiskSource(dump_dir)

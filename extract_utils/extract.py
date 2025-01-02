@@ -590,22 +590,26 @@ def extract_ext4(file_paths: List[str], output_path: str):
     process_cmds_in_parallel(procs, fatal=True)
 
 
+class DumpDirResult:
+    def __init__(
+        self,
+        dump_dir: str,
+        copy_source_dir_to_dump_dir=False,
+    ):
+        self.dump_dir = dump_dir
+        self.copy_source_dir_to_dump_dir = copy_source_dir_to_dump_dir
+
+
 @contextmanager
 def get_dump_dir(
     source: str,
     ctx: ExtractCtx,
-) -> Generator[str, None, None]:
+) -> Generator[DumpDirResult, None, None]:
     if not path.exists(source):
         raise FileNotFoundError(f'File not found: {source}')
 
     if not path.isfile(source) and not path.isdir(source):
         raise ValueError(f'Unexpected file type at {source}')
-
-    if path.isdir(source):
-        # Source is a directory, try to extract its contents into itself
-        print(f'Extracting to source dump dir {source}')
-        yield source
-        return
 
     if not ctx.keep_dump:
         # We don't want to keep the dump, ignore previous dump output
@@ -614,11 +618,20 @@ def get_dump_dir(
             print(f'Extracting to temporary dump dir {dump_dir}')
 
             try:
-                yield dump_dir
+                yield DumpDirResult(
+                    dump_dir,
+                    copy_source_dir_to_dump_dir=path.isdir(source),
+                )
             except GeneratorExit:
                 pass
 
             return
+
+    if path.isdir(source):
+        # Source is a directory, try to extract its contents into itself
+        print(f'Extracting to source dump dir {source}')
+        yield DumpDirResult(dump_dir)
+        return
 
     # Remove the extension from the file and use it as a dump dir
     dump_dir, _ = path.splitext(source)
@@ -626,7 +639,7 @@ def get_dump_dir(
     if path.isdir(dump_dir):
         print(f'Using existing dump dir {dump_dir}')
         # Previous dump output exists, return it and don't extract
-        yield dump_dir
+        yield DumpDirResult(dump_dir)
         return
 
     if path.exists(dump_dir):
@@ -634,7 +647,7 @@ def get_dump_dir(
 
     print(f'Extracting to new dump dir {dump_dir}')
     os.mkdir(dump_dir)
-    yield dump_dir
+    yield DumpDirResult(dump_dir)
 
 
 def unzip_file(source: str, file_path: str, output_file_path: str):
