@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d41a168_c016462a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 31496
+      },
+      "writtenOn": "2025-01-02T15:07:20Z",
+      "side": 1,
+      "message": "This causes all files to error with \"no such file or directory\" during extraction step.\n\nJust to be sure, I tried it from a writable directory, and this works as expected.",
+      "revId": "6825ac54e8085f3e11e235fdb175bd6b7f88019f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
