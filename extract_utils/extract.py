@@ -595,9 +595,11 @@ class DumpDirResult:
         self,
         dump_dir: str,
         copy_source_dir_to_dump_dir=False,
+        source_not_writeable=False,
     ):
         self.dump_dir = dump_dir
         self.copy_source_dir_to_dump_dir = copy_source_dir_to_dump_dir
+        self.source_not_writeable = source_not_writeable
 
 
 @contextmanager
@@ -630,13 +632,19 @@ def get_dump_dir(
     if path.isdir(source):
         # Source is a directory, try to extract its contents into itself
         print(f'Extracting to source dump dir {source}')
-        yield DumpDirResult(dump_dir)
+        yield DumpDirResult(
+            dump_dir,
+            source_not_writeable=not os.access(source, os.W_OK),
+        )
         return
 
     # Remove the extension from the file and use it as a dump dir
     dump_dir, _ = path.splitext(source)
 
     if path.isdir(dump_dir):
+        if not os.access(source, os.W_OK):
+            raise ValueError(f'Expected dump dir {source} to be writeable')
+
         print(f'Using existing dump dir {dump_dir}')
         # Previous dump output exists, return it and don't extract
         yield DumpDirResult(dump_dir)
