@@ -23,7 +23,7 @@ from extract_utils.file import (
     FileTree,
 )
 from extract_utils.fixups_lib import lib_fixups_type, run_libs_fixup
-from extract_utils.utils import file_path_sha1
+from extract_utils.utils import Color, color_print, file_path_sha1
 
 ALL_PARTITIONS = ['system', 'vendor', 'product', 'system_ext', 'odm']
 APEX_PARTITIONS = ['system', 'vendor', 'system_ext']
@@ -505,6 +505,12 @@ def write_product_packages(
 
     for part in ALL_PARTITIONS:
         wp(write_bin_package, part, 'bin', packages_ctx)
+
+    for file in base_file_tree:
+        color_print(
+            f'{file.dst}: does not match known package rules',
+            color=Color.YELLOW,
+        )
 
     assert not list(base_file_tree)
 
