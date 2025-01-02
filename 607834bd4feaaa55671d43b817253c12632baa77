@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a8cca1df_25acafaf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 28270
+      },
+      "writtenOn": "2025-01-02T18:25:45Z",
+      "side": 1,
+      "message": "Without the commit:\n\n\nTraceback (most recent call last):\n  File \"/home/sarthakroy2002/can/device/motorola/cancunf/extract-files.py\", line 91, in \u003cmodule\u003e\n    utils.run()\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/main.py\", line 184, in run\n    self.write_makefiles()\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/main.py\", line 129, in write_makefiles\n    module.write_makefiles(\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/module.py\", line 678, in write_makefiles\n    proprietary_file.write_makefiles(self, ctx)\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/module.py\", line 201, in write_makefiles\n    write_product_packages(\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/makefiles.py\", line 509, in write_product_packages\n    assert not list(base_file_tree)\nAssertionError\n\n\nWith the commit:\n\n\nUnprocessed file: framework/mediatek-common.jar\nUnprocessed file: framework/mediatek-framework.jar\nUnprocessed file: framework/mediatek-ims-base.jar\nUnprocessed file: framework/mediatek-ims-oem-plugin.jar\nTraceback (most recent call last):\n  File \"/home/sarthakroy2002/can/device/motorola/cancunf/extract-files.py\", line 91, in \u003cmodule\u003e\n    utils.run()\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/main.py\", line 184, in run\n    self.write_makefiles()\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/main.py\", line 129, in write_makefiles\n    module.write_makefiles(\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/module.py\", line 678, in write_makefiles\n    proprietary_file.write_makefiles(self, ctx)\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/module.py\", line 201, in write_makefiles\n    write_product_packages(\n  File \"/home/sarthakroy2002/can/tools/extract-utils/extract_utils/makefiles.py\", line 509, in write_product_packages\n    assert not list(base_file_tree)\nAssertionError\n\nSo that we can know which files are to be fixed on proprietary-files.",
+      "revId": "607834bd4feaaa55671d43b817253c12632baa77",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
