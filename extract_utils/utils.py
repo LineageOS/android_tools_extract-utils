@@ -12,6 +12,7 @@ import os
 import shutil
 from enum import Enum
 from functools import lru_cache
+from os import path
 from subprocess import PIPE, Popen, run
 from typing import Generator, Iterable, List, Optional, Tuple
 
@@ -49,6 +50,15 @@ def remove_dir_contents(dir_path: str):
             os.remove(f.path)
         else:
             assert False
+
+
+def copy_dir_contents(src_dir: str, dst_dir: str):
+    for f in os.scandir(src_dir):
+        dst_path = path.join(dst_dir, f.name)
+        if f.is_dir():
+            shutil.copytree(f, dst_path, dirs_exist_ok=True, symlinks=True)
+        else:
+            shutil.copy(f, dst_path)
 
 
 def file_path_hash(file_path: str, hash_fn):
