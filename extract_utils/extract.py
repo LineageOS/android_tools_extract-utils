@@ -601,7 +601,7 @@ def get_dump_dir(
     if not path.isfile(source) and not path.isdir(source):
         raise ValueError(f'Unexpected file type at {source}')
 
-    if path.isdir(source):
+    if path.isdir(source) and os.access(source, os.W_OK):
         # Source is a directory, try to extract its contents into itself
         print(f'Extracting to source dump dir {source}')
         yield source
