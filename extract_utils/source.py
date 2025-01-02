@@ -236,6 +236,9 @@ def create_source(source: str | ArgsSource, ctx: ExtractCtx):
         filter_already_extracted_partitions(dump_dir, ctx)
         # TODO: filter already extracted firmware
         if ctx.extract_partitions:
+            if result.source_not_writeable:
+                raise ValueError(f'Cannot extract to read-only source {source}')
+
             if result.copy_source_dir_to_dump_dir:
                 copy_dir_contents(source, dump_dir)
             extract_image(source, ctx, dump_dir)
