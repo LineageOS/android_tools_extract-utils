@@ -1,5 +1,5 @@
 #
-# SPDX-FileCopyrightText: 2024 The LineageOS Project
+# SPDX-FileCopyrightText: 2024-2025 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -505,6 +505,12 @@ def write_product_packages(
 
     for part in ALL_PARTITIONS:
         wp(write_bin_package, part, 'bin', packages_ctx)
+
+    # Logging unprocessed files
+    remaining_files = list(base_file_tree)
+    if remaining_files:
+        for file in remaining_files:
+            print(f"Unprocessed file: {file.dst}")
 
     assert not list(base_file_tree)
 
