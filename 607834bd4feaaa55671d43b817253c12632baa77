@@ -33,6 +33,24 @@
       "message": "can\u0027t you just do for file in base_file_tree?",
       "revId": "607834bd4feaaa55671d43b817253c12632baa77",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c54a5e0_2c59933c",
+        "filename": "extract_utils/makefiles.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 28270
+      },
+      "writtenOn": "2025-01-02T18:41:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2649dc1d_61268ebe",
+      "revId": "607834bd4feaaa55671d43b817253c12632baa77",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
