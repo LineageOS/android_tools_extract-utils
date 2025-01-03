@@ -35,19 +35,16 @@ class ExtractUtils:
     ):
         self.__args = parse_args()
 
-        self.__device_module = device_module
-        self.__common_module = common_module
-
         self.__modules: List[ExtractUtilsModule] = []
         if self.__args.only_target:
-            self.__modules.append(self.__device_module)
+            self.__modules.append(device_module)
         elif self.__args.only_common:
-            assert self.__common_module is not None
-            self.__modules.append(self.__common_module)
+            assert common_module is not None
+            self.__modules.append(common_module)
         else:
-            self.__modules = [self.__device_module]
-            if self.__common_module is not None:
-                self.__modules.append(self.__common_module)
+            self.__modules = [device_module]
+            if common_module is not None:
+                self.__modules.append(common_module)
 
     @classmethod
     def device_with_common(
