@@ -53,8 +53,8 @@ class ExtractUtils:
     def device_with_common(
         cls,
         device_module: ExtractUtilsModule,
-        device_common,
-        vendor_common=None,
+        device_common: str,
+        vendor_common: Optional[str] = None,
     ):
         if vendor_common is None:
             vendor_common = device_module.vendor
