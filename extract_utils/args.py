@@ -50,7 +50,6 @@ parser.add_argument(
 parser.add_argument(
     '-s',
     '--section',
-    action='store',
     help='only apply to section name matching pattern',
 )
 parser.add_argument(
