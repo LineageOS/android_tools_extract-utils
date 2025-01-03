@@ -39,7 +39,12 @@ class ExtractUtils:
         self.__args = parse_args()
 
         self.__modules: List[ExtractUtilsModule] = []
-        if self.__args.only_target:
+        if self.__args.only_name:
+            all_modules = [device_module] + common_modules
+            for module in all_modules:
+                if module.device == self.__args.only_name:
+                    self.__modules.append(module)
+        elif self.__args.only_target:
             self.__modules.append(device_module)
         elif self.__args.only_common:
             self.__modules.extend(common_modules)
