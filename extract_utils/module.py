@@ -398,8 +398,8 @@ class RuntimeResourceOverlay:
 class ExtractUtilsModule:
     def __init__(
         self,
-        device,
-        vendor,
+        device: str,
+        vendor: str,
         device_rel_path: Optional[str] = None,
         blob_fixups: Optional[blob_fixups_user_type] = None,
         lib_fixups: Optional[lib_fixups_user_type] = None,
