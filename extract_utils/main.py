@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from os import path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from extract_utils.args import parse_args
 from extract_utils.extract import ExtractCtx
@@ -31,20 +31,43 @@ class ExtractUtils:
     def __init__(
         self,
         device_module: ExtractUtilsModule,
-        common_module: Optional[ExtractUtilsModule] = None,
+        common_modules: Optional[List[ExtractUtilsModule]] = None,
     ):
+        if common_modules is None:
+            common_modules = []
+
         self.__args = parse_args()
 
         self.__modules: List[ExtractUtilsModule] = []
         if self.__args.only_target:
             self.__modules.append(device_module)
         elif self.__args.only_common:
-            assert common_module is not None
-            self.__modules.append(common_module)
+            self.__modules.extend(common_modules)
         else:
             self.__modules = [device_module]
-            if common_module is not None:
-                self.__modules.append(common_module)
+            self.__modules.extend(common_modules)
+
+    @classmethod
+    def device_with_commons(
+        cls,
+        device_module: ExtractUtilsModule,
+        device_vendor_commons: List[Tuple[str] | Tuple[str, str]],
+    ):
+        if device_vendor_commons is None:
+            device_vendor_commons = []
+
+        common_modules = []
+        for device_vendor_common in device_vendor_commons:
+            device_common = device_vendor_common[0]
+            if len(device_vendor_common) == 2:
+                vendor_common = device_vendor_common[1]
+            else:
+                vendor_common = device_module.vendor
+
+            common_module = cls.get_module(device_common, vendor_common)
+            common_modules.append(common_module)
+
+        return cls(device_module, common_modules)
 
     @classmethod
     def device_with_common(
@@ -55,8 +78,13 @@ class ExtractUtils:
     ):
         if vendor_common is None:
             vendor_common = device_module.vendor
-        common_module = cls.get_module(device_common, vendor_common)
-        return cls(device_module, common_module)
+
+        return cls.device_with_commons(
+            device_module,
+            [
+                (device_common, vendor_common),
+            ],
+        )
 
     @classmethod
     def device(cls, device_module: ExtractUtilsModule):
