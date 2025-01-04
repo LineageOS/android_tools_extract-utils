@@ -16,6 +16,24 @@
       "message": "Apparently a `Tuple[str]` is just a `str`.\n\nI added `print(device_vendor_commons)`, and with the following:\n`ExtractUtils.device_with_commons(module, [(\u0027judyln-common\u0027), (\u0027sdm845-common\u0027)])`\n\nit returns `[\u0027judyln-common\u0027, \u0027sdm845-common\u0027]`\n\nIt thus makes device_common the first char of each item (in my case `j`) and fails as such:\nhttps://katb.in/asiregutare",
       "revId": "114e02de0fcc3251bef6b7eaf8dae86781542ff2",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "efb6e7aa_f1b2341d",
+        "filename": "extract_utils/main.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 31496
+      },
+      "writtenOn": "2025-01-04T09:14:41Z",
+      "side": 1,
+      "message": "Apparently to do this you need to do `(\u0027judyln-common\u0027,)`\nThat was not what I was given as an example usage, hence the confusion, ignore me",
+      "parentUuid": "ae9bf4c4_c192d6b8",
+      "revId": "114e02de0fcc3251bef6b7eaf8dae86781542ff2",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
