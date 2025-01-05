@@ -175,6 +175,24 @@
       "parentUuid": "6fcd4f11_9dacf66f",
       "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab659b19_e9619c7f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 25732
+      },
+      "writtenOn": "2025-01-05T00:43:57Z",
+      "side": 1,
+      "message": "You extract them from an OTA dump",
+      "parentUuid": "45498523_c3d600b4",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
