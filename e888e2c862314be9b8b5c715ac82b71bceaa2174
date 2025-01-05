@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9116d55_da0225a3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34494
+      },
+      "writtenOn": "2025-01-05T00:17:09Z",
+      "side": 1,
+      "message": "I hope you all had good holidays and I wish you health and all the best for 2025!\n\nI fixed the whitespace issue with patch set 2.\n\nHowever, the question if the proposed patch is helpful and should be merged is still unanswered. Maybe, some of the more experienced developers could provide their opinion on that issue?",
+      "revId": "e888e2c862314be9b8b5c715ac82b71bceaa2174",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}

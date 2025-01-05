@@ -139,6 +139,42 @@
       "parentUuid": "ad7ce10a_44976c1a",
       "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58265c10_b69476ab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34494
+      },
+      "writtenOn": "2025-01-05T00:17:09Z",
+      "side": 1,
+      "message": "Got it!\nHas been fixed with patch set 2.",
+      "parentUuid": "72d7aa9f_fdec6d6e",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "45498523_c3d600b4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 34494
+      },
+      "writtenOn": "2025-01-05T00:17:09Z",
+      "side": 1,
+      "message": "Ok, that makes sense for devices which are already supported or, for example, the blobs required by sm6150-common.\n\nBut how do you extract the blobs for devices that aren\u0027t already supported?\nTaking everything from an supported device (with the same chipset) and only extracting the missing blobs from the stock os?",
+      "parentUuid": "6fcd4f11_9dacf66f",
+      "revId": "d3c51ec76f96f69c725cbbed2c9755b7b918b7ca",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
