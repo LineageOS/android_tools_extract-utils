@@ -29,7 +29,7 @@ def remove_libs_so_ending(libs: None | Iterable[str]) -> None | List[str]:
 
     so_removed_libs = []
     for lib in libs:
-        assert lib.endswith(SO_SUFFIX)
+        assert lib.endswith(SO_SUFFIX), f'{lib} not end with {SO_SUFFIX}'
         lib = lib[:-SO_SUFFIX_LEN]
         so_removed_libs.append(lib)
 

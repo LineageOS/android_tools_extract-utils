@@ -206,7 +206,10 @@ def write_elfs_package(
         if is_bin and (machine is None or bits is None):
             return write_sh_package(files[0], builder, any_extension=True)
 
-        deps = remove_libs_so_ending(libs)
+        try:
+            deps = remove_libs_so_ending(libs)
+        except AssertionError as e:
+            raise ValueError(f'Unexpected dependency of {f}') from e
         deps = run_libs_fixup(ctx.lib_fixups, deps, partition)
         machines.append(machine)
         bitses.append(bits)
