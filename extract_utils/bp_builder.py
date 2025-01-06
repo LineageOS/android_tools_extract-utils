@@ -158,6 +158,58 @@ class FileBpBuilder(BpBuilder):
 
         self.set_partition(file.partition)
 
+    def set_owner(self, owner: str) -> FileBpBuilder:
+        super().set_owner(owner)
+        return self
+
+    def set_partition(self, partition: str) -> FileBpBuilder:
+        super().set_partition(partition)
+        return self
+
+    def set_rule_name(self, rule_name: str) -> FileBpBuilder:
+        super().set_rule_name(rule_name)
+        return self
+
+    def set(self, k, v, optional=False) -> FileBpBuilder:
+        super().set(k, v, optional)
+        return self
+
+    def name(self, package_name: str) -> FileBpBuilder:
+        super().name(package_name)
+        return self
+
+    def stem(self, stem: Optional[str]) -> FileBpBuilder:
+        super().stem(stem)
+        return self
+
+    def owner(self) -> FileBpBuilder:
+        super().owner()
+        return self
+
+    def specific(self) -> FileBpBuilder:
+        super().specific()
+        return self
+
+    def multilib(self, bits: int) -> FileBpBuilder:
+        super().multilib(bits)
+        return self
+
+    def multilibs(self, bitses: List[int]) -> FileBpBuilder:
+        super().multilibs(bitses)
+        return self
+
+    def check_elf(self, enable_checkelf: bool) -> FileBpBuilder:
+        super().check_elf(enable_checkelf)
+        return self
+
+    def no_strip(self) -> FileBpBuilder:
+        super().no_strip()
+        return self
+
+    def prefer(self) -> FileBpBuilder:
+        super().prefer()
+        return self
+
     def __file_dir_without_prefix(self) -> Optional[str]:
         # Remove the length of the file tree prefix from the dirname,
         # including the final slash
