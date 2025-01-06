@@ -560,6 +560,26 @@ def write_symlink_package(
     package_names.append(package_name)
 
 
+def write_dummy_shared_libs(
+    ctx: MakefilesCtx,
+    files: Iterable[File],
+):
+    encoder = BpJSONEncoder(legacy=ctx.legacy)
+
+    for file in files:
+        stem, package_name = file_stem_package_name(file, can_have_stem=True)
+
+        (
+            BpBuilder(encoder)
+            .set_rule_name('cc_library_shared')
+            .set_partition(file.partition)
+            .name(package_name)
+            .stem(stem)
+            .specific()
+            .write(ctx.bp_out)
+        )
+
+
 def write_symlink_packages(
     ctx: MakefilesCtx,
     files: Iterable[File],
