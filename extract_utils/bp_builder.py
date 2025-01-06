@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from enum import Enum
 from json import JSONEncoder
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from extract_utils.elf_parser import EM
 from extract_utils.file import File
@@ -78,7 +78,12 @@ class BpBuilder:
         self.__rule_name = rule_name
         return self
 
-    def set(self, k, v, optional=False) -> BpBuilder:
+    def set(
+        self,
+        k: str,
+        v: Optional[str | bool | List | Dict],
+        optional=False,
+    ) -> BpBuilder:
         assert v is not None or optional
         if v is not None:
             self.o[k] = v
