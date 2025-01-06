@@ -27,6 +27,7 @@ from extract_utils.makefiles import (
     write_board_info_file,
     write_bp_header,
     write_bp_soong_namespaces,
+    write_dummy_shared_libs,
     write_mk_firmware,
     write_mk_firmware_ab_partitions,
     write_mk_firmware_file,
@@ -207,6 +208,12 @@ class ProprietaryFile:
         write_symlink_packages(
             ctx,
             self.file_list.package_symlinks,
+        )
+
+        write_dummy_shared_libs(
+            ctx,
+            packages_ctx,
+            self.file_list.dummy_shared_libs,
         )
 
         self.run_post_makefile_generation_fns(ctx, packages_ctx)

@@ -43,6 +43,7 @@ BIN_PARTS = ['bin']
 class FileArgs(str, Enum):
     AB = 'AB'
     CERTIFICATE = 'CERTIFICATE'
+    DUMMY_SHARED_LIB = 'DUMMY_SHARED_LIB'
     EXTRACT_ONLY = 'EXTRACT_ONLY'
     MAKE_COPY_RULE = 'MAKE_COPY_RULE'
     MAKE_COPY_RULE_ONLY = 'MAKE_COPY_RULE_ONLY'
@@ -64,6 +65,7 @@ class FileArgs(str, Enum):
 FILE_ARGS_TYPE_MAP = {
     FileArgs.AB: True,
     FileArgs.CERTIFICATE: str,
+    FileArgs.DUMMY_SHARED_LIB: True,
     FileArgs.EXTRACT_ONLY: True,
     FileArgs.MAKE_COPY_RULE: True,
     FileArgs.MAKE_COPY_RULE_ONLY: True,
@@ -480,6 +482,7 @@ class FileList:
         # packages_files is a FileTree to help with performance while grouping
         # multiple files of the same type together
         self.package_files = FileTree()
+        self.dummy_shared_libs = FileTree()
         self.package_symlinks = SimpleFileList()
         self.copy_files = SimpleFileList()
         self.all_files = SimpleFileList()
@@ -518,6 +521,10 @@ class FileList:
     def __add_file(self, file: File, section: Optional[str]):
         if FileArgs.SYMLINK in file.args:
             self.package_symlinks.add(file)
+
+        if FileArgs.DUMMY_SHARED_LIB in file.args:
+            self.dummy_shared_libs.add(file)
+            return
 
         if self.__section is None or (
             section is not None and fnmatch.fnmatch(section, self.__section)

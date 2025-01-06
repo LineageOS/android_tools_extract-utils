@@ -564,6 +564,83 @@ def write_symlink_package(
     package_names.append(package_name)
 
 
+def write_dummy_shared_libs_package(
+    file: File,
+    builder: FileBpBuilder,
+    ctx: ProductPackagesCtx,
+):
+    return write_dummy_shared_libs_packages(
+        [file],
+        builder,
+        ctx,
+    )
+
+
+def write_dummy_shared_libs_packages(
+    files: List[File],
+    builder: FileBpBuilder,
+    ctx: ProductPackagesCtx,
+):
+    stem, package_name = file_stem_package_name(files[0], can_have_stem=True)
+    bitses = []
+
+    for f in files:
+        dst_dir = f.src_parts[1]
+        if dst_dir == 'lib':
+            bitses.append(32)
+        elif dst_dir == 'lib64':
+            bitses.append(64)
+
+    (
+        builder.set_rule_name('cc_library_shared')
+        .set_partition(files[0].partition)
+        .name(package_name)
+        .stem(stem)
+        .multilibs(bitses)
+        .specific()
+    )
+
+
+def write_dummy_shared_libs(
+    ctx: MakefilesCtx,
+    packages_ctx: ProductPackagesCtx,
+    base_file_tree: FileTree,
+):
+    encoder = BpJSONEncoder(legacy=ctx.legacy)
+    package_names: List[str] = []
+
+    def w(fn: write_package_fn, file_tree: FileTree, *args, **kwargs):
+        return write_packages_group(
+            packages_ctx,
+            file_tree,
+            fn,
+            package_names,
+            ctx.bp_out,
+            encoder,
+            *args,
+            **kwargs,
+        )
+
+    for part in ALL_PARTITIONS:
+        lib32_tree = base_file_tree.filter_prefixed([part, 'lib'])
+        lib64_tree = base_file_tree.filter_prefixed([part, 'lib64'])
+
+        lib_common_tree = CommonFileTree.common_files(lib32_tree, lib64_tree)
+
+        write_common_packages_group(
+            packages_ctx,
+            lib_common_tree,
+            write_dummy_shared_libs_packages,
+            package_names,
+            ctx.bp_out,
+            encoder,
+            packages_ctx,
+        )
+
+        w(write_dummy_shared_libs_package, lib32_tree, packages_ctx)
+        w(write_dummy_shared_libs_package, lib64_tree, packages_ctx)
+
+
 def write_symlink_packages(
     ctx: MakefilesCtx,
     files: Iterable[File],
