@@ -172,33 +172,33 @@ class FileBpBuilder(BpBuilder):
 
         return remaining
 
-    def relative_install_path(self) -> BpBuilder:
+    def relative_install_path(self) -> FileBpBuilder:
         p = self.__file_dir_without_prefix()
         return self.set('relative_install_path', p, optional=True)
 
-    def sub_dir(self) -> BpBuilder:
+    def sub_dir(self) -> FileBpBuilder:
         p = self.__file_dir_without_prefix()
         return self.set('sub_dir', p, optional=True)
 
     def __file_rel_sub_path(self, file_rel_path: str) -> str:
         return f'{self.__rel_sub_path}/{file_rel_path}'
 
-    def src(self) -> BpBuilder:
+    def src(self) -> FileBpBuilder:
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('src', rel_path)
 
-    def apk(self) -> BpBuilder:
+    def apk(self) -> FileBpBuilder:
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('apk', rel_path)
 
-    def jars(self) -> BpBuilder:
+    def jars(self) -> FileBpBuilder:
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('jars', [rel_path])
 
-    def filename(self) -> BpBuilder:
+    def filename(self) -> FileBpBuilder:
         return self.set('filename', self.__file.basename)
 
-    def signature(self) -> BpBuilder:
+    def signature(self) -> FileBpBuilder:
         if self.__file.presigned:
             self.set('preprocessed', True)
             self.set('presigned', True)
@@ -208,7 +208,7 @@ class FileBpBuilder(BpBuilder):
             self.set('certificate', 'platform')
         return self
 
-    def skip_preprocessed_apk_checks(self) -> BpBuilder:
+    def skip_preprocessed_apk_checks(self) -> FileBpBuilder:
         return self.set(
             'skip_preprocessed_apk_checks',
             self.__file.skip_preprocessed_apk_checks,
@@ -217,7 +217,7 @@ class FileBpBuilder(BpBuilder):
 
     def target(
         self, f: File, machine: EM, deps: Optional[List[str]]
-    ) -> BpBuilder:
+    ) -> FileBpBuilder:
         target = self.o.setdefault('target', {})
 
         rel_path = self.__file_rel_sub_path(f.dst)
@@ -234,7 +234,7 @@ class FileBpBuilder(BpBuilder):
         files: List[File],
         machines: List[EM],
         depses: List[Optional[List[str]]],
-    ) -> BpBuilder:
+    ) -> FileBpBuilder:
         for f, machine, deps in zip(files, machines, depses):
             self.target(f, machine, deps)
         return self
