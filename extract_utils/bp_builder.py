@@ -66,15 +66,15 @@ class BpBuilder:
 
         self.o: dict = {}
 
-    def set_owner(self, owner: str):
+    def set_owner(self, owner: str) -> BpBuilder:
         self.__owner = owner
         return self
 
-    def set_partition(self, partition: str):
+    def set_partition(self, partition: str) -> BpBuilder:
         self.__partition = partition
         return self
 
-    def set_rule_name(self, rule_name: str):
+    def set_rule_name(self, rule_name: str) -> BpBuilder:
         self.__rule_name = rule_name
         return self
 
