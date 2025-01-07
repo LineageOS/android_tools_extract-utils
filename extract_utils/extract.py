@@ -714,6 +714,12 @@ def extract_image_file(source: str, ctx: ExtractCtx, dump_dir: str):
 
 
 def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
+    filter_already_extracted_partitions(dump_dir, ctx)
+
+    # TODO: filter already extracted firmware
+    if not ctx.extract_partitions:
+        return
+
     source_is_file = path.isfile(source)
 
     ctx.extra_partitions.append(SUPER_PARTITION_NAME)
