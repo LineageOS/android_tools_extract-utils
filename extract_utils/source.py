@@ -15,12 +15,7 @@ from typing import List, Optional
 
 from extract_utils.adb import init_adb_connection
 from extract_utils.args import ArgsSource
-from extract_utils.extract import (
-    ExtractCtx,
-    extract_image,
-    filter_already_extracted_partitions,
-    get_dump_dir,
-)
+from extract_utils.extract import ExtractCtx, extract_image, get_dump_dir
 from extract_utils.file import File, FileArgs
 from extract_utils.utils import run_cmd
 
@@ -232,9 +227,5 @@ def create_source(source: str | ArgsSource, ctx: ExtractCtx):
     assert not isinstance(source, ArgsSource)
 
     with get_dump_dir(source, ctx) as dump_dir:
-        filter_already_extracted_partitions(dump_dir, ctx)
-        # TODO: filter already extracted firmware
-        if ctx.extract_partitions:
-            extract_image(source, ctx, dump_dir)
-
+        extract_image(source, ctx, dump_dir)
         yield DiskSource(dump_dir)
