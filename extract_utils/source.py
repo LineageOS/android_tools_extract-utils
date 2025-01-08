@@ -11,9 +11,10 @@ import shutil
 from abc import ABC, abstractmethod
 from contextlib import contextmanager, suppress
 from os import path
+from subprocess import SubprocessError
+from time import sleep
 from typing import List, Optional
 
-from extract_utils.adb import init_adb_connection
 from extract_utils.args import ArgsSource
 from extract_utils.extract import ExtractCtx, extract_image, get_dump_dir
 from extract_utils.file import File, FileArgs
@@ -129,7 +130,11 @@ class AdbSource(Source):
     def __init__(self):
         super().__init__('')
 
-        self.__slot_suffix = run_cmd(
+        self.__init_adb_connection()
+        self.__slot_suffix = self.__get_slot_suffix()
+
+    def __get_slot_suffix(self):
+        return run_cmd(
             [
                 'adb',
                 'shell',
@@ -137,6 +142,25 @@ class AdbSource(Source):
                 'ro.boot.slot_suffix',
             ]
         ).strip()
+
+    def __adb_connected(self):
+        output = None
+        with suppress(SubprocessError):
+            output = run_cmd(['adb', 'get-state'])
+        return output == 'device\n'
+
+    def __init_adb_connection(self):
+        run_cmd(['adb', 'start-server'])
+        if not self.__adb_connected():
+            print('No device is online. Waiting for one...')
+            print('Please connect USB and/or enable USB debugging')
+            while not self.__adb_connected():
+                sleep(1)
+
+        # TODO: TCP connection
+
+        run_cmd(['adb', 'root'])
+        run_cmd(['adb', 'wait-for-device'])
 
     def _copy_file_path(self, file_path: str, target_file_path: str):
         try:
@@ -220,7 +244,6 @@ class DiskSource(Source):
 @contextmanager
 def create_source(source: str | ArgsSource, ctx: ExtractCtx):
     if source == ArgsSource.ADB:
-        init_adb_connection()
         yield AdbSource()
         return
 
