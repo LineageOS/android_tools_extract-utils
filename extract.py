@@ -10,7 +10,6 @@ from extract_utils.extract import (
     ExtractCtx,
     extract_fns_type,
     extract_image,
-    filter_already_extracted_partitions,
     get_dump_dir,
 )
 from extract_utils.extract_pixel import (
@@ -122,6 +121,4 @@ if __name__ == '__main__':
     )
 
     with get_dump_dir(args.source, ctx) as dump_dir:
-        filter_already_extracted_partitions(dump_dir, ctx)
-        if ctx.extract_partitions:
-            extract_image(args.source, ctx, dump_dir)
+        extract_image(args.source, ctx, dump_dir)
