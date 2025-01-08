@@ -155,7 +155,6 @@ class ExtractUtils:
                 )
 
             extract_ctx = ExtractCtx(
-                self.__args.keep_dump,
                 extract_fns,
                 list(extract_partitions),
                 list(firmware_partitions),
@@ -164,7 +163,11 @@ class ExtractUtils:
                 self.__args.extract_all,
             )
 
-            with create_source(self.__args.source, extract_ctx) as source:
+            with create_source(
+                self.__args.source,
+                extract_ctx,
+                self.__args.keep_dump,
+            ) as source:
                 self.regenerate_modules(source)
 
                 all_copied = self.process_modules(source)
