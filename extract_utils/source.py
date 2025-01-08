@@ -8,15 +8,16 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import tempfile
 from abc import ABC, abstractmethod
 from contextlib import contextmanager, suppress
 from os import path
 from subprocess import SubprocessError
 from time import sleep
-from typing import List, Optional
+from typing import Generator, List, Optional
 
 from extract_utils.args import ArgsSource
-from extract_utils.extract import ExtractCtx, extract_image, get_dump_dir
+from extract_utils.extract import ExtractCtx, extract_image
 from extract_utils.file import File, FileArgs
 from extract_utils.utils import run_cmd
 
@@ -242,13 +243,57 @@ class DiskSource(Source):
 
 
 @contextmanager
-def create_source(source: str | ArgsSource, ctx: ExtractCtx):
+def get_dump_dir(source: str, keep_dump: bool) -> Generator[str, None, None]:
+    if not path.exists(source):
+        raise FileNotFoundError(f'File not found: {source}')
+
+    if not path.isfile(source) and not path.isdir(source):
+        raise ValueError(f'Unexpected file type at {source}')
+
+    if path.isdir(source):
+        # Source is a directory, try to extract its contents into itself
+        print(f'Extracting to source dump dir {source}')
+        yield source
+        return
+
+    if not keep_dump:
+        # We don't want to keep the dump, ignore previous dump output
+        # and use a temporary directory to extract
+        with tempfile.TemporaryDirectory() as dump_dir:
+            print(f'Extracting to temporary dump dir {dump_dir}')
+
+            try:
+                yield dump_dir
+            except GeneratorExit:
+                pass
+
+            return
+
+    # Remove the extension from the file and use it as a dump dir
+    dump_dir, _ = path.splitext(source)
+
+    if path.isdir(dump_dir):
+        print(f'Using existing dump dir {dump_dir}')
+        # Previous dump output exists, return it and don't extract
+        yield dump_dir
+        return
+
+    if path.exists(dump_dir):
+        raise ValueError(f'Unexpected file type at {dump_dir}')
+
+    print(f'Extracting to new dump dir {dump_dir}')
+    os.mkdir(dump_dir)
+    yield dump_dir
+
+
+@contextmanager
+def create_source(source: str | ArgsSource, ctx: ExtractCtx, keep_dump: bool):
     if source == ArgsSource.ADB:
         yield AdbSource()
         return
 
     assert not isinstance(source, ArgsSource)
 
-    with get_dump_dir(source, ctx) as dump_dir:
+    with get_dump_dir(source, keep_dump) as dump_dir:
         extract_image(source, ctx, dump_dir)
         yield DiskSource(dump_dir)
