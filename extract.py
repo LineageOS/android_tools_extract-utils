@@ -120,4 +120,4 @@ if __name__ == '__main__':
     )
 
     with get_dump_dir(args.source, ctx) as dump_dir:
-        extract_image(args.source, ctx, dump_dir)
+        extract_image(args.source, dump_dir, ctx)

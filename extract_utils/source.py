@@ -227,5 +227,5 @@ def create_source(source: str | ArgsSource, ctx: ExtractCtx):
     assert not isinstance(source, ArgsSource)
 
     with get_dump_dir(source, ctx) as dump_dir:
-        extract_image(source, ctx, dump_dir)
+        extract_image(source, dump_dir, ctx)
         yield DiskSource(dump_dir)
