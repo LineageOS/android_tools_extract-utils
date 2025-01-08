@@ -170,11 +170,11 @@ class ExtractUtils:
             )
 
             with create_source(source_ctx) as source:
-                if source.dump_dir:
+                if source.source_path and source.dump_dir:
                     extract_image(
                         source.source_path,
-                        extract_ctx,
                         source.dump_dir,
+                        extract_ctx,
                     )
 
                 self.regenerate_modules(source)
