@@ -14,17 +14,31 @@ from contextlib import contextmanager, suppress
 from os import path
 from subprocess import SubprocessError
 from time import sleep
-from typing import Generator, List, Optional
+from typing import List, Optional
 
 from extract_utils.args import ArgsSource
-from extract_utils.extract import ExtractCtx, extract_image
 from extract_utils.file import File, FileArgs
 from extract_utils.utils import run_cmd
 
 
+class SourceCtx:
+    def __init__(
+        self,
+        source: str | ArgsSource,
+        keep_dump: bool,
+    ):
+        self.source = source
+        self.keep_dump = keep_dump
+
+
 class Source(ABC):
-    def __init__(self, source_path: str):
+    def __init__(
+        self,
+        source_path: str = '',
+        dump_dir: str = '',
+    ):
         self.source_path = source_path
+        self.dump_dir = dump_dir
 
     @abstractmethod
     def _list_sub_path_file_rel_paths(self, source_path: str) -> List[str]: ...
@@ -129,7 +143,7 @@ class Source(ABC):
 
 class AdbSource(Source):
     def __init__(self):
-        super().__init__('')
+        super().__init__('', '')
 
         self.__init_adb_connection()
         self.__slot_suffix = self.__get_slot_suffix()
@@ -243,9 +257,12 @@ class DiskSource(Source):
 
 
 @contextmanager
-def get_dump_dir(source: str, keep_dump: bool) -> Generator[str, None, None]:
-    if not path.exists(source):
-        raise FileNotFoundError(f'File not found: {source}')
+def create_source(ctx: SourceCtx):
+    source = ctx.source
+
+    if source == ArgsSource.ADB:
+        yield AdbSource()
+        return
 
     if not path.isfile(source) and not path.isdir(source):
         raise ValueError(f'Unexpected file type at {source}')
@@ -253,17 +270,17 @@ def get_dump_dir(source: str, keep_dump: bool) -> Generator[str, None, None]:
     if path.isdir(source):
         # Source is a directory, try to extract its contents into itself
         print(f'Extracting to source dump dir {source}')
-        yield source
+        yield DiskSource(source, source)
         return
 
-    if not keep_dump:
+    if not ctx.keep_dump:
         # We don't want to keep the dump, ignore previous dump output
         # and use a temporary directory to extract
         with tempfile.TemporaryDirectory() as dump_dir:
             print(f'Extracting to temporary dump dir {dump_dir}')
 
             try:
-                yield dump_dir
+                yield DiskSource(source, dump_dir)
             except GeneratorExit:
                 pass
 
@@ -275,7 +292,7 @@ def get_dump_dir(source: str, keep_dump: bool) -> Generator[str, None, None]:
     if path.isdir(dump_dir):
         print(f'Using existing dump dir {dump_dir}')
         # Previous dump output exists, return it and don't extract
-        yield dump_dir
+        yield DiskSource(source, dump_dir)
         return
 
     if path.exists(dump_dir):
@@ -283,17 +300,4 @@ def get_dump_dir(source: str, keep_dump: bool) -> Generator[str, None, None]:
 
     print(f'Extracting to new dump dir {dump_dir}')
     os.mkdir(dump_dir)
-    yield dump_dir
-
-
-@contextmanager
-def create_source(source: str | ArgsSource, ctx: ExtractCtx, keep_dump: bool):
-    if source == ArgsSource.ADB:
-        yield AdbSource()
-        return
-
-    assert not isinstance(source, ArgsSource)
-
-    with get_dump_dir(source, keep_dump) as dump_dir:
-        extract_image(source, dump_dir, ctx)
-        yield DiskSource(dump_dir)
+    yield DiskSource(source, dump_dir)

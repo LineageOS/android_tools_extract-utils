@@ -17,7 +17,7 @@ from extract_utils.extract_star import (
     extract_star_firmware,
     star_firmware_regex,
 )
-from extract_utils.source import get_dump_dir
+from extract_utils.source import SourceCtx, create_source
 
 DEFAULT_EXTRACTED_PARTITIONS = [
     'odm',
@@ -114,5 +114,15 @@ if __name__ == '__main__':
         extract_all=args.all,
     )
 
-    with get_dump_dir(args.source, True) as dump_dir:
-        extract_image(args.source, dump_dir, ctx)
+    source_ctx = SourceCtx(
+        args.source,
+        True,
+    )
+
+    with create_source(source_ctx) as source:
+        if source.source_path and source.dump_dir:
+            extract_image(
+                source.source_path,
+                source.dump_dir,
+                ctx,
+            )
