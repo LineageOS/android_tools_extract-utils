@@ -962,7 +962,7 @@ class ExtractUtilsModule:
     def backup_pinned_files(self, backup_dir: str):
         for proprietary_file in self.proprietary_files:
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
-            backup_source = DiskSource(vendor_path)
+            backup_source = DiskSource(dump_dir=vendor_path)
 
             printed = False
             for file in proprietary_file.file_list.pinned_files:
@@ -1113,7 +1113,7 @@ class ExtractUtilsModule:
             if section is None and not no_cleanup:
                 self.cleanup()
 
-            backup_source = DiskSource(backup_dir)
+            backup_source = DiskSource(dump_dir=backup_dir)
 
             return self.process_proprietary_files(
                 source,

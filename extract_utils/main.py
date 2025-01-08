@@ -9,13 +9,14 @@ from os import path
 from typing import List, Optional
 
 from extract_utils.args import parse_args
-from extract_utils.extract import ExtractCtx
+from extract_utils.extract import ExtractCtx, extract_image
 from extract_utils.module import (
     ExtractUtilsModule,
 )
 from extract_utils.postprocess import PostprocessCtx
 from extract_utils.source import (
     Source,
+    SourceCtx,
     create_source,
 )
 from extract_utils.tools import android_root
@@ -163,11 +164,19 @@ class ExtractUtils:
                 self.__args.extract_all,
             )
 
-            with create_source(
+            source_ctx = SourceCtx(
                 self.__args.source,
-                extract_ctx,
                 self.__args.keep_dump,
-            ) as source:
+            )
+
+            with create_source(source_ctx) as source:
+                if source.dump_dir:
+                    extract_image(
+                        source.source_path,
+                        extract_ctx,
+                        source.dump_dir,
+                    )
+
                 self.regenerate_modules(source)
 
                 all_copied = self.process_modules(source)
