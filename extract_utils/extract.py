@@ -653,7 +653,7 @@ def extract_image_file(source: str, ctx: ExtractCtx, dump_dir: str):
     extract_fn(source, ctx, dump_dir)
 
 
-def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
+def extract_image(source: str, dump_dir: str, ctx: ExtractCtx):
     filter_already_extracted_partitions(dump_dir, ctx)
 
     # TODO: filter already extracted firmware

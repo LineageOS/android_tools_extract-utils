@@ -123,6 +123,6 @@ if __name__ == '__main__':
         if source.source_path and source.dump_dir:
             extract_image(
                 source.source_path,
-                ctx,
                 source.dump_dir,
+                ctx,
             )
