@@ -72,7 +72,6 @@ parser.add_argument(
 
 parser.add_argument(
     'source',
-    default='adb',
     help='sources from which to extract',
     nargs='?',
 )
