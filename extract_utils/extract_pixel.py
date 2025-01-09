@@ -23,11 +23,7 @@ def extract_pixel_factory_image(
     *args,
     **kwargs,
 ):
-    extract_zip(
-        file_path,
-        ctx,
-        work_dir,
-    )
+    extract_zip(file_path, work_dir)
     return file_path
 
 
