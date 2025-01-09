@@ -6,12 +6,7 @@
 
 import argparse
 
-from extract_utils.extract import (
-    ExtractCtx,
-    extract_fns_user_type,
-    extract_image,
-    get_dump_dir,
-)
+from extract_utils.extract import ExtractCtx, extract_fns_user_type
 from extract_utils.extract_pixel import (
     extract_pixel_factory_image,
     extract_pixel_firmware,
@@ -22,6 +17,8 @@ from extract_utils.extract_star import (
     extract_star_firmware,
     star_firmware_regex,
 )
+from extract_utils.main import create_source
+from extract_utils.source import SourceCtx
 
 DEFAULT_EXTRACTED_PARTITIONS = [
     'odm',
@@ -112,12 +109,16 @@ if __name__ == '__main__':
     if args.extra_partitions is not None:
         extract_partitions += args.extra_partitions
 
-    ctx = ExtractCtx(
-        keep_dump=True,
+    extract_ctx = ExtractCtx(
         extract_partitions=extract_partitions,
         extract_fns=extract_fns,
         extract_all=args.all,
     )
 
-    with get_dump_dir(args.source, ctx) as dump_dir:
-        extract_image(args.source, ctx, dump_dir)
+    source_ctx = SourceCtx(
+        args.source,
+        True,
+    )
+
+    with create_source(source_ctx, extract_ctx) as source:
+        pass

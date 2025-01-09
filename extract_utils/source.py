@@ -8,25 +8,33 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import tempfile
 from abc import ABC, abstractmethod
-from contextlib import contextmanager, suppress
+from contextlib import contextmanager, nullcontext, suppress
 from os import path
 from subprocess import SubprocessError
 from time import sleep
 from typing import List, Optional
 
 from extract_utils.args import ArgsSource
-from extract_utils.extract import ExtractCtx, extract_image, get_dump_dir
+from extract_utils.extract import ExtractCtx, extract_dump, extract_image_file
 from extract_utils.file import File, FileArgs
 from extract_utils.utils import run_cmd
 
 
-class Source(ABC):
-    def __init__(self, source_path: str):
-        self.source_path = source_path
+class SourceCtx:
+    def __init__(
+        self,
+        source: str | ArgsSource,
+        keep_dump: bool,
+    ):
+        self.source = source
+        self.keep_dump = keep_dump
 
+
+class Source(ABC):
     @abstractmethod
-    def _list_sub_path_file_rel_paths(self, source_path: str) -> List[str]: ...
+    def _list_sub_path_file_rel_paths(self, sub_path: str) -> List[str]: ...
 
     @abstractmethod
     def _copy_file_path(
@@ -106,8 +114,7 @@ class Source(ABC):
 
         file_srcs = []
 
-        source_sub_path = path.join(self.source_path, sub_path)
-        file_rel_paths = self._list_sub_path_file_rel_paths(source_sub_path)
+        file_rel_paths = self._list_sub_path_file_rel_paths(sub_path)
         file_rel_paths.sort()
 
         for file_rel_path in file_rel_paths:
@@ -128,8 +135,6 @@ class Source(ABC):
 
 class AdbSource(Source):
     def __init__(self):
-        super().__init__('')
-
         self.__init_adb_connection()
         self.__slot_suffix = self.__get_slot_suffix()
 
@@ -169,13 +174,13 @@ class AdbSource(Source):
         except ValueError:
             return False
 
-    def _list_sub_path_file_rel_paths(self, source_path: str) -> List[str]:
+    def _list_sub_path_file_rel_paths(self, sub_path: str) -> List[str]:
         return (
             run_cmd(
                 [
                     'adb',
                     'shell',
-                    f'cd {source_path}; find * -type f',
+                    f'cd {sub_path}; find * -type f',
                 ]
             )
             .strip()
@@ -203,6 +208,9 @@ class AdbSource(Source):
 
 
 class DiskSource(Source):
+    def __init__(self, dump_dir: str):
+        self.dump_dir = dump_dir
+
     def _copy_firmware(self, file: File, target_file_path: str) -> bool:
         return self._copy_file_to_path(file, target_file_path)
 
@@ -211,7 +219,7 @@ class DiskSource(Source):
         file_path: str,
         target_file_path: str,
     ) -> bool:
-        file_path = f'{self.source_path}/{file_path}'
+        file_path = f'{self.dump_dir}/{file_path}'
 
         if not path.isfile(file_path):
             return False
@@ -222,11 +230,13 @@ class DiskSource(Source):
 
         return False
 
-    def _list_sub_path_file_rel_paths(self, source_path: str) -> List[str]:
+    def _list_sub_path_file_rel_paths(self, sub_path: str) -> List[str]:
+        dump_dir_sub_path = path.join(self.dump_dir, sub_path)
+
         file_rel_paths = []
 
-        for dir_path, _, file_names in os.walk(source_path):
-            dir_rel_path = path.relpath(dir_path, source_path)
+        for dir_path, _, file_names in os.walk(dump_dir_sub_path):
+            dir_rel_path = path.relpath(dir_path, dump_dir_sub_path)
             if dir_rel_path == '.':
                 dir_rel_path = ''
 
@@ -241,14 +251,62 @@ class DiskSource(Source):
         return file_rel_paths
 
 
+def create_disk_source(dump_dir: str, extract_ctx: ExtractCtx):
+    extract_dump(dump_dir, extract_ctx)
+    return DiskSource(dump_dir)
+
+
 @contextmanager
-def create_source(source: str | ArgsSource, ctx: ExtractCtx):
+def create_extractable_source(
+    source: str,
+    ctx: SourceCtx,
+    extract_ctx: ExtractCtx,
+):
+    if ctx.keep_dump:
+        dump_dir, _ = path.splitext(source)
+
+        if path.exists(dump_dir):
+            if not path.isdir(dump_dir):
+                raise ValueError(f'Unexpected file type at {dump_dir}')
+
+            extract_image = False
+        else:
+            extract_image = True
+
+        dump_dir_context = nullcontext(dump_dir)
+    else:
+        extract_image = True
+        dump_dir_context = tempfile.TemporaryDirectory()
+
+    with dump_dir_context as dump_dir:
+        if extract_image:
+            print(f'Extracting to new dump dir {dump_dir}')
+            extract_image_file(source, dump_dir)
+        else:
+            print(f'Using existing dump dir {dump_dir}')
+
+        yield create_disk_source(dump_dir, extract_ctx)
+
+
+@contextmanager
+def create_source(ctx: SourceCtx, extract_ctx: ExtractCtx):
+    source = ctx.source
+
     if source == ArgsSource.ADB:
         yield AdbSource()
         return
 
-    assert not isinstance(source, ArgsSource)
+    if not path.isfile(source) and not path.isdir(source):
+        raise ValueError(f'Unexpected file type at {source}')
 
-    with get_dump_dir(source, ctx) as dump_dir:
-        extract_image(source, ctx, dump_dir)
-        yield DiskSource(dump_dir)
+    if path.isdir(source):
+        # Source is a directory, try to extract its contents into itself
+        print(f'Using source dump dir {source}')
+        yield create_disk_source(source, extract_ctx)
+        return
+
+    with create_extractable_source(ctx.source, ctx, extract_ctx) as source:
+        try:
+            yield source
+        except GeneratorExit:
+            pass
