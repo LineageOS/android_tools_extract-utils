@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import os
 from os import path
 from typing import List, Optional
 
@@ -136,6 +137,9 @@ class ExtractUtils:
         firmware_files = set()
 
         self.parse_modules()
+
+        for module in self.__modules:
+            os.makedirs(module.vendor_path, exist_ok=True)
 
         if not self.__args.regenerate_makefiles:
             for module in self.__modules:
