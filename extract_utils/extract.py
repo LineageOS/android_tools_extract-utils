@@ -13,7 +13,7 @@ import tempfile
 from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from os import path
-from tarfile import TarFile, is_tarfile
+from tarfile import is_tarfile
 from typing import Callable, Generator, Iterable, List, Optional, Set, Union
 from zipfile import ZipFile, is_zipfile
 
@@ -30,6 +30,7 @@ from extract_utils.utils import (
     color_print,
     parallel_input_cmds,
     process_cmds_in_parallel,
+    scan_tree,
 )
 
 ALTERNATE_PARTITION_PATH_MAP = {
@@ -85,11 +86,9 @@ class ExtractCtx:
         # extension, their name matches a partition
         self.extract_partitions = extract_partitions
         self.firmware_partitions = firmware_partitions
-        self.extra_partitions: List[str] = []
         # Files are extracted if their name matches as-is
         self.firmware_files = firmware_files
         self.factory_files = factory_files
-        self.extra_files: List[str] = []
 
         self.extract_all = extract_all
 
@@ -106,7 +105,7 @@ def find_files(
     ext: Optional[str] = None,
 ) -> List[str]:
     file_paths = []
-    for file in os.scandir(input_path):
+    for file in scan_tree(input_path):
         if not file.is_file():
             continue
 
@@ -235,30 +234,6 @@ def filter_files(
         )
 
     return list(found_file_paths)
-
-
-def filter_extract_file_paths(
-    ctx: ExtractCtx,
-    file_paths: List[str],
-):
-    if ctx.extract_all:
-        return file_paths
-
-    return filter_files(
-        [
-            ctx.extract_partitions,
-            ctx.firmware_partitions,
-            ctx.extra_partitions,
-        ],
-        [
-            ctx.firmware_files,
-            ctx.factory_files,
-            ctx.extra_files,
-        ],
-        set(),
-        dict(ctx.extract_fns),
-        file_paths,
-    )
 
 
 def filter_extract_partitions(
@@ -644,55 +619,25 @@ def unzip_file(source: str, file_path: str, output_file_path: str):
                 shutil.copyfileobj(z, f)
 
 
-def untar_file(tar: TarFile, file_path: str, output_file_path: str):
-    t = tar.extractfile(file_path)
-    if t is None:
-        return
-
-    with open(output_file_path, 'wb') as f:
-        shutil.copyfileobj(t, f)
-
-
-def extract_zip(
-    source: str,
-    ctx: ExtractCtx,
-    dump_dir: str,
-):
+def extract_zip(source: str, dump_dir: str):
     with ZipFile(source) as zip_file:
         file_paths = zip_file.namelist()
 
-    file_paths = filter_extract_file_paths(ctx, file_paths)
-
     with ProcessPoolExecutor(len(file_paths)) as exe:
         for file_path in file_paths:
-            file_name = path.basename(file_path)
-            output_file_path = path.join(dump_dir, file_name)
-
-            print(f'Extracting {file_path}')
+            output_file_path = path.join(dump_dir, file_path)
+            output_dir = path.dirname(output_file_path)
+            os.makedirs(output_dir, exist_ok=True)
 
             exe.submit(unzip_file, source, file_path, output_file_path)
 
 
-def extract_tar(source: str, ctx: ExtractCtx, dump_dir: str):
+def extract_tar(source: str, dump_dir: str):
     with tarfile.open(source, 'r:*') as tar:
-        file_paths = tar.getnames()
-        file_paths = filter_extract_file_paths(ctx, file_paths)
-
-        for file_path in file_paths:
-            file_name = path.basename(file_path)
-            output_file_path = path.join(dump_dir, file_name)
-
-            print(f'Extracting {file_path}')
-
-            t = tar.extractfile(file_path)
-            if t is None:
-                continue
-
-            with open(output_file_path, 'wb') as f:
-                shutil.copyfileobj(t, f)
+        tar.extractall(dump_dir)
 
 
-def extract_image_file(source: str, ctx: ExtractCtx, dump_dir: str):
+def extract_image_file(source: str, dump_dir: str):
     if is_zipfile(source):
         extract_fn = extract_zip
     elif is_tarfile(source):
@@ -701,7 +646,7 @@ def extract_image_file(source: str, ctx: ExtractCtx, dump_dir: str):
         raise ValueError(f'Unexpected file type at {source}')
 
     print(f'Extracting file {source}')
-    extract_fn(source, ctx, dump_dir)
+    extract_fn(source, dump_dir)
 
 
 def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
@@ -713,11 +658,8 @@ def extract_image(source: str, ctx: ExtractCtx, dump_dir: str):
 
     source_is_file = path.isfile(source)
 
-    ctx.extra_partitions.append(SUPER_PARTITION_NAME)
-    ctx.extra_files.append(PAYLOAD_BIN_FILE_NAME)
-
     if source_is_file:
-        extract_image_file(source, ctx, dump_dir)
+        extract_image_file(source, dump_dir)
 
     run_extract_fns(ctx, dump_dir)
 

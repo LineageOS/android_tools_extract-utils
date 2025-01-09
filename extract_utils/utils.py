@@ -207,3 +207,11 @@ def TemporaryWorkingDirectory(dir_path: str) -> Generator[None, None, None]:
         yield
     finally:
         os.chdir(cwd)
+
+
+def scan_tree(path):
+    for entry in os.scandir(path):
+        if entry.is_dir(follow_symlinks=False):
+            yield from scan_tree(entry.path)
+        else:
+            yield entry
