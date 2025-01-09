@@ -12,8 +12,10 @@ import shutil
 from contextlib import contextmanager
 from enum import Enum
 from functools import lru_cache
+from os import path
 from subprocess import PIPE, run
-from typing import Generator, Iterable, List, Optional
+from typing import Callable, Generator, Iterable, List, Optional
+from urllib.request import Request, urlopen
 
 CHUNK_SIZE = 1024 * 1024
 
@@ -195,3 +197,85 @@ def scan_tree(dir_path: str):
             yield from scan_tree(entry.path)
         else:
             yield entry
+
+
+def get_content_length(url: str):
+    req = Request(url, method='HEAD')
+    with urlopen(req) as response:
+        content_length = response.getheader('Content-Length')
+        assert content_length is not None
+        return int(content_length)
+
+
+def check_downloaded_path(
+    file_path: str,
+    total_size: int,
+    expected_sha256: Optional[str] = None,
+):
+    if not path.exists(file_path):
+        return 0
+
+    downloaded_size = path.getsize(file_path)
+    if downloaded_size < total_size:
+        return downloaded_size
+
+    if downloaded_size > total_size:
+        return 0
+
+    if expected_sha256 is not None:
+        downloaded_hash = file_path_sha256(file_path)
+        if downloaded_hash != expected_sha256:
+            return 0
+
+    return total_size
+
+
+def urlretrieve_resume(
+    url: str,
+    file_path: str,
+    expected_sha256: Optional[str] = None,
+    print_fn: Optional[Callable[[int, bool, bool]]] = None,
+):
+    total_size = get_content_length(url)
+
+    def print_percent(size: int, first=False, last=False):
+        percent = int(size / total_size * 100)
+        if print_fn is not None:
+            print_fn(percent, first, last)
+
+    downloaded_size = check_downloaded_path(
+        file_path,
+        total_size,
+        expected_sha256,
+    )
+
+    if downloaded_size == total_size:
+        return
+
+    print_percent(downloaded_size, first=True)
+
+    req = Request(url)
+    if downloaded_size != 0:
+        req.add_header('Range', f'bytes={downloaded_size}-')
+
+    with urlopen(req) as response:
+        mode = 'ab' if downloaded_size > 0 else 'wb'
+        with open(file_path, mode) as output_file:
+            while True:
+                chunk = response.read(CHUNK_SIZE)
+                if not chunk:
+                    print_percent(downloaded_size, last=True)
+                    break
+
+                output_file.write(chunk)
+                downloaded_size += len(chunk)
+                print_percent(downloaded_size)
+
+    downloaded_size = check_downloaded_path(
+        file_path,
+        total_size,
+        expected_sha256,
+    )
+
+    if downloaded_size == 0:
+        raise ValueError(f'Invalid file hash, expected {expected_sha256}')
