@@ -76,6 +76,14 @@ parser.add_argument(
     action='store_true',
     help='keep the dump directory',
 )
+parser.add_argument(
+    '--download-dir',
+    help='path to directory into which to store downloads',
+)
+parser.add_argument(
+    '--download-sha256',
+    help='SHA256 of the download',
+)
 
 parser.add_argument(
     'source',
@@ -83,6 +91,9 @@ parser.add_argument(
     help='sources from which to extract',
     nargs='?',
 )
+
+
+DOWNLOAD_DIR_ENV_KEY = 'EXTRACT_UTILS_DOWNLOAD_DIR'
 
 
 class ArgsSource(str, Enum):
@@ -103,6 +114,11 @@ class Args:
         self.no_cleanup: bool = args.no_cleanup
         self.kang: bool = args.kang
         self.section: Optional[str] = args.section
+        self.download_dir: Optional[str] = args.download_dir
+        self.download_sha256: Optional[str] = args.download_sha256
+
+        if self.download_dir is None and DOWNLOAD_DIR_ENV_KEY in os.environ:
+            self.download_dir = os.environ[DOWNLOAD_DIR_ENV_KEY]
 
         self.source: ArgsSource | str = args.source
         with suppress(ValueError):
