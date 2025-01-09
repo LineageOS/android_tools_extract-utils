@@ -196,6 +196,8 @@ class ExtractUtils:
             source_ctx = SourceCtx(
                 self.__args.source,
                 self.__args.keep_dump,
+                self.__args.download_dir,
+                self.__args.download_sha256,
             )
 
             with create_source(source_ctx, extract_ctx) as source:

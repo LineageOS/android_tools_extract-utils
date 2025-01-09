@@ -15,11 +15,12 @@ from os import path
 from subprocess import SubprocessError
 from time import sleep
 from typing import List, Optional
+from urllib.parse import urlparse
 
 from extract_utils.args import ArgsSource
 from extract_utils.extract import ExtractCtx, extract_dump, extract_image_file
 from extract_utils.file import File, FileArgs
-from extract_utils.utils import run_cmd
+from extract_utils.utils import run_cmd, urlretrieve_resume
 
 
 class SourceCtx:
@@ -27,9 +28,13 @@ class SourceCtx:
         self,
         source: str | ArgsSource,
         keep_dump: bool,
+        download_dir: Optional[str],
+        download_sha256: Optional[str],
     ):
         self.source = source
         self.keep_dump = keep_dump
+        self.download_dir = download_dir
+        self.download_sha256 = download_sha256
 
 
 class Source(ABC):
@@ -289,12 +294,59 @@ def create_extractable_source(
 
 
 @contextmanager
+def create_downloadable_source(ctx: SourceCtx, extract_ctx: ExtractCtx):
+    source = ctx.source
+    source_url = urlparse(ctx.source)
+    source_name = path.basename(source_url.path)
+
+    def print_percent(percent: int, first: bool, last: bool):
+        ret = '' if first else '\r'
+        end = '\n' if last else ''
+        print(
+            f'{ret}Downloading {source_name}: {percent}%',
+            end=end,
+            flush=True,
+        )
+
+    if ctx.download_dir is not None:
+        download_dir_context = nullcontext(ctx.download_dir)
+    else:
+        download_dir_context = tempfile.TemporaryDirectory()
+
+    with download_dir_context as download_dir:
+        file_path = path.join(download_dir, source_name)
+
+        urlretrieve_resume(
+            source,
+            file_path,
+            expected_sha256=ctx.download_sha256,
+            print_fn=print_percent,
+        )
+
+        with create_extractable_source(file_path, ctx, extract_ctx) as source:
+            try:
+                yield source
+            except GeneratorExit:
+                pass
+
+
+@contextmanager
 def create_source(ctx: SourceCtx, extract_ctx: ExtractCtx):
     source = ctx.source
 
     if source == ArgsSource.ADB:
         yield AdbSource()
         return
+
+    source_url = urlparse(ctx.source)
+    if source_url.scheme in ['http', 'https']:
+        with create_downloadable_source(ctx, extract_ctx) as source:
+            try:
+                yield source
+            except GeneratorExit:
+                pass
+
+            return
 
     if not path.isfile(source) and not path.isdir(source):
         raise ValueError(f'Unexpected file type at {source}')
