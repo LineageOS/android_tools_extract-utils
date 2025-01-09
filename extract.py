@@ -5,7 +5,9 @@
 #
 
 import argparse
+import os
 
+from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
 from extract_utils.extract import ExtractCtx, extract_fns_type
 from extract_utils.extract_pixel import (
     extract_pixel_factory_image,
@@ -113,6 +115,11 @@ if __name__ == '__main__':
                 extract_star_firmware,
             )
 
+    download_dir = args.download_dir
+
+    if download_dir is None and DOWNLOAD_DIR_ENV_KEY in os.environ:
+        download_dir = os.environ[DOWNLOAD_DIR_ENV_KEY]
+
     extract_partitions = args.partitions
     if args.extra_partitions is not None:
         extract_partitions += args.extra_partitions
@@ -126,6 +133,8 @@ if __name__ == '__main__':
     source_ctx = SourceCtx(
         args.source,
         True,
+        download_dir,
+        args.download_sha256,
     )
 
     with create_source(source_ctx, extract_ctx) as source:
