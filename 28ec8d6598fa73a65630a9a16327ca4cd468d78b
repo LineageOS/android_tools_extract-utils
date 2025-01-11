@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "82195ff8_782687d3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 31496
+      },
+      "writtenOn": "2025-01-11T21:24:59Z",
+      "side": 1,
+      "message": "Tested with LGE SDM845 family (judyln in particular)",
+      "revId": "28ec8d6598fa73a65630a9a16327ca4cd468d78b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
