@@ -15,6 +15,8 @@ from functools import lru_cache
 from subprocess import PIPE, Popen, run
 from typing import Generator, Iterable, List, Optional, Tuple
 
+CHUNK_SIZE = 1024 * 1024
+
 
 def import_module(module_name, module_path):
     spec = importlib.util.spec_from_file_location(module_name, module_path)
@@ -52,10 +54,15 @@ def remove_dir_contents(dir_path: str):
 
 
 def file_path_hash(file_path: str, hash_fn):
+    file_hash = hash_fn()
     with open(file_path, 'rb') as f:
-        data = f.read()
-        file_hash = hash_fn(data)
-        return file_hash.hexdigest()
+        while True:
+            data = f.read(CHUNK_SIZE)
+            if not data:
+                break
+
+            file_hash.update(data)
+    return file_hash.hexdigest()
 
 
 def file_path_sha1(file_path: str):
