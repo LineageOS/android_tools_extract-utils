@@ -82,7 +82,7 @@ parallel_input_cmds_ret_fail = List[Tuple[str, int, str]]
 
 @lru_cache(maxsize=None)
 def executable_path(name: str) -> str:
-    path = shutil.which(
+    exe_path = shutil.which(
         name,
         path=os.pathsep.join(
             [
@@ -92,10 +92,10 @@ def executable_path(name: str) -> str:
         ),
     )
 
-    if not path:
+    if not exe_path:
         raise ValueError(f'Failed to find executable path for: {name}')
 
-    return path
+    return exe_path
 
 
 def process_cmds_in_parallel(input_cmds: parallel_input_cmds, fatal=False):
