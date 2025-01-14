@@ -14,10 +14,18 @@ from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from os import path
 from tarfile import TarFile, is_tarfile
-from typing import Callable, Generator, Iterable, List, Optional, Set, Union
+from typing import (
+    Callable,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Optional,
+    Set,
+    Union,
+)
 from zipfile import ZipFile, is_zipfile
 
-from extract_utils.fixups import fixups_type, fixups_user_type
 from extract_utils.tools import (
     brotli_path,
     lpunpack_path,
@@ -51,15 +59,14 @@ SUPER_IMG_NAME = 'super.img'
 
 extract_fn_type = Callable[['ExtractCtx', str, str], Optional[str]]
 extract_fns_value_type = Union[extract_fn_type, List[extract_fn_type]]
-extract_fns_user_type = fixups_user_type[extract_fns_value_type]
-extract_fns_type = fixups_type[extract_fns_value_type]
+extract_fns_user_type = Dict[str, extract_fns_value_type]
 
 
 class ExtractCtx:
     def __init__(
         self,
         keep_dump=False,
-        extract_fns: Optional[extract_fns_type] = None,
+        extract_fns: Optional[extract_fns_user_type] = None,
         extract_partitions: Optional[List[str]] = None,
         firmware_partitions: Optional[List[str]] = None,
         firmware_files: Optional[List[str]] = None,
@@ -134,7 +141,7 @@ def find_files(
 
 
 def should_extract_pattern_file_name(
-    extract_fns: extract_fns_type, file_name: str
+    extract_fns: extract_fns_user_type, file_name: str
 ):
     for extract_pattern in extract_fns:
         match = re.match(extract_pattern, file_name)
@@ -172,7 +179,7 @@ def find_alternate_partitions(
 def _filter_files(
     extract_partitions: List[str],
     extract_file_names: List[str],
-    extract_fns: extract_fns_type,
+    extract_fns: extract_fns_user_type,
     file_paths: List[str],
     found_partitions: Set[str],
 ) -> List[str]:
@@ -208,7 +215,7 @@ def filter_files(
     partition_lists: List[List[str]],
     file_name_lists: List[List[str]],
     found_partitions: Set[str],
-    extract_fns: extract_fns_type,
+    extract_fns: extract_fns_user_type,
     file_paths: List[str],
 ) -> List[str]:
     extract_partitions = sum(partition_lists, [])
