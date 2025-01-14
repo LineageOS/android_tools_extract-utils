@@ -428,7 +428,7 @@ class ExtractUtilsModule:
 
         self.blob_fixups = flatten_fixups(blob_fixups)
         self.lib_fixups = flatten_fixups(lib_fixups)
-        self.extract_fns = flatten_fixups(extract_fns)
+        self.extract_fns = extract_fns
 
         self.namespace_imports = namespace_imports
         self.check_elf = check_elf
