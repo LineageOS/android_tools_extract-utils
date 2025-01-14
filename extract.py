@@ -8,7 +8,7 @@ import argparse
 
 from extract_utils.extract import (
     ExtractCtx,
-    extract_fns_type,
+    extract_fns_user_type,
     extract_image,
     get_dump_dir,
 )
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     if args.star_firmware is not None and not args.star_firmware:
         args.star_firmware = [star_firmware_regex]
 
-    extract_fns: extract_fns_type = {}
+    extract_fns: extract_fns_user_type = {}
 
     if args.pixel_factory:
         for extract_pattern in args.pixel_factory:
