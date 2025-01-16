@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 from ctypes import Structure, c_char, c_uint16, c_uint32, c_uint64, sizeof
+from io import BufferedReader
 from mmap import ACCESS_READ, MAP_PRIVATE, mmap
 from typing import BinaryIO, List, Optional, TypeVar
 
@@ -160,10 +161,17 @@ T = TypeVar('T', bound=Structure)
 
 
 class LpImage:
-    def __init__(self, i: BinaryIO):
-        mm = mmap(i.fileno(), 0, access=ACCESS_READ | MAP_PRIVATE)
-        self.__mm = mm
+    def __init__(self, inputs: BufferedReader | List[BufferedReader]):
+        if not isinstance(inputs, list):
+            inputs = [inputs]
 
+        self.__mms = []
+        for i in inputs:
+            mm = mmap(i.fileno(), 0, access=ACCESS_READ | MAP_PRIVATE)
+            self.__mms.append(mm)
+
+        mm = self.__mms[0]
+        self.__mm = mm
         offset = LP_PARTITION_RESERVED_BYTES
         geometry = LpMetadataGeometry.from_buffer(mm, offset)
         # There are two consecutives copies of the geometry
@@ -215,7 +223,8 @@ class LpImage:
         offset = extent.target_data * LP_SECTOR_SIZE
         size = extent.num_sectors * LP_SECTOR_SIZE
 
-        for data_chunk in read_mmap_chunked(self.__mm, size, offset):
+        mm = self.__mms[extent.target_source]
+        for data_chunk in read_mmap_chunked(mm, size, offset):
             o.write(data_chunk)
 
     def get_table_descriptor_data(
