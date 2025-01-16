@@ -43,8 +43,31 @@ SUPER_IMG_NAME = 'super.img'
 
 
 extract_fn_type = Callable[['ExtractCtx', str, str], Optional[str]]
+extract_fn_paths_type = Callable[['ExtractCtx', List[str], str], List[str]]
+
 extract_fns_value_type = Union[extract_fn_type, List[extract_fn_type]]
-extract_fns_user_type = Dict[str, extract_fns_value_type]
+extract_fns_dict_type = Dict[str, extract_fns_value_type]
+
+
+class ExtractFn:
+    def __init__(
+        self,
+        key: str,
+        path_fn: Optional[extract_fn_type] = None,
+        path_fns: Optional[List[extract_fn_type]] = None,
+        paths_fn: Optional[extract_fn_paths_type] = None,
+    ):
+        if path_fn is not None:
+            assert path_fns is None
+            path_fns = [path_fn]
+
+        self.key = key
+        self.path_fns = path_fns
+        self.paths_fn = paths_fn
+
+
+extract_fns_type = List[ExtractFn]
+extract_fns_user_type = extract_fns_dict_type | extract_fns_type
 
 
 class ExtractCtx:
@@ -608,19 +631,55 @@ def create_empty_partition_dirs(dump_dir: str, ctx: ExtractCtx):
         os.mkdir(dump_partition_dir)
 
 
+def convert_dict_extract_fns(dict_extract_fns: extract_fns_dict_type):
+    extract_fns = []
+    for extract_pattern, extract_fn in dict_extract_fns.items():
+        if isinstance(extract_fn, list):
+            extract_fns.append(
+                ExtractFn(
+                    key=extract_pattern,
+                    path_fns=extract_fn,
+                )
+            )
+        else:
+            extract_fns.append(
+                ExtractFn(
+                    key=extract_pattern,
+                    path_fn=extract_fn,
+                )
+            )
+
+    return extract_fns
+
+
 def run_extract_fns(dump_dir: str, ctx: ExtractCtx):
-    for extract_pattern, extract_fns in ctx.extract_fns.items():
-        if not isinstance(extract_fns, list):
-            extract_fns = [extract_fns]
+    if isinstance(ctx.extract_fns, list):
+        extract_fns = ctx.extract_fns
+    else:
+        extract_fns = convert_dict_extract_fns(ctx.extract_fns)
+
+    for value in extract_fns:
+        extract_pattern = value.key
 
         found_files = find_files(dump_dir, regex=extract_pattern)
+
         print_file_paths(found_files, f'pattern: "{extract_pattern}"')
+
+        if not found_files:
+            continue
+
+        if value.paths_fn is not None:
+            processed_files = value.paths_fn(ctx, found_files, dump_dir)
+            remove_file_paths(processed_files)
+            continue
+
+        assert value.path_fns is not None
 
         processed_files = set()
         for file_path in found_files:
             file_name = path.basename(file_path)
             print(f'Processing {file_name}')
-            for extract_fn in extract_fns:
+            for extract_fn in value.path_fns:
                 processed_file = extract_fn(ctx, file_path, dump_dir)
                 if processed_file is not None:
                     processed_files.add(processed_file)
