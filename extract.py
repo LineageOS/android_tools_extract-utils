@@ -8,7 +8,7 @@ import argparse
 import os
 
 from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
-from extract_utils.extract import ExtractCtx, extract_fns_user_type
+from extract_utils.extract import ExtractCtx, ExtractFn, extract_fns_type
 from extract_utils.extract_pixel import (
     extract_pixel_factory_image,
     extract_pixel_firmware,
@@ -95,24 +95,24 @@ if __name__ == '__main__':
     if args.star_firmware is not None and not args.star_firmware:
         args.star_firmware = [star_firmware_regex]
 
-    extract_fns: extract_fns_user_type = {}
+    extract_fns: extract_fns_type = []
 
     if args.pixel_factory:
         for extract_pattern in args.pixel_factory:
-            extract_fns.setdefault(extract_pattern, []).append(
-                extract_pixel_factory_image,
+            extract_fns.append(
+                ExtractFn(extract_pattern, extract_pixel_factory_image)
             )
 
     if args.pixel_firmware:
         for extract_pattern in args.pixel_firmware:
-            extract_fns.setdefault(extract_pattern, []).append(
-                extract_pixel_firmware,
+            extract_fns.append(
+                ExtractFn(extract_pattern, extract_pixel_firmware)
             )
 
     if args.star_firmware:
         for extract_pattern in args.star_firmware:
-            extract_fns.setdefault(extract_pattern, []).append(
-                extract_star_firmware,
+            extract_fns.append(
+                ExtractFn(extract_pattern, extract_star_firmware)
             )
 
     download_dir = args.download_dir
