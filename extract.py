@@ -9,6 +9,7 @@ import os
 
 from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
 from extract_utils.extract import ExtractCtx, ExtractFn, extract_fns_type
+from extract_utils.extract_misc import ExtractRenameSuperToExtVolumeName
 from extract_utils.extract_pixel import (
     extract_pixel_factory_image,
     extract_pixel_firmware,
@@ -76,6 +77,11 @@ parser.add_argument(
     help='Partitions in retrofit super, in order',
 )
 parser.add_argument(
+    '--rename-super-to-volume-name',
+    action='store_true',
+    help='Rename super_*.img images to their volume name',
+)
+parser.add_argument(
     '--download-dir',
     help='path to directory into which to store downloads',
 )
@@ -124,6 +130,9 @@ if __name__ == '__main__':
 
     if args.retrofit_super_partitions:
         extract_fns.append(ExtractSuperRetrofit(args.retrofit_super_partitions))
+
+    if args.rename_super_to_volume_name:
+        extract_fns.append(ExtractRenameSuperToExtVolumeName())
 
     download_dir = args.download_dir
 
