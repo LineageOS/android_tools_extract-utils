@@ -400,7 +400,7 @@ def extract_zip(source: str, dump_dir: str):
     with ZipFile(source) as zip_file:
         file_paths = zip_file.namelist()
 
-    with ProcessPoolExecutor(len(file_paths)) as exe:
+    with ProcessPoolExecutor() as exe:
         for file_path in file_paths:
             output_file_path = path.join(dump_dir, file_path)
             output_dir = path.dirname(output_file_path)
@@ -521,7 +521,7 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
     partitions = normal_partitions + firmware_partitions
 
     while partitions:
-        with ProcessPoolExecutor(len(partitions)) as exe:
+        with ProcessPoolExecutor() as exe:
             for partition in partitions:
                 if partition in normal_partitions:
                     fn = extract_partition
