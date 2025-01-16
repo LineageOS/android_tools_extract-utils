@@ -19,6 +19,7 @@ from extract_utils.extract_star import (
     extract_star_firmware,
     star_firmware_regex,
 )
+from extract_utils.extract_super_retrofit import ExtractSuperRetrofit
 from extract_utils.main import create_source
 from extract_utils.source import SourceCtx
 
@@ -69,6 +70,12 @@ parser.add_argument(
     help='Files to extract as star firmware',
 )
 parser.add_argument(
+    '--retrofit-super-partitions',
+    nargs='*',
+    type=str,
+    help='Partitions in retrofit super, in order',
+)
+parser.add_argument(
     '--download-dir',
     help='path to directory into which to store downloads',
 )
@@ -114,6 +121,9 @@ if __name__ == '__main__':
             extract_fns.append(
                 ExtractFn(extract_pattern, extract_star_firmware)
             )
+
+    if args.retrofit_super_partitions:
+        extract_fns.append(ExtractSuperRetrofit(args.retrofit_super_partitions))
 
     download_dir = args.download_dir
 
