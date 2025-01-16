@@ -15,6 +15,7 @@ from tarfile import is_tarfile
 from typing import Callable, Dict, Iterable, List, Optional, Union
 from zipfile import ZipFile, is_zipfile
 
+from extract_utils.ext4 import EXT4_MAGIC, EXT4_MAGIC_OFFSET
 from extract_utils.file import File
 from extract_utils.lp import LpImage
 from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
@@ -206,8 +207,12 @@ def find_erofs_path(partition: str, input_path: str):
 
 
 def find_ext4_path(partition: str, input_path: str):
-    magic = 0xEF53.to_bytes(2, 'little')
-    return find_file(input_path, partition, magic=magic, position=1080)
+    return find_file(
+        input_path,
+        partition,
+        magic=EXT4_MAGIC,
+        position=EXT4_MAGIC_OFFSET,
+    )
 
 
 def find_payload_path(partition: str, input_path: str):
