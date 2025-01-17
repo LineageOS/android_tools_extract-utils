@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f2eaa6a3_a16024d6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2025-01-17T09:47:03Z",
+      "side": 1,
+      "message": "breaks extracting from zip:\n\n```\n./extract-files.py /home/luk/lineage-22/out/target/product/pdx225/lineage-22.1-20250117-UNOFFICIAL-pdx225.zip\nParsing device/sony/sm6375-common/proprietary-files.txt\nExtracting to new dump dir /tmp/tmpwz7ptwba\nExtracting file /home/luk/lineage-22/out/target/product/pdx225/lineage-22.1-20250117-UNOFFICIAL-pdx225.zip\nPartition product not extracted\nPartition oem not extracted\nPartition system not extracted\nPartition odm not extracted\nPartition vendor not extracted\nPartition system_ext not extracted\nProcessing device/sony/sm6375-common/proprietary-files.txt\nodm/etc/thermal-engine.conf: file not found\nproduct/etc/permissions/jp.co.sony.mc.euiccmemoryreset.xml: file not found\nproduct/priv-app/EuiccGoogle/EuiccGoogle.apk: file not found\nproduct/priv-app/EuiccMemoryReset/EuiccMemoryReset.apk: file not found\nsystem/etc/sysconfig/qti_whitelist.xml: file not found\nsystem_ext/app/ImsRcsService/ImsRcsService.apk: file not found\nsystem_ext/app/QtiTelephonyService/QtiTelephonyService.apk: file not found\n...\n```",
+      "revId": "9ede64b65108b8f8c4f080b957f33687bb8a9c47",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
