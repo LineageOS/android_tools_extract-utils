@@ -25,6 +25,7 @@ from extract_utils.makefiles import (
     MakefilesCtx,
     ProductPackagesCtx,
     write_board_info_file,
+    write_boot_jars,
     write_bp_header,
     write_bp_soong_namespaces,
     write_dummy_shared_libs,
@@ -208,6 +209,11 @@ class ProprietaryFile:
         write_symlink_packages(
             ctx,
             self.file_list.package_symlinks,
+        )
+
+        write_boot_jars(
+            ctx,
+            self.file_list.boot_jars,
         )
 
         write_dummy_shared_libs(

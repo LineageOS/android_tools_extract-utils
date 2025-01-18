@@ -434,6 +434,23 @@ def write_packages_inclusion(package_names: List[str], out: TextIO):
     out.write('\n')
 
 
+def write_boot_jars(
+    ctx: MakefilesCtx,
+    base_file_tree: FileTree,
+):
+    if not list(base_file_tree):
+        return
+
+    ctx.product_mk_out.write('\nPRODUCT_BOOT_JARS +=')
+
+    for file in base_file_tree:
+        _, package_name = file_stem_package_name(file, can_have_stem=True)
+        line = f' \\\n    {package_name}'
+        ctx.product_mk_out.write(line)
+
+    ctx.product_mk_out.write('\n')
+
+
 def write_product_packages(
     ctx: MakefilesCtx,
     packages_ctx: ProductPackagesCtx,
