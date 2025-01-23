@@ -462,13 +462,13 @@ def extract_partition(partition: str, dump_dir: str):
     if sparse_data_path:
         print_file_path(sparse_data_path, 'sparse data')
         extract_sparse_data_img(sparse_data_path, dump_dir)
-        remove_file_paths(sparse_data_path)
+        remove_file_path(sparse_data_path)
 
     erofs_path = find_erofs_path(partition, dump_dir)
     if erofs_path:
         print_file_path(erofs_path, 'EROFS')
         extract_erofs(erofs_path, dump_dir)
-        remove_file_paths(erofs_path)
+        remove_file_path(erofs_path)
 
     ext4_path = find_ext4_path(partition, dump_dir)
     if ext4_path:
