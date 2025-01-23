@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "de53fc5e_3d131675",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2025-01-23T18:28:25Z",
+      "side": 1,
+      "message": "```nolenjohnson@ODS-PROD:~/tmp/tmp/sphynx/new$ extract-firmware lineage-22.1-20250122-UNOFFICIAL-sphynx.zip \nExtracting to new dump dir lineage-22.1-20250122-UNOFFICIAL-sphynx\nExtracting file lineage-22.1-20250122-UNOFFICIAL-sphynx.zip\nFound brotli files: system.new.dat.br\nFound brotli files: vendor.new.dat.br\nDeleting vendor.new.dat.br\nFound sparse data files: vendor.new.dat\nDeleting l, i, n, e, a, g, e, -, 2, 2, ., 1, -, 2, 0, 2, 5, 0, 1, 2, 2, -, U, N, O, F, F, I, C, I, A, L, -, s, p, h, y, n, x, , v, e, n, d, o, r, ., n, e, w, ., d, a, t\nDeleting system.new.dat.br\nFound sparse data files: system.new.dat\nDeleting l, i, n, e, a, g, e, -, 2, 2, ., 1, -, 2, 0, 2, 5, 0, 1, 2, 2, -, U, N, O, F, F, I, C, I, A, L, -, s, p, h, y, n, x, , s, y, s, t, e, m, ., n, e, w, ., d, a, t\nFound sparse data files: vendor.new.dat\nFound sparse data files: system.new.dat\nDeleting l, i, n, e, a, g, e, -, 2, 2, ., 1, -, 2, 0, 2, 5, 0, 1, 2, 2, -, U, N, O, F, F, I, C, I, A, L, -, s, p, h, y, n, x, , v, e, n, d, o, r, ., n, e, w, ., d, a, t```\n\nBefore\n\nAfter it looks as expected",
+      "revId": "a5549b014608ec1162881c6c894dbf10fda510c8",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
