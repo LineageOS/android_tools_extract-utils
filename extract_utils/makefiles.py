@@ -302,6 +302,19 @@ def write_rfsa_package(file: File, builder: FileBpBuilder):
     )
     return package_name
 
+def write_rfs_package(file: File, builder: FileBpBuilder):
+    _, package_name = file_stem_package_name(file, can_have_stem=True)
+
+    (
+        builder.set_rule_name('prebuilt_rfs')
+        .name(package_name)
+        .filename()
+        .owner()
+        .src()
+        .relative_install_path()
+        .specific()
+    )
+    return package_name
 
 def write_apex_package(file: File, builder: FileBpBuilder):
     _, package_name = file_stem_package_name(file)
@@ -478,10 +491,14 @@ def write_product_packages(
 
     for part in ALL_PARTITIONS:
         lib_rfsa_tree = None
+        lib_rfs_tree = None
         if part in RFSA_PARTITIONS:
             # Extract these first so that they don't end up in lib32
             lib_rfsa_tree = base_file_tree.filter_prefixed(
                 [part, 'lib', 'rfsa']
+            )
+            lib_rfs_tree = base_file_tree.filter_prefixed(
+                [part, 'lib64', 'rfs']
             )
 
         lib32_tree = base_file_tree.filter_prefixed([part, 'lib'])
@@ -504,6 +521,9 @@ def write_product_packages(
 
         if lib_rfsa_tree is not None:
             w(write_rfsa_package, lib_rfsa_tree)
+
+        if lib_rfs_tree is not None:
+            w(write_rfs_package, lib_rfs_tree)
 
     for part in APEX_PARTITIONS:
         wp(write_apex_package, part, 'apex')
