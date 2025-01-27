@@ -16,6 +16,23 @@
       "message": "before:\n```\ncc_prebuilt_library_shared {\n    name: \"libnsp_ipc_cdsp_skel\",\n    owner: \"oneplus\",\n    strip: {\n        none: true,\n    },\n    target: {\n        android_arm: {\n            srcs: [\n                \"proprietary/vendor/lib64/rfs/dsp/libnsp_ipc_cdsp_skel.so\",\n            ],\n        },\n    },\n    compile_multilib: \"both\",\n    relative_install_path: \"rfs/dsp\",\n    prefer: true,\n    soc_specific: true,\n}\n```\n\nafter:\n```\ncc_prebuilt_library_shared {\n    name: \"libnsp_ipc_cdsp_skel\",\n    owner: \"oneplus\",\n    strip: {\n        none: true,\n    },\n    target: {\n        android_arm: {\n            srcs: [\n                \"proprietary/vendor/lib/rfs/dsp/libnsp_ipc_cdsp_skel.so\",\n            ],\n        },\n        android_arm64: {\n            srcs: [\n                \"proprietary/vendor/lib64/rfs/dsp/libnsp_ipc_cdsp_skel.so\",\n            ],\n        },\n    },\n    compile_multilib: \"both\",\n    check_elf_files: false,\n    relative_install_path: \"rfs/dsp\",\n    prefer: true,\n    soc_specific: true,\n}\n```",
       "revId": "70997b4ac813e1b9cf1f3d590c1107df5023211a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35cb0596_d9460535",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2025-01-27T07:59:04Z",
+      "side": 1,
+      "message": "looks good, although I observed no diffs in Android.bp.",
+      "revId": "70997b4ac813e1b9cf1f3d590c1107df5023211a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
