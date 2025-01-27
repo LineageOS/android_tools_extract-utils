@@ -16,6 +16,7 @@ from extract_utils.elf import (
     get_file_machine_bits_libs,
     remove_libs_so_ending,
 )
+from extract_utils.elf_parser import EM
 from extract_utils.file import (
     CommonFileTree,
     File,
@@ -203,6 +204,11 @@ def write_elfs_package(
         machine, bits, libs = get_file_machine_bits_libs(f_path, gen_deps)
         if is_bin and (machine is None or bits is None):
             return write_sh_package(files[0], builder, any_extension=True)
+
+        if machine == EM.QDSP6:
+            libs = None
+            enable_check_elf = False
+            bits = f.inferred_bits
 
         deps = remove_libs_so_ending(libs)
         deps = run_libs_fixup(ctx.lib_fixups, deps, file.partition)

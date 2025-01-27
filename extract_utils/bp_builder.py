@@ -14,7 +14,6 @@ from extract_utils.file import File
 
 MACHINE_TARGET_MAP = {
     EM.ARM: 'android_arm',
-    EM.QDSP6: 'android_arm',
     EM.AARCH64: 'android_arm64',
     EM.X86: 'android_x86',
     EM.X86_64: 'android_x86_64',
@@ -219,7 +218,10 @@ class FileBpBuilder(BpBuilder):
         target = self.o.setdefault('target', {})
 
         rel_path = self.__file_rel_sub_path(f.dst)
-        arch = MACHINE_TARGET_MAP[machine]
+        if machine == EM.QDSP6:
+            arch = 'android_arm64' if f.inferred_bits == 64 else 'android_arm'
+        else:
+            arch = MACHINE_TARGET_MAP[machine]
         target[arch] = {'srcs': [rel_path]}
 
         if deps:

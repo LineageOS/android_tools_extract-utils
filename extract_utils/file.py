@@ -293,6 +293,15 @@ class File:
     def skip_preprocessed_apk_checks(self):
         return self.args.get(FileArgs.SKIPAPKCHECKS)
 
+    @property
+    def inferred_bits(self):
+        if self.contains_path_parts(LIB_PARTS):
+            return 32
+        elif self.contains_path_parts(LIB64_PARTS):
+            return 64
+        else:
+            raise ValueError(f'Cannot infer bits from file path: {self.src}')
+
 
 T = TypeVar('T')
 
