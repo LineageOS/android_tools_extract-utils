@@ -51,6 +51,23 @@
       "parentUuid": "35cb0596_d9460535",
       "revId": "70997b4ac813e1b9cf1f3d590c1107df5023211a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2708cfd2_99060756",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29080
+      },
+      "writtenOn": "2025-01-27T08:46:29Z",
+      "side": 1,
+      "message": "Builds fine and the libs are in the correct place",
+      "revId": "70997b4ac813e1b9cf1f3d590c1107df5023211a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
