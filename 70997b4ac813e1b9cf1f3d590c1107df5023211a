@@ -33,6 +33,24 @@
       "message": "looks good, although I observed no diffs in Android.bp.",
       "revId": "70997b4ac813e1b9cf1f3d590c1107df5023211a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "223bc3f0_e474fa68",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2025-01-27T07:59:34Z",
+      "side": 1,
+      "message": "ah, that\u0027s because the only hexagon lib I have uses `prebuilt_rfsa`.",
+      "parentUuid": "35cb0596_d9460535",
+      "revId": "70997b4ac813e1b9cf1f3d590c1107df5023211a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
