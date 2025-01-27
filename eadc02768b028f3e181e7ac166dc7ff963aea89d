@@ -16,6 +16,23 @@
       "message": "need to support vendor/lib/rfs/dsp as well",
       "revId": "eadc02768b028f3e181e7ac166dc7ff963aea89d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "90e63dea_12beb08f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10258
+      },
+      "writtenOn": "2025-01-27T07:42:41Z",
+      "side": 1,
+      "message": "I\u0027m afraid that prebuilt_rfs puts files in vendor/rfs rather than vendor/lib{,64}/rfs, have you verified yet?",
+      "revId": "eadc02768b028f3e181e7ac166dc7ff963aea89d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
