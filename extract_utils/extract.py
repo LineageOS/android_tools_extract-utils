@@ -16,6 +16,7 @@ from typing import Callable, Dict, Iterable, List, Optional, Union
 from zipfile import ZipFile, is_zipfile
 
 from extract_utils.ext4 import EXT4_MAGIC, EXT4_MAGIC_OFFSET
+from extract_utils.extract_moto_piv import MOTO_PIV_MAGIC, extract_moto_piv
 from extract_utils.file import File
 from extract_utils.lp import LpImage
 from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
@@ -230,6 +231,10 @@ def find_brotli_path(partition: str, input_path: str):
 
 def find_sparse_data_path(partition: str, input_path: str):
     return find_file(input_path, partition, ext=SPARSE_DATA_EXT)
+
+
+def find_moto_piv_path(partition: str, input_path: str):
+    return find_file(input_path, partition, magic=MOTO_PIV_MAGIC)
 
 
 def print_file_paths(file_paths: List[str], file_type: str):
@@ -451,6 +456,12 @@ def extract_partition(partition: str, dump_dir: str):
         print_file_paths(sparse_raw_paths, 'sparse raw')
         extract_sparse_raw_img(sparse_raw_paths, dump_dir)
         remove_file_paths(sparse_raw_paths)
+
+    moto_piv_path = find_moto_piv_path(partition, dump_dir)
+    if moto_piv_path:
+        print_file_path(moto_piv_path, 'Moto PIV')
+        extract_moto_piv(moto_piv_path, dump_dir)
+        remove_file_path(moto_piv_path)
 
     brotli_img_path = find_brotli_path(partition, dump_dir)
     if brotli_img_path:
