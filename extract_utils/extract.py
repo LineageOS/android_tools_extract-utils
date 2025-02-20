@@ -9,7 +9,7 @@ import os
 import re
 import shutil
 import tarfile
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import Future, ProcessPoolExecutor
 from os import path
 from tarfile import is_tarfile
 from typing import Callable, Dict, Iterable, List, Optional, Union
@@ -526,6 +526,7 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
     partitions = normal_partitions + firmware_partitions
 
     while partitions:
+        futures: List[Future] = []
         with ProcessPoolExecutor() as exe:
             for partition in partitions:
                 if partition in normal_partitions:
@@ -533,7 +534,13 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
                 else:
                     fn = extract_firmware_partition
 
-                exe.submit(fn, partition, dump_dir)
+                future = exe.submit(fn, partition, dump_dir)
+                futures.append(future)
+
+        for future in futures:
+            exc = future.exception()
+            if exc:
+                raise exc
 
         found_partitions = find_partitions(dump_dir, ctx)
         partitions = find_alternate_partitions(partitions, found_partitions)
