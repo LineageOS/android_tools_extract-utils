@@ -572,6 +572,7 @@ def move_factory_files(dump_dir: str, ctx: ExtractCtx):
 def extract_dump(dump_dir: str, ctx: ExtractCtx):
     should_extract = filter_already_extracted(dump_dir, ctx)
     if not should_extract:
+        move_sar_system_paths(dump_dir)
         return
 
     run_extract_fns(dump_dir, ctx)
