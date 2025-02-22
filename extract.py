@@ -21,6 +21,7 @@ from extract_utils.extract_star import (
     star_firmware_regex,
 )
 from extract_utils.extract_super_retrofit import ExtractSuperRetrofit
+from extract_utils.file import File
 from extract_utils.main import create_source
 from extract_utils.source import SourceCtx
 
@@ -69,6 +70,12 @@ parser.add_argument(
     nargs='*',
     type=str,
     help='Files to extract as star firmware',
+)
+parser.add_argument(
+    '--firmware',
+    nargs='+',
+    type=str,
+    help='Firmware files to extract',
 )
 parser.add_argument(
     '--retrofit-super-partitions',
@@ -143,8 +150,15 @@ if __name__ == '__main__':
     if args.extra_partitions is not None:
         extract_partitions += args.extra_partitions
 
+    firmware_file_names = args.firmware
+    if firmware_file_names is None:
+        firmware_file_names = []
+
+    firmware_files = [File(f) for f in firmware_file_names]
+
     extract_ctx = ExtractCtx(
         extract_partitions=extract_partitions,
+        firmware_files=firmware_files,
         extract_fns=extract_fns,
         extract_all=args.all,
     )
