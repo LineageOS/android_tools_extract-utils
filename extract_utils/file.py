@@ -61,6 +61,7 @@ class FileArgs(str, Enum):
     SKIPAPKCHECKS = 'SKIPAPKCHECKS'
     SYMLINK = 'SYMLINK'
     TRYSRCFIRST = 'TRYSRCFIRST'
+    FILEGROUP = 'FILEGROUP'
 
 
 FILE_ARGS_TYPE_MAP = {
@@ -84,6 +85,7 @@ FILE_ARGS_TYPE_MAP = {
     FileArgs.SKIPAPKCHECKS: True,
     FileArgs.SYMLINK: list,
     FileArgs.TRYSRCFIRST: True,
+    FileArgs.FILEGROUP: list,
 }
 
 assert len(FileArgs) == len(FILE_ARGS_TYPE_MAP)
@@ -302,6 +304,10 @@ class File:
         else:
             raise ValueError(f'Cannot infer bits from file path: {self.src}')
 
+    @property
+    def filegroups(self):
+        return self.args.get(FileArgs.FILEGROUP)
+
 
 T = TypeVar('T')
 
@@ -496,6 +502,7 @@ class FileList:
         self.boot_jars = FileTree()
         self.dummy_shared_libs = FileTree()
         self.package_symlinks = SimpleFileList()
+        self.filegroup_files = SimpleFileList()
         self.copy_files = SimpleFileList()
         self.all_files = SimpleFileList()
 
@@ -540,6 +547,9 @@ class FileList:
         if FileArgs.DUMMY_SHARED_LIB in file.args:
             self.dummy_shared_libs.add(file)
             return
+
+        if FileArgs.FILEGROUP in file.args:
+            self.filegroup_files.add(file)
 
         if self.__section is None or (
             section is not None and fnmatch.fnmatch(section, self.__section)
