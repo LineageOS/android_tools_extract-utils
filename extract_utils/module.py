@@ -41,6 +41,7 @@ from extract_utils.makefiles import (
     write_product_packages,
     write_rro_package,
     write_symlink_packages,
+    write_filegroups,
 )
 from extract_utils.postprocess import (
     postprocess_carriersettings_fn_impl,
@@ -209,6 +210,12 @@ class ProprietaryFile:
         write_symlink_packages(
             ctx,
             self.file_list.package_symlinks,
+        )
+
+        write_filegroups(
+            ctx,
+            self.vendor_rel_sub_path,
+            self.file_list.filegroup_files,
         )
 
         write_boot_jars(

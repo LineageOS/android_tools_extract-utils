@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import os
+from collections import defaultdict
 from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
 from typing import Iterable, List, Optional, Protocol, TextIO
@@ -688,6 +689,33 @@ def write_symlink_packages(
             )
 
     write_packages_inclusion(package_names, ctx.product_mk_out)
+
+
+def write_filegroups(
+    ctx: MakefilesCtx,
+    vendor_rel_sub_path: str,
+    files: Iterable[File],
+):
+    encoder = BpJSONEncoder(legacy=ctx.legacy)
+    filegroup_to_files = defaultdict(list)
+
+    for file in files:
+        filegroups = file.filegroups
+        assert isinstance(filegroups, list)
+
+        for filegroup in filegroups:
+            filegroup_to_files[filegroup].append(file)
+
+    for filegroup, files in filegroup_to_files.items():
+        (
+            BpBuilder(encoder)
+            .set_rule_name('filegroup')
+            .name(filegroup)
+            .set(
+                'srcs', [f'{vendor_rel_sub_path}/{file.dst}' for file in files]
+            )
+            .write(ctx.bp_out)
+        )
 
 
 def write_mk_firmware_ab_partitions(files: Iterable[File], out: TextIO):
