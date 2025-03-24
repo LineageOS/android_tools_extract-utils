@@ -29,6 +29,7 @@ from extract_utils.makefiles import (
     write_bp_header,
     write_bp_soong_namespaces,
     write_dummy_shared_libs,
+    write_filegroups,
     write_mk_firmware,
     write_mk_firmware_ab_partitions,
     write_mk_firmware_file,
@@ -209,6 +210,12 @@ class ProprietaryFile:
         write_symlink_packages(
             ctx,
             self.file_list.package_symlinks,
+        )
+
+        write_filegroups(
+            ctx,
+            self.vendor_rel_sub_path,
+            self.file_list.filegroup_files,
         )
 
         write_boot_jars(
