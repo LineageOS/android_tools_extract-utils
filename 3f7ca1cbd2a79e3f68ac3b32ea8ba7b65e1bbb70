@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d5b99c04_7c9ef4ba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 21290
+      },
+      "writtenOn": "2025-03-24T13:44:40Z",
+      "side": 1,
+      "message": "Can be used like this: https://review.lineageos.org/c/LineageOS/android_device_osom_ingot/+/419386\nYou can add FILEGROUP\u003dgroup1,group2 and it will create the appropriate filegroup which can be used outside of the vendor repository",
+      "revId": "3f7ca1cbd2a79e3f68ac3b32ea8ba7b65e1bbb70",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
