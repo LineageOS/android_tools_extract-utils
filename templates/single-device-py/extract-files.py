@@ -102,6 +102,10 @@ module = ExtractUtilsModule(
     namespace_imports=namespace_imports,
 )
 
+module.add_proprietary_file('proprietary-files-phone.txt').add_copy_files_guard(
+    'TARGET_IS_TABLET', 'true', invert=True
+)
+
 if __name__ == '__main__':
     utils = ExtractUtils.device(module)
     utils.run()
