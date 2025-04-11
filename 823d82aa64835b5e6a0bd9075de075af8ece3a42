@@ -16,6 +16,24 @@
       "message": "`*` check is irrelevant here.",
       "revId": "823d82aa64835b5e6a0bd9075de075af8ece3a42",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d063ae65_2ab2eeb2",
+        "filename": "extract_utils/fixups_lib.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 34120
+      },
+      "writtenOn": "2025-04-11T10:30:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a77652e_89422767",
+      "revId": "823d82aa64835b5e6a0bd9075de075af8ece3a42",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
