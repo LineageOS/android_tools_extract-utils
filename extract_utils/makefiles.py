@@ -340,6 +340,7 @@ def write_app_package(file: File, builder: FileBpBuilder):
         .set('dex_preopt', {'enabled': False})
         .set('privileged', file.privileged, optional=True)
         .skip_preprocessed_apk_checks()
+        .relative_install_path(is_app=True)
         .specific()
     )
     return package_name
