@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import fnmatch
 from typing import Callable, List, Optional
 
 from extract_utils.fixups import fixups_type, fixups_user_type
@@ -61,6 +62,13 @@ def run_lib_fixup(
         return lib
 
     lib_fixup_fn = fixups.get(lib)
+
+    if lib_fixup_fn is None:
+        for pattern, fixup_fn in fixups.items():
+            if fnmatch.fnmatch(lib, pattern):
+                lib_fixup_fn = fixup_fn
+                break
+
     if lib_fixup_fn is None:
         return lib
 
