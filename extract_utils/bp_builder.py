@@ -169,6 +169,9 @@ class FileBpBuilder(BpBuilder):
         if not remaining:
             return None
 
+        if self.__file.ext == '.apk' and '/' not in remaining:
+            return None
+
         return remaining
 
     def relative_install_path(self):
