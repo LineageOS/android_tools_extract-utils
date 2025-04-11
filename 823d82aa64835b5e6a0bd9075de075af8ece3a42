@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a77652e_89422767",
+        "filename": "extract_utils/fixups_lib.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2025-04-11T09:30:12Z",
+      "side": 1,
+      "message": "`*` check is irrelevant here.",
+      "revId": "823d82aa64835b5e6a0bd9075de075af8ece3a42",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
