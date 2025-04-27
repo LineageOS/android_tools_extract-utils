@@ -214,6 +214,13 @@ class FileBpBuilder(BpBuilder):
             optional=True,
         )
 
+    def recovery_available(self):
+        return self.set(
+            'recovery_available',
+            self.__file.recovery_available,
+            optional=True,
+        )
+
     def target(self, f: File, machine: EM, deps: Optional[List[str]]):
         target = self.o.setdefault('target', {})
 

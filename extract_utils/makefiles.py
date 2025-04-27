@@ -180,6 +180,7 @@ def write_sh_package(file: File, builder: FileBpBuilder, any_extension=False):
         .filename()
         .sub_dir()
         .specific()
+        .recovery_available()
     )
 
     return package_name
@@ -234,6 +235,7 @@ def write_elfs_package(
             .prefer()
             .relative_install_path()
             .specific()
+            .recovery_available()
         )
 
         return package_name
@@ -250,6 +252,7 @@ def write_elfs_package(
         .relative_install_path()
         .prefer()
         .specific()
+        .recovery_available()
     )
 
     return package_name
@@ -375,6 +378,7 @@ def write_etc_package(file: File, builder: FileBpBuilder):
         .set('filename_from_src', True)
         .sub_dir()
         .specific()
+        .recovery_available()
     )
 
     return package_name
@@ -426,6 +430,8 @@ def write_packages_group(
         package_name = fn(file, builder, *args, **kwargs)
         builder.write(out)
         package_names.append(package_name)
+        if file.recovery_available:
+            package_names.append(f'{package_name}.recovery')
 
 
 def write_packages_inclusion(package_names: List[str], out: TextIO):
