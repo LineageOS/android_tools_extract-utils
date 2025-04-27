@@ -108,6 +108,11 @@ class BpBuilder:
 
         return self.set(f'{specific}_specific', True)
 
+    def recovery_available(self, recovery_available: bool):
+        if recovery_available:
+            self.set('recovery_available', True)
+        return self
+
     def __multilib(self, bits: Multilib):
         return self.set('compile_multilib', bits)
 

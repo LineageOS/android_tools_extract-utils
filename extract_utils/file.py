@@ -62,6 +62,7 @@ class FileArgs(str, Enum):
     SYMLINK = 'SYMLINK'
     TRYSRCFIRST = 'TRYSRCFIRST'
     FILEGROUP = 'FILEGROUP'
+    RECOVERY_AVAILABLE = 'RECOVERY_AVAILABLE'
 
 
 FILE_ARGS_TYPE_MAP = {
@@ -86,6 +87,7 @@ FILE_ARGS_TYPE_MAP = {
     FileArgs.SYMLINK: list,
     FileArgs.TRYSRCFIRST: True,
     FileArgs.FILEGROUP: list,
+    FileArgs.RECOVERY_AVAILABLE: True,
 }
 
 assert len(FileArgs) == len(FILE_ARGS_TYPE_MAP)
@@ -307,6 +309,10 @@ class File:
     @property
     def filegroups(self):
         return self.args.get(FileArgs.FILEGROUP)
+
+    @property
+    def recovery_available(self):
+        return self.args.get(FileArgs.RECOVERY_AVAILABLE)
 
 
 T = TypeVar('T')
