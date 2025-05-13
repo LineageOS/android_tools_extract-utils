@@ -109,7 +109,11 @@ def executable_path(name: str) -> str:
 
 
 def run_cmd(cmd: List[str], shell=False):
-    cmd[0] = executable_path(cmd[0])
+    try:
+        cmd[0] = executable_path(cmd[0])
+    except ValueError as e:
+        color_print(f'{e}', color=Color.RED)
+
     proc = run(
         cmd,
         stdout=PIPE,
