@@ -180,6 +180,20 @@ class blob_fixup:
 
         return patches
 
+    def __get_patch_affected_files(self, patch):
+        output = run_cmd(['git', 'apply', '--numstat', patch])
+
+        files = []
+        for line in output.strip().splitlines():
+            parts = line.split('\t')
+            if len(parts) != 3:
+                raise ValueError(f'Invalid numstat line {line}')
+
+            _, _, path = parts
+            files.append(path)
+
+        return files
+
     def patch_impl(
         self,
         patches_path: str,
@@ -193,11 +207,15 @@ class blob_fixup:
         patches = self.__get_patches(ctx, patches_path)
         assert tmp_dir is not None
 
+        affected_files = []
+        for patch in patches:
+            affected_files += self.__get_patch_affected_files(patch)
+
         # Try to apply the changes in reverse, so that they apply cleanly
         # forward
         with TemporaryWorkingDirectory(tmp_dir):
             run_cmd(['git', 'init'])
-            run_cmd(['git', 'add', '.'])
+            run_cmd(['git', 'add'] + affected_files)
             run_cmd(['git', 'commit', '-m', 'Initial commit'])
 
             with suppress(Exception):
