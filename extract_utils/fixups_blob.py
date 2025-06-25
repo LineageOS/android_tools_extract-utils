@@ -256,26 +256,42 @@ class blob_fixup:
 
         affected_files = self.__get_patches_affected_files(patches)
 
+        def git_add_files():
+            run_cmd(['git', 'add'] + affected_files)
+
         # Try to apply the changes in reverse, so that they apply cleanly
         # forward
         with TemporaryWorkingDirectory(tmp_dir):
             run_cmd(['git', 'init'])
-            run_cmd(['git', 'add'] + affected_files)
+            git_add_files()
             run_cmd(['git', 'commit', '-m', 'Initial commit'])
 
-            with suppress(Exception):
-                run_cmd(
-                    [
-                        'git',
-                        'apply',
-                        '--reverse',
-                        '--check',
-                    ]
-                    + patches[::-1]
-                )
-                return
+            for patch in patches[::-1]:
+                with suppress(Exception):
+                    run_cmd(
+                        [
+                            'git',
+                            'apply',
+                            '--verbose',
+                            '--reverse',
+                        ]
+                        + patch
+                    )
+                    git_add_files()
+                    run_cmd(['git', 'commit', '-m', f'Revert: "{patch}"'])
 
-            run_cmd(['git', 'apply'] + patches)
+            for patch in patches:
+                try:
+                    run_cmd(['git', 'am', '--reject', patch])
+                except ValueError as e:
+                    color_print(
+                        f'Failed to apply patch {patch}',
+                        color=Color.RED,
+                    )
+                    color_print('Git history:', color=Color.RED)
+                    output = run_cmd(['git', 'log'])
+                    print(output)
+                    raise e
 
     def patch_dir(self, patches_path: str) -> blob_fixup:
         impl = partial(self.patch_impl, patches_path)
