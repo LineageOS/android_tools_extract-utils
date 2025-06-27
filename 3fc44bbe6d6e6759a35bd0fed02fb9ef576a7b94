@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c2c21995_b727004e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 13648
+      },
+      "writtenOn": "2025-06-27T09:54:04Z",
+      "side": 1,
+      "message": "Also rename templates/multi-device-py and templates/single-device-py?",
+      "revId": "3fc44bbe6d6e6759a35bd0fed02fb9ef576a7b94",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
