@@ -69,7 +69,7 @@ class ExtractFn:
 
 
 extract_fns_type = List[ExtractFn]
-extract_fns_user_type = extract_fns_dict_type | extract_fns_type
+extract_fns_user_type = Union[extract_fns_dict_type, extract_fns_type]
 
 
 class ExtractCtx:
