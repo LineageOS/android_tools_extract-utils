@@ -34,7 +34,7 @@ from extract_utils.utils import (
 
 APKTOOL_NO_RES_ARG = '--no-res'
 APKTOOL_NO_SRC_ARG = '--no-src'
-APKTOOL_SRC_PATH = 'smali/'
+APKTOOL_SRC_PATH_PREFIX = 'smali'
 APKTOOL_RES_PATH = 'res/'
 APKTOOL_ANDROID_MANIFEST_NAME = 'AndroidManifest.xml'
 
@@ -226,7 +226,7 @@ class blob_fixup:
             if affected_file.startswith(APKTOOL_RES_PATH):
                 decode_res = True
 
-            if affected_file.startswith(APKTOOL_SRC_PATH):
+            if affected_file.startswith(APKTOOL_SRC_PATH_PREFIX):
                 decode_src = True
 
             if affected_file == APKTOOL_ANDROID_MANIFEST_NAME:
