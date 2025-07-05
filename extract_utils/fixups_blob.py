@@ -257,7 +257,9 @@ class blob_fixup:
         affected_files = self.__get_patches_affected_files(patches)
 
         def git_add_files():
-            run_cmd(['git', 'add'] + affected_files)
+            run_cmd(
+                ['git', 'add'] + list(filter(os.path.exists, affected_files))
+            )
 
         # Try to apply the changes in reverse, so that they apply cleanly
         # forward
