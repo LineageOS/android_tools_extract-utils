@@ -254,16 +254,19 @@ class blob_fixup:
         patches = self.__get_patches(ctx, patches_path)
         assert tmp_dir is not None
 
-        affected_files = self.__get_patches_affected_files(patches)
-
-        def git_add_files():
-            run_cmd(['git', 'add'] + affected_files)
+        def git_add_files(files: List[str]):
+            run_cmd(['git', 'add'] + files)
 
         # Try to apply the changes in reverse, so that they apply cleanly
         # forward
         with TemporaryWorkingDirectory(tmp_dir):
             run_cmd(['git', 'init'])
-            git_add_files()
+            all_files = list(
+                filter(
+                    os.path.exists, self.__get_patches_affected_files(patches)
+                )
+            )
+            git_add_files(all_files)
             run_cmd(['git', 'commit', '-m', 'Initial commit'])
 
             for patch in patches[::-1]:
@@ -277,7 +280,8 @@ class blob_fixup:
                         ]
                         + patch
                     )
-                    git_add_files()
+                    patch_files = self.__get_patch_affected_files(patch)
+                    git_add_files(patch_files)
                     run_cmd(['git', 'commit', '-m', f'Revert: "{patch}"'])
 
             for patch in patches:
