@@ -284,7 +284,9 @@ class blob_fixup:
 
             for patch in patches:
                 try:
-                    run_cmd(['git', 'am', '--reject', patch])
+                    run_cmd(['git', 'apply', '--reject', patch])
+                    git_add_files()
+                    run_cmd(['git', 'commit', '-m', f'Apply: "{patch}"'])
                 except ValueError as e:
                     color_print(
                         f'Failed to apply patch {patch}',
