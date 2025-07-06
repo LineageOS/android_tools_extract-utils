@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "95d03aea_ebda69f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2025-07-06T10:31:02Z",
+      "side": 1,
+      "message": "@bengris32@protonmail.ch\n\nCould you test the new version?",
+      "revId": "fdae2268362dd2ac8f96e11d52bc90bd7662dbe0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
