@@ -192,7 +192,8 @@ class blob_fixup:
         return patches
 
     def __get_patch_affected_files(self, patch: str) -> List[str]:
-        output = run_cmd(['git', 'apply', '--numstat', patch])
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output = run_cmd(['git', 'apply', '--numstat', patch], cwd=tmp_dir)
 
         files = []
         for line in output.strip().splitlines():

@@ -108,7 +108,7 @@ def executable_path(name: str) -> str:
     return exe_path
 
 
-def run_cmd(cmd: List[str], shell=False):
+def run_cmd(cmd: List[str], shell=False, cwd=None):
     cmd[0] = executable_path(cmd[0])
     proc = run(
         cmd,
@@ -116,6 +116,7 @@ def run_cmd(cmd: List[str], shell=False):
         stderr=PIPE,
         text=True,
         shell=shell,
+        cwd=cwd,
         check=False,
     )
     if proc.returncode != 0:
