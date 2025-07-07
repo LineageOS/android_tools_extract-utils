@@ -192,18 +192,8 @@ class blob_fixup:
         return patches
 
     def __get_patch_affected_files(self, patch: str) -> List[str]:
-        output = run_cmd(['git', 'apply', '--numstat', patch])
-
-        files = []
-        for line in output.strip().splitlines():
-            parts = line.split('\t')
-            if len(parts) != 3:
-                raise ValueError(f'Invalid numstat line {line}')
-
-            _, _, path = parts
-            files.append(path)
-
-        return files
+        output = run_cmd(['diffstat', '-p', '1', '-l', patch])
+        return output.strip().splitlines()
 
     def __get_patches_affected_files(self, patches: List[str]) -> List[str]:
         affected_files = []
