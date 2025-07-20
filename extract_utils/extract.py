@@ -391,7 +391,7 @@ def extract_ext4(file_path: str, output_path: str):
         [
             'debugfs',
             '-R',
-            f'rdump / {partition_output_path}',
+            f'rdump / "{partition_output_path}"',
             file_path,
         ],
     )
