@@ -1473,25 +1473,21 @@ function append_firmware_calls_to_makefiles() {
     local ARGS_LIST=("${PRODUCT_COPY_FILES_ARGS[@]}")
     local COUNT=${#DEST_LIST[@]}
 
-    if [[ ${ARGS_LIST[*]} =~ "AB" ]]; then
-        printf '%s\n' "AB_OTA_PARTITIONS += \\" >>"$BOARDMK"
-    fi
-
     for ((i = 1; i < COUNT + 1; i++)); do
         local DST_FILE="${DEST_LIST[$i - 1]}"
         local SPEC_ARGS="${ARGS_LIST[$i - 1]}"
-        local SHA1=$(get_hash "$ANDROID_ROOT"/"$OUTDIR"/radio/"$DST_FILE")
+        local DST_FILE_PATH="$OUTDIR"/radio/"$DST_FILE"
+        local SHA1=$(get_hash "$ANDROID_ROOT"/"$DST_FILE_PATH")
         local DST_FILE_NAME="${DST_FILE%.img}"
+        local DST_PART_NAME="${DST_FILE_NAME^^}"
         local ARGS=(${SPEC_ARGS//;/ })
-        LINEEND=" \\"
-        if [ "$i" -eq "$COUNT" ]; then
-            LINEEND=""
-        fi
 
         for ARG in "${ARGS[@]}"; do
             if [ "$ARG" = "AB" ]; then
-                printf '    %s%s\n' "$DST_FILE_NAME" "$LINEEND" >>"$BOARDMK"
+                printf 'AB_OTA_PARTITIONS += %s\n' "$DST_FILE_NAME" >>"$BOARDMK"
             fi
+            printf 'BOARD_CUSTOMIMAGES_PARTITION_LIST += %s\n' "$DST_FILE_NAME" >>"$BOARDMK"
+            printf 'BOARD_%s_IMAGE_LIST += %s\n\n' "$DST_PART_NAME" "$DST_FILE_PATH" >>"$BOARDMK"
         done
         printf '%s\n' "\$(call add-radio-file-sha1-checked,radio/$DST_FILE,$SHA1)" >>"$ANDROIDMK"
     done
