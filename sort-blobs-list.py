@@ -88,7 +88,12 @@ if __name__ == '__main__':
             continue
 
         with open(file, 'r', encoding='utf-8') as f:
-            sections = f.read().split('\n\n')
+            lines = f.read().splitlines()
+        if not lines:
+            continue
+        header = lines.pop(0)
+
+        sections = '\n'.join(lines).split('\n\n')
 
         ordered_sections = []
         for section in sections:
@@ -97,4 +102,5 @@ if __name__ == '__main__':
             ordered_sections.append('\n'.join(section_list))
 
         with open(file, 'w', encoding='utf-8') as f:
+            f.write(header + '\n')
             f.write('\n\n'.join(ordered_sections).strip() + '\n')
