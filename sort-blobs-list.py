@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 #
-# SPDX-FileCopyrightText: 2021-2024 The LineageOS Project
+# SPDX-FileCopyrightText: 2021-2025 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
 import re
 from argparse import ArgumentParser
 from functools import cmp_to_key
+from itertools import groupby
 from locale import LC_ALL, setlocale, strcoll
 from pathlib import Path
+
+
+def is_blob(line: str) -> bool:
+    line = line.strip()
+    return line and not line.startswith('#')
 
 
 def get_source_file_name(line: str) -> str:
@@ -88,13 +94,14 @@ if __name__ == '__main__':
             continue
 
         with open(file, 'r', encoding='utf-8') as f:
-            sections = f.read().split('\n\n')
+            sections = groupby(f.readlines(), is_blob)
 
         ordered_sections = []
-        for section in sections:
-            section_list = [line.strip() for line in section.splitlines()]
-            section_list.sort(key=sort_key)
-            ordered_sections.append('\n'.join(section_list))
+        for sort, section in sections:
+            if sort:
+                ordered_sections.append(''.join(sorted(section, key=sort_key)))
+            else:
+                ordered_sections.append(''.join(section))
 
         with open(file, 'w', encoding='utf-8') as f:
-            f.write('\n\n'.join(ordered_sections).strip() + '\n')
+            f.write(''.join(ordered_sections))
