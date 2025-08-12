@@ -191,6 +191,7 @@ class ProprietaryFile:
             vendor_rel_path,
             self.vendor_rel_sub_path,
             module.lib_fixups,
+            module.apps_gen_uses_libs,
         )
 
         self.run_pre_makefile_generation_fns(ctx, packages_ctx)
@@ -416,6 +417,7 @@ class ExtractUtilsModule:
         add_generated_carriersettings_file=False,
         add_generated_carriersettings=False,
         skip_main_proprietary_file=False,
+        apps_gen_uses_libs=False,
     ):
         self.device = device
         self.vendor = vendor
@@ -457,6 +459,8 @@ class ExtractUtilsModule:
 
         if not skip_main_proprietary_file:
             self.add_proprietary_file('proprietary-files.txt')
+
+        self.apps_gen_uses_libs = apps_gen_uses_libs
 
     def get_partitions(
         self,

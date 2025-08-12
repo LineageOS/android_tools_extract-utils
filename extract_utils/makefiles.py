@@ -11,6 +11,7 @@ from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
 from typing import Iterable, List, Optional, Protocol, TextIO
 
+from extract_utils.apk import get_file_uses_libs_optional_uses_libs
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
 from extract_utils.bp_encoder import BpJSONEncoder
 from extract_utils.elf import (
@@ -81,6 +82,7 @@ class ProductPackagesCtx:
         vendor_prop_rel_path: str,
         vendor_prop_rel_sub_path: str,
         lib_fixups: lib_fixups_type,
+        apps_gen_uses_libs: bool,
     ):
         self.check_elf = check_elf
         self.vendor = vendor
@@ -91,6 +93,7 @@ class ProductPackagesCtx:
         # Path of the vendor sub-directory relative to the vendor path
         self.vendor_prop_rel_sub_path = vendor_prop_rel_sub_path
         self.lib_fixups = lib_fixups
+        self.apps_gen_uses_libs = apps_gen_uses_libs
 
 
 class write_package_fn(Protocol):
@@ -327,8 +330,18 @@ def write_apex_package(file: File, builder: FileBpBuilder):
     return package_name
 
 
-def write_app_package(file: File, builder: FileBpBuilder):
+def write_app_package(
+    file: File, builder: FileBpBuilder, ctx: ProductPackagesCtx
+):
     _, package_name = file_stem_package_name(file)
+
+    gen_uses_libs = ctx.apps_gen_uses_libs
+    uses_libs = optional_uses_libs = None, None
+    if gen_uses_libs:
+        f_path = f'{ctx.vendor_prop_path}/{file.dst}'
+        uses_libs, optional_uses_libs = get_file_uses_libs_optional_uses_libs(
+            f_path
+        )
 
     # TODO: remove required entries from package_names if actually needed
     # TODO: check if manually specified certificates are needed
@@ -339,6 +352,8 @@ def write_app_package(file: File, builder: FileBpBuilder):
         .apk()
         .set('overrides', file.overrides, optional=True)
         .set('required', file.required, optional=True)
+        .set('uses_libs', uses_libs, optional=True)
+        .set('optional_uses_libs', optional_uses_libs, optional=True)
         .signature()
         .set('dex_preopt', {'enabled': False})
         .set('privileged', file.privileged, optional=True)
@@ -523,8 +538,8 @@ def write_product_packages(
         wp(write_apex_package, part, 'apex')
 
     for part in ALL_PARTITIONS:
-        wp(write_app_package, part, 'app')
-        wp(write_app_package, part, 'priv-app')
+        wp(write_app_package, part, 'app', packages_ctx)
+        wp(write_app_package, part, 'priv-app', packages_ctx)
 
     for part in ALL_PARTITIONS:
         wp(write_framework_package, part, 'framework')
