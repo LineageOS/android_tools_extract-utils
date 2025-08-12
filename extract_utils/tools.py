@@ -50,3 +50,6 @@ carriersettings_extractor_path = path.join(
     'carriersettings-extractor/carriersettings_extractor.py',
 )
 fbpacktool_path = path.join(lineage_scripts_dir, 'fbpacktool/fbpacktool.py')
+
+sdk_binaries_dir = path.join(android_root, 'prebuilts/sdk/tools/linux/bin/')
+aapt2_path = path.join(sdk_binaries_dir, 'aapt2')
