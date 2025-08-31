@@ -1,5 +1,5 @@
 #
-# SPDX-FileCopyrightText: 2024 The LineageOS Project
+# SPDX-FileCopyrightText: 2024-2025 The LineageOS Project
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -236,6 +236,7 @@ def write_elfs_package(
             .relative_install_path()
             .specific()
             .recovery_available()
+            .set('required', file.required, optional=True)
         )
 
         return package_name
@@ -253,6 +254,7 @@ def write_elfs_package(
         .prefer()
         .specific()
         .recovery_available()
+        .set('required', file.required, optional=True)
     )
 
     return package_name
