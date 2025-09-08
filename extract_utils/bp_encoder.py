@@ -3,9 +3,18 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+from __future__ import annotations
+
 import json
 from json import JSONEncoder
-from typing import Iterator
+from typing import Dict, Iterator, Sequence, Union
+
+bp_type = Union[
+    Dict[str, 'bp_type'],
+    Sequence['bp_type'],
+    str,
+    bool,
+]
 
 
 class BpJSONEncoder(JSONEncoder):
