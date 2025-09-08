@@ -79,7 +79,7 @@ class Source(ABC):
         self,
         file: File,
         file_path: str,
-        is_firmware=False,
+        is_firmware: bool = False,
     ) -> bool:
         file_dir = path.dirname(file_path)
         os.makedirs(file_dir, exist_ok=True)
@@ -96,7 +96,7 @@ class Source(ABC):
         self,
         file: File,
         copy_dir: str,
-        is_firmware=False,
+        is_firmware: bool = False,
     ) -> bool:
         file_copy_path = self.get_file_copy_path(file, copy_dir)
         return self.copy_file_to_path(
@@ -117,7 +117,7 @@ class Source(ABC):
         if regex is not None:
             compiled_regex = re.compile(regex)
 
-        file_srcs = []
+        file_srcs: List[str] = []
 
         file_rel_paths = self._list_sub_path_file_rel_paths(sub_path)
         file_rel_paths.sort()
@@ -238,7 +238,7 @@ class DiskSource(Source):
     def _list_sub_path_file_rel_paths(self, sub_path: str) -> List[str]:
         dump_dir_sub_path = path.join(self.dump_dir, sub_path)
 
-        file_rel_paths = []
+        file_rel_paths: List[str] = []
 
         for dir_path, _, file_names in os.walk(dump_dir_sub_path):
             dir_rel_path = path.relpath(dir_path, dump_dir_sub_path)
