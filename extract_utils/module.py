@@ -98,7 +98,6 @@ class ProprietaryFile:
         kind=ProprietaryFileType.BLOBS,
     ):
         self.file_list_path = file_list_path
-        self.root_path = path.relpath(self.file_list_path, android_root)
         self.vendor_rel_sub_path = vendor_rel_sub_path
         self.file_list = FileList()
 
@@ -119,6 +118,11 @@ class ProprietaryFile:
             self.add_post_makefile_generation_fn(post_makefile_generation_fn)
 
         self.kind = kind
+
+    @property
+    def printable_path(self):
+        assert self.file_list_path is not None
+        return path.relpath(self.file_list_path, android_root)
 
     def fix_file_list(self):
         if self.__fix_file_list is not None:
@@ -694,7 +698,7 @@ class ExtractUtilsModule:
         if not kanged and not generated:
             return
 
-        print(f'Updating {proprietary_file.root_path}')
+        print(f'Updating {proprietary_file.printable_path}')
 
         proprietary_file.write_to_file()
 
@@ -716,7 +720,7 @@ class ExtractUtilsModule:
             ):
                 continue
 
-            print(f'Parsing {proprietary_file.root_path}')
+            print(f'Parsing {proprietary_file.printable_path}')
 
             proprietary_file.init_file_list(self, section)
             proprietary_file.parse()
@@ -736,7 +740,7 @@ class ExtractUtilsModule:
             ):
                 continue
 
-            print(f'Regenerating {proprietary_file.root_path}')
+            print(f'Regenerating {proprietary_file.printable_path}')
 
             proprietary_file.init_file_list(self, None)
             proprietary_file.regenerate(self, source)
@@ -964,7 +968,7 @@ class ExtractUtilsModule:
             printed = False
             for file in proprietary_file.file_list.pinned_files:
                 if not printed:
-                    print(f'Backing up {proprietary_file.root_path}')
+                    print(f'Backing up {proprietary_file.printable_path}')
                 self.backup_file(file, backup_source, backup_dir)
 
     def process_file(
@@ -1062,7 +1066,7 @@ class ExtractUtilsModule:
             ):
                 continue
 
-            print(f'Processing {proprietary_file.root_path}')
+            print(f'Processing {proprietary_file.printable_path}')
 
             is_firmware = proprietary_file.kind is ProprietaryFileType.FIRMWARE
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
