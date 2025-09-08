@@ -30,6 +30,8 @@ for version in patchelf_versions:
 build_tools_dir = path.join(android_root, 'prebuilts/build-tools/linux-x86/bin')
 brotli_path = path.join(build_tools_dir, 'brotli')
 
+kernel_build_tools_dir = path.join(android_root, 'prebuilts/kernel-build-tools/linux-x86/bin')
+avbtool_path = path.join(kernel_build_tools_dir, 'avbtool')
 
 common_binaries_dir = path.join(android_root, 'prebuilts/extract-tools/common')
 apktool_path = path.join(common_binaries_dir, 'apktool/apktool.jar')
