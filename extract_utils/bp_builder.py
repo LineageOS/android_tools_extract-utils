@@ -7,8 +7,9 @@ from __future__ import annotations
 
 from enum import Enum
 from json import JSONEncoder
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TextIO
 
+from extract_utils.bp_encoder import bp_type
 from extract_utils.elf_parser import EM
 from extract_utils.file import File
 
@@ -63,7 +64,7 @@ class BpBuilder:
         self.__rule_name: Optional[str] = None
         self.__encoder = encoder
 
-        self.o: dict = {}
+        self.o: Dict[str, bp_type] = {}
 
     def set_owner(self, owner: str):
         self.__owner = owner
@@ -80,8 +81,8 @@ class BpBuilder:
     def set(
         self,
         k: str,
-        v: Optional[str | bool | List | Dict],
-        optional=False,
+        v: Optional[bp_type],
+        optional: bool = False,
     ):
         assert v is not None or optional
         if v is not None:
@@ -135,7 +136,7 @@ class BpBuilder:
     def prefer(self):
         return self.set('prefer', True)
 
-    def write(self, out):
+    def write(self, out: TextIO):
         assert self.__rule_name is not None
 
         out.write('\n')
@@ -162,7 +163,7 @@ class FileBpBuilder(BpBuilder):
 
         self.set_partition(file.partition)
 
-    def __file_dir_without_prefix(self, is_app=False) -> Optional[str]:
+    def __file_dir_without_prefix(self, is_app: bool = False) -> Optional[str]:
         # Remove the length of the file tree prefix from the dirname,
         # including the final slash
         remaining = self.__file.dirname[self.__prefix_len :]
@@ -174,7 +175,7 @@ class FileBpBuilder(BpBuilder):
 
         return remaining
 
-    def relative_install_path(self, is_app=False):
+    def relative_install_path(self, is_app: bool = False):
         p = self.__file_dir_without_prefix(is_app)
         return self.set('relative_install_path', p, optional=True)
 
@@ -225,17 +226,22 @@ class FileBpBuilder(BpBuilder):
         )
 
     def target(self, f: File, machine: EM, deps: Optional[List[str]]):
-        target = self.o.setdefault('target', {})
+        target_dict: Dict[str, bp_type] = {}
+        if 'target' not in self.o:
+            self.o['target'] = target_dict
 
         rel_path = self.__file_rel_sub_path(f.dst)
         if machine == EM.QDSP6:
             arch = 'android_arm64' if f.inferred_bits == 64 else 'android_arm'
         else:
             arch = MACHINE_TARGET_MAP[machine]
-        target[arch] = {'srcs': [rel_path]}
+
+        target_dict_arch: Dict[str, bp_type] = {'srcs': [rel_path]}
 
         if deps:
-            target[arch]['shared_libs'] = deps
+            target_dict_arch['shared_libs'] = deps
+
+        target_dict[arch] = target_dict_arch
 
         return self
 
