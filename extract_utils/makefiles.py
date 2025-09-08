@@ -9,7 +9,7 @@ import os
 from collections import defaultdict
 from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
-from typing import Iterable, List, Optional, Protocol, TextIO
+from typing import Any, DefaultDict, Iterable, List, Optional, Protocol, TextIO
 
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
 from extract_utils.bp_encoder import BpJSONEncoder
@@ -98,8 +98,8 @@ class write_package_fn(Protocol):
         self,
         file: File,
         builder: FileBpBuilder,
-        *args,
-        **kwargs,
+        *args: Any,
+        **kwargs: Any,
     ) -> str: ...
 
 
@@ -108,8 +108,8 @@ class write_common_package_fn(Protocol):
         self,
         files: List[File],
         builder: FileBpBuilder,
-        *args,
-        **kwargs,
+        *args: Any,
+        **kwargs: Any,
     ) -> str: ...
 
 
@@ -133,8 +133,8 @@ def file_gen_deps_check_elf(global_check_elf: bool, file: File):
 
 def file_stem_package_name(
     file: File,
-    can_have_stem=False,
-    any_extension=False,
+    can_have_stem: bool = False,
+    any_extension: bool = False,
 ):
     package_name = file.root
     stem = None
@@ -165,7 +165,11 @@ def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> Optional[str]:
     return remaining
 
 
-def write_sh_package(file: File, builder: FileBpBuilder, any_extension=False):
+def write_sh_package(
+    file: File,
+    builder: FileBpBuilder,
+    any_extension: bool = False,
+):
     stem, package_name = file_stem_package_name(
         file,
         any_extension=any_extension,
@@ -190,15 +194,15 @@ def write_elfs_package(
     files: List[File],
     builder: FileBpBuilder,
     ctx: ProductPackagesCtx,
-    is_bin=False,
+    is_bin: bool = False,
 ):
     file = files[0]
 
     gen_deps, enable_check_elf = file_gen_deps_check_elf(ctx.check_elf, file)
 
-    machines = []
-    bitses = []
-    depses = []
+    machines: List[EM] = []
+    bitses: List[int] = []
+    depses: List[Optional[List[str]]] = []
 
     for f in files:
         f_path = f'{ctx.vendor_prop_path}/{f.dst}'
@@ -206,6 +210,9 @@ def write_elfs_package(
         machine, bits, libs = get_file_machine_bits_libs(f_path, gen_deps)
         if is_bin and (machine is None or bits is None):
             return write_sh_package(files[0], builder, any_extension=True)
+
+        assert machine is not None
+        assert bits is not None
 
         if machine == EM.QDSP6:
             libs = None
@@ -219,7 +226,9 @@ def write_elfs_package(
         depses.append(deps)
 
     stem, package_name = file_stem_package_name(
-        file, can_have_stem=True, any_extension=is_bin
+        file,
+        can_have_stem=True,
+        any_extension=is_bin,
     )
 
     if is_bin:
@@ -408,8 +417,8 @@ def write_common_packages_group(
     package_names: List[str],
     out: TextIO,
     encoder: JSONEncoder,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     for files in file_tree.common_files_iter():
         builder = create_builder(ctx, file_tree, files[0], encoder)
@@ -425,8 +434,8 @@ def write_packages_group(
     package_names: List[str],
     out: TextIO,
     encoder: JSONEncoder,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     for file in file_tree:
         builder = create_builder(ctx, file_tree, file, encoder)
@@ -475,7 +484,12 @@ def write_product_packages(
     encoder = BpJSONEncoder(legacy=ctx.legacy)
     package_names: List[str] = []
 
-    def w(fn: write_package_fn, file_tree: FileTree, *args, **kwargs):
+    def w(
+        fn: write_package_fn,
+        file_tree: FileTree,
+        *args: Any,
+        **kwargs: Any,
+    ):
         return write_packages_group(
             packages_ctx,
             file_tree,
@@ -487,7 +501,13 @@ def write_product_packages(
             **kwargs,
         )
 
-    def wp(fn: write_package_fn, partition: str, sub_dir: str, *args, **kwargs):
+    def wp(
+        fn: write_package_fn,
+        partition: str,
+        sub_dir: str,
+        *args: Any,
+        **kwargs: Any,
+    ):
         file_tree = base_file_tree.filter_prefixed([partition, sub_dir])
 
         return w(fn, file_tree, *args, **kwargs)
@@ -617,7 +637,7 @@ def write_dummy_shared_libs_packages(
     file = files[0]
     stem, package_name = file_stem_package_name(file, can_have_stem=True)
 
-    bitses = []
+    bitses: List[int] = []
     for f in files:
         dst_dir = f.parts[1]
         if dst_dir == 'lib':
@@ -645,7 +665,12 @@ def write_dummy_shared_libs(
     encoder = BpJSONEncoder(legacy=ctx.legacy)
     package_names: List[str] = []
 
-    def w(fn: write_package_fn, file_tree: FileTree, *args, **kwargs):
+    def w(
+        fn: write_package_fn,
+        file_tree: FileTree,
+        *args: Any,
+        **kwargs: Any,
+    ):
         return write_packages_group(
             packages_ctx,
             file_tree,
@@ -706,7 +731,7 @@ def write_filegroups(
     files: Iterable[File],
 ):
     encoder = BpJSONEncoder(legacy=ctx.legacy)
-    filegroup_to_files = defaultdict(list)
+    filegroup_to_files: DefaultDict[str, List[File]] = defaultdict(list)
 
     for file in files:
         filegroups = file.filegroups
@@ -917,7 +942,12 @@ def write_rro_package(
     write_packages_inclusion([package_name], ctx.product_mk_out)
 
 
-def write_mk_guard_begin(name: str, value: str, mk_out: TextIO, invert=False):
+def write_mk_guard_begin(
+    name: str,
+    value: str,
+    mk_out: TextIO,
+    invert: bool = False,
+):
     rule = 'ifeq' if not invert else 'ifneq'
     mk_out.write(f'\n{rule} ($({name}),{value})\n')
 
