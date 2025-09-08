@@ -27,7 +27,7 @@ def remove_libs_so_ending(libs: None | Iterable[str]) -> None | List[str]:
     if libs is None:
         return None
 
-    so_removed_libs = []
+    so_removed_libs: List[str] = []
     for lib in libs:
         assert lib.endswith(SO_SUFFIX)
         lib = lib[:-SO_SUFFIX_LEN]
