@@ -279,8 +279,8 @@ class blob_fixup:
                             'apply',
                             '--verbose',
                             '--reverse',
+                            patch,
                         ]
-                        + patch
                     )
                     patch_files = self.__get_patch_affected_files(patch)
                     git_add_files(patch_files)
