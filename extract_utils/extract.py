@@ -424,11 +424,20 @@ def extract_tar(source: str, dump_dir: str):
         tar.extractall(dump_dir)
 
 
+def extract_7z(source: str, dump_dir: str):
+    import py7zr
+
+    with py7zr.SevenZipFile(source, 'r') as archive:
+        archive.extractall(dump_dir)
+
+
 def extract_image_file(source: str, dump_dir: str):
     if is_zipfile(source):
         extract_fn = extract_zip
     elif is_tarfile(source):
         extract_fn = extract_tar
+    elif source.endswith('.7z'):
+        extract_fn = extract_7z
     else:
         raise ValueError(f'Unexpected file type at {source}')
 
