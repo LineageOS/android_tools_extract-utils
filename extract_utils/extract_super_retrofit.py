@@ -7,7 +7,7 @@ from concurrent.futures import ProcessPoolExecutor
 from contextlib import ExitStack
 from functools import partial
 from os import path
-from typing import List
+from typing import Any, List
 
 from extract_utils.extract import ExtractCtx, ExtractFn
 from extract_utils.lp import LpImage
@@ -52,13 +52,13 @@ def extract_super_retrofit(
     ctx: ExtractCtx,
     file_paths: List[str],
     work_dir: str,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     key_fn = partial(key_super_partitions, partitions)
     file_paths.sort(key=key_fn)
 
-    unsparsed_file_paths = []
+    unsparsed_file_paths: List[str] = []
     with ProcessPoolExecutor() as exe:
         for file_path in file_paths:
             output_file_path = f'{file_path}.unsparsed'
