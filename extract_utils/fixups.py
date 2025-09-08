@@ -22,7 +22,7 @@ fixups_type = Dict[str, T]
 def flatten_fixups(
     fixups: Optional[fixups_user_type[T]],
 ) -> fixups_type[T]:
-    fixups_final: fixups_type = {}
+    fixups_final: fixups_type[T] = {}
 
     if fixups is None:
         return fixups_final
@@ -30,10 +30,9 @@ def flatten_fixups(
     for entries, value in fixups.items():
         if isinstance(entries, str):
             fixups_final[entries] = value
-        elif isinstance(entries, tuple):
+        else:
+            assert isinstance(entries, tuple)
             for entry in entries:
                 fixups_final[entry] = value
-        else:
-            assert False
 
     return fixups_final
