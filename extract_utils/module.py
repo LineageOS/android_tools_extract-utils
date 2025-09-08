@@ -71,6 +71,7 @@ class ProprietaryFileType(Enum):
     BLOBS = 0
     FIRMWARE = 1
     FACTORY = 2
+    VIRTUAL = 3
 
 
 fix_file_list_fn_type = Callable[[FileList], None]
@@ -83,7 +84,7 @@ pre_post_makefile_generation_fn_type = Callable[
 class ProprietaryFile:
     def __init__(
         self,
-        file_list_path: str,
+        file_list_path: Optional[str],
         vendor_rel_sub_path: str = 'proprietary',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
         pre_makefile_generation_fn: Optional[
@@ -100,6 +101,8 @@ class ProprietaryFile:
         ] = None,
         kind: ProprietaryFileType = ProprietaryFileType.BLOBS,
     ):
+        assert file_list_path is not None or kind == ProprietaryFileType.VIRTUAL
+
         self.file_list_path = file_list_path
         self.vendor_rel_sub_path = vendor_rel_sub_path
         self.file_list = FileList()
@@ -239,6 +242,7 @@ class ProprietaryFile:
         self.run_post_makefile_generation_fns(ctx, packages_ctx)
 
     def write_to_file(self):
+        assert self.file_list_path is not None
         self.file_list.write_to_file(self.file_list_path)
 
     def init_file_list(
@@ -252,6 +256,7 @@ class ProprietaryFile:
         )
 
     def parse(self):
+        assert self.file_list_path is not None
         self.file_list.add_from_file(self.file_list_path)
 
     def get_files(self) -> Iterable[File]:
@@ -259,6 +264,34 @@ class ProprietaryFile:
 
     def get_partitions(self) -> Set[str]:
         return self.file_list.partitions
+
+
+class VirtualPropertietaryFile(ProprietaryFile):
+    def __init__(
+        self,
+        name: str,
+        file_list_lines: List[str],
+        vendor_rel_sub_path: str = 'proprietary',
+    ):
+        super().__init__(
+            None,
+            vendor_rel_sub_path,
+            None,
+            kind=ProprietaryFileType.VIRTUAL,
+        )
+
+        self.name = name
+        self.file_list_lines = file_list_lines
+
+    @property
+    def printable_path(self):
+        return self.name
+
+    def write_to_file(self):
+        pass
+
+    def parse(self):
+        self.file_list.add_from_lines(self.file_list_lines)
 
 
 class FirmwareProprietaryFile(ProprietaryFile):
