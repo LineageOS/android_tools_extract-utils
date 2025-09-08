@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import shutil
 from os import path
+from typing import Any
 
 from extract_utils.extract import ExtractCtx, extract_zip
 from extract_utils.tools import fbpacktool_path
@@ -20,8 +21,8 @@ def extract_pixel_factory_image(
     ctx: ExtractCtx,
     file_path: str,
     work_dir: str,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     extract_zip(file_path, work_dir)
     return file_path
@@ -31,8 +32,8 @@ def copy_pixel_firmware(
     ctx: ExtractCtx,
     file_path: str,
     work_dir: str,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     file_name = path.basename(file_path)
     file_root, ext = path.splitext(file_name)
@@ -51,8 +52,8 @@ def extract_pixel_firmware(
     ctx: ExtractCtx,
     file_path: str,
     work_dir: str,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     run_cmd(['python', fbpacktool_path, 'unpack', '-o', work_dir, file_path])
     return file_path
