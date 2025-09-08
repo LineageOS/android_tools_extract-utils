@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 from os import path
+from typing import Any
 
 from extract_utils.ext4 import ext4_get_volume_name
 from extract_utils.extract import ExtractCtx, ExtractFn
@@ -16,8 +17,8 @@ def extract_rename_ext_image(
     ctx: ExtractCtx,
     file_path: str,
     work_dir: str,
-    *args,
-    **kwargs,
+    *args: Any,
+    **kwargs: Any,
 ):
     volume_name = ext4_get_volume_name(file_path)
     if not volume_name:
