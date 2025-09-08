@@ -9,7 +9,7 @@ import ctypes
 from enum import Enum
 from io import BufferedReader
 from mmap import ACCESS_READ, MAP_PRIVATE, mmap
-from typing import Optional
+from typing import List, Optional
 
 MAG = b'\x7fELF'
 E_IDENT_LEN = 16
@@ -258,9 +258,9 @@ class ELFFile:
         return None, None
 
     def dynamic_section_strtab(self, shdr: Elf32_Shdr | Elf64_Shdr):
-        strtab_addr = None
-        strtab_sz = None
-        strtab_offsets = []
+        strtab_addr: Optional[int] = None
+        strtab_sz: Optional[int] = None
+        strtab_offsets: List[int] = []
 
         for dyn in self.iter_section_dyn(shdr):
             if dyn.d_tag == DT.STRTAB:
