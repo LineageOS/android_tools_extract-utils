@@ -14,15 +14,16 @@ from enum import Enum
 from functools import lru_cache
 from io import SEEK_CUR
 from mmap import mmap
-from os import path
+from os import DirEntry, path
 from subprocess import PIPE, run
-from typing import BinaryIO, Callable, Generator, Iterable, List, Optional
+from types import ModuleType
+from typing import Any, BinaryIO, Callable, Generator, Iterable, List, Optional
 from urllib.request import Request, urlopen
 
 CHUNK_SIZE = 1024 * 1024
 
 
-def import_module(module_name, module_path):
+def import_module(module_name: str, module_path: str):
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     if spec is None:
         return None
@@ -37,7 +38,7 @@ def import_module(module_name, module_path):
     return module
 
 
-def get_module_attr(module, attr):
+def get_module_attr(module: Optional[ModuleType], attr: str):
     if module is None:
         return None
 
@@ -57,8 +58,8 @@ def remove_dir_contents(dir_path: str):
             assert False
 
 
-def file_path_hash(file_path: str, hash_fn):
-    file_hash = hash_fn()
+# TODO: fix typing
+def file_path_hash(file_path: str, file_hash: Any):
     with open(file_path, 'rb') as f:
         while True:
             data = f.read(CHUNK_SIZE)
@@ -70,11 +71,11 @@ def file_path_hash(file_path: str, hash_fn):
 
 
 def file_path_sha1(file_path: str):
-    return file_path_hash(file_path, hashlib.sha1)
+    return file_path_hash(file_path, hashlib.sha1())
 
 
 def file_path_sha256(file_path: str):
-    return file_path_hash(file_path, hashlib.sha256)
+    return file_path_hash(file_path, hashlib.sha256())
 
 
 class Color(str, Enum):
@@ -84,10 +85,10 @@ class Color(str, Enum):
     END = '\033[0m'
 
 
-def color_print(*args, color: Color, **kwargs):
+def color_print(*args: object, color: Color):
     args_str = ' '.join(str(arg) for arg in args)
     args_str = color.value + args_str + Color.END.value
-    print(args_str, **kwargs)
+    print(args_str)
 
 
 @lru_cache(maxsize=None)
@@ -108,7 +109,7 @@ def executable_path(name: str) -> str:
     return exe_path
 
 
-def run_cmd(cmd: List[str], shell=False):
+def run_cmd(cmd: List[str], shell: bool = False):
     cmd[0] = executable_path(cmd[0])
     proc = run(
         cmd,
@@ -170,7 +171,7 @@ def split_lines_into_sections(lines: Iterable[str]) -> List[List[str]]:
 
 
 def parse_lines(lines: Iterable[str]) -> List[str]:
-    valid_lines = []
+    valid_lines: List[str] = []
 
     for line in lines:
         line = line.strip()
@@ -193,7 +194,7 @@ def TemporaryWorkingDirectory(dir_path: str) -> Generator[None, None, None]:
         os.chdir(cwd)
 
 
-def scan_tree(dir_path: str):
+def scan_tree(dir_path: str) -> Generator[DirEntry[str], None, None]:
     for entry in os.scandir(dir_path):
         if entry.is_dir(follow_symlinks=False):
             yield from scan_tree(entry.path)
@@ -236,11 +237,11 @@ def urlretrieve_resume(
     url: str,
     file_path: str,
     expected_sha256: Optional[str] = None,
-    print_fn: Optional[Callable[[int, bool, bool]]] = None,
+    print_fn: Optional[Callable[[int, bool, bool], None]] = None,
 ):
     total_size = get_content_length(url)
 
-    def print_percent(size: int, first=False, last=False):
+    def print_percent(size: int, first: bool = False, last: bool = False):
         percent = int(size / total_size * 100)
         if print_fn is not None:
             print_fn(percent, first, last)
@@ -286,8 +287,8 @@ def urlretrieve_resume(
 def read_mmap_chunked(
     mm: mmap,
     size: int,
-    offset=0,
-    chunk_size=0x100000,
+    offset: int = 0,
+    chunk_size: int = 0x100000,
 ):
     while size > 0:
         read_size = min(chunk_size, size)
