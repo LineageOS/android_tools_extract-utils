@@ -57,10 +57,7 @@ class ExtractUtils:
         device_module: ExtractUtilsModule,
         device_vendor_commons: List[Tuple[str] | Tuple[str, str]],
     ):
-        if device_vendor_commons is None:
-            device_vendor_commons = []
-
-        common_modules = []
+        common_modules: List[ExtractUtilsModule] = []
         for device_vendor_common in device_vendor_commons:
             device_common = device_vendor_common[0]
             if len(device_vendor_common) == 2:
@@ -95,7 +92,11 @@ class ExtractUtils:
         return cls(device_module)
 
     @classmethod
-    def import_module(cls, device, vendor) -> Optional[ExtractUtilsModule]:
+    def import_module(
+        cls,
+        device: str,
+        vendor: str,
+    ) -> Optional[ExtractUtilsModule]:
         module_name = f'{vendor}_{device}'
         module_path = path.join(
             android_root, 'device', vendor, device, 'extract-files.py'
