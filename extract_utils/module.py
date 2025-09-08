@@ -954,7 +954,7 @@ class ExtractUtilsModule:
         backup_source: Source,
         backup_dir: str,
     ):
-        if backup_source.copy_file_to_dir(file, backup_dir) is None:
+        if not backup_source.copy_file_to_dir(file, backup_dir):
             color_print(f'Failed to back up {file.dst}', color=Color.YELLOW)
             return
 
