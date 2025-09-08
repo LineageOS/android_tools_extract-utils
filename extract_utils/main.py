@@ -10,7 +10,7 @@ from os import path
 from typing import List, Optional, Set, Tuple
 
 from extract_utils.args import parse_args
-from extract_utils.extract import ExtractCtx
+from extract_utils.extract import ExtractCtx, extract_fns_type
 from extract_utils.file import File
 from extract_utils.module import (
     ExtractUtilsModule,
@@ -161,7 +161,7 @@ class ExtractUtils:
             )
 
     def run(self):
-        extract_fns = {}
+        extract_fns: extract_fns_type = []
         extract_partitions: Set[str] = set()
         firmware_files: List[File] = []
         factory_files: List[File] = []
@@ -173,7 +173,7 @@ class ExtractUtils:
 
         if not self.__args.regenerate_makefiles:
             for module in self.__modules:
-                extract_fns.update(module.extract_fns)
+                extract_fns.extend(module.extract_fns)
 
                 extract_partitions.update(
                     module.get_extract_partitions(self.__args.section),

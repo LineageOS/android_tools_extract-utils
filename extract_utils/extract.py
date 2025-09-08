@@ -75,14 +75,14 @@ extract_fns_user_type = Union[extract_fns_dict_type, extract_fns_type]
 class ExtractCtx:
     def __init__(
         self,
-        extract_fns: Optional[extract_fns_user_type] = None,
+        extract_fns: Optional[extract_fns_type] = None,
         extract_partitions: Optional[List[str]] = None,
         firmware_files: Optional[List[File]] = None,
         factory_files: Optional[List[File]] = None,
         extract_all=False,
     ):
         if extract_fns is None:
-            extract_fns = {}
+            extract_fns = []
         if extract_partitions is None:
             extract_partitions = []
         if firmware_files is None:
@@ -626,12 +626,7 @@ def convert_dict_extract_fns(dict_extract_fns: extract_fns_dict_type):
 
 
 def run_extract_fns(dump_dir: str, ctx: ExtractCtx):
-    if isinstance(ctx.extract_fns, list):
-        extract_fns = ctx.extract_fns
-    else:
-        extract_fns = convert_dict_extract_fns(ctx.extract_fns)
-
-    for value in extract_fns:
+    for value in ctx.extract_fns:
         extract_pattern = value.key
 
         found_files = find_files(dump_dir, regex=extract_pattern)

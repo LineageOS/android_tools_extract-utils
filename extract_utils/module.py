@@ -12,7 +12,10 @@ from functools import partial
 from os import path
 from typing import Callable, Iterable, List, Optional, Set
 
-from extract_utils.extract import extract_fns_user_type
+from extract_utils.extract import (
+    convert_dict_extract_fns,
+    extract_fns_user_type,
+)
 from extract_utils.file import File, FileArgs, FileList
 from extract_utils.fixups import flatten_fixups
 from extract_utils.fixups_blob import (
@@ -431,8 +434,13 @@ class ExtractUtilsModule:
         self.lib_fixups = flatten_fixups(lib_fixups)
 
         if extract_fns is None:
-            extract_fns = {}
-        self.extract_fns = extract_fns
+            list_extract_fns = []
+        elif isinstance(extract_fns, dict):
+            list_extract_fns = convert_dict_extract_fns(extract_fns)
+        else:
+            list_extract_fns = extract_fns
+
+        self.extract_fns = list_extract_fns
 
         self.namespace_imports = namespace_imports
         self.check_elf = check_elf
