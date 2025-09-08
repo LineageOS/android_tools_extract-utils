@@ -982,6 +982,7 @@ class ExtractUtilsModule:
             for file in proprietary_file.file_list.pinned_files:
                 if not printed:
                     print(f'Backing up {proprietary_file.printable_path}')
+                    printed = True
                 self.backup_file(file, backup_source, backup_dir)
 
     def process_file(
