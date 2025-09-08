@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional
 
 from extract_utils.fixups import fixups_type, fixups_user_type
 
@@ -25,11 +25,19 @@ libs_proto_21_12 = ('libprotobuf-cpp-lite-21.12', 'libprotobuf-cpp-full-21.12')
 libs_proto_unversioned = ('libprotobuf-cpp-lite', 'libprotobuf-cpp-full')
 
 
-def lib_fixup_remove(lib: str, *args, **kwargs):
+def lib_fixup_remove(
+    lib: str,
+    *args: Any,
+    **kwargs: Any,
+):
     return ''
 
 
-def lib_fixup_remove_arch_suffix(lib: str, *args, **kwargs):
+def lib_fixup_remove_arch_suffix(
+    lib: str,
+    *args: Any,
+    **kwargs: Any,
+):
     suffixes = ['-arm-android', '-aarch64-android']
     for suffix in suffixes:
         if lib.endswith(suffix):
@@ -38,11 +46,20 @@ def lib_fixup_remove_arch_suffix(lib: str, *args, **kwargs):
     assert False
 
 
-def lib_fixup_vendorcompat(lib: str, partition: str, *args, **kwargs):
+def lib_fixup_vendorcompat(
+    lib: str,
+    partition: str,
+    *args: Any,
+    **kwargs: Any,
+):
     return f'{lib}-vendorcompat' if partition in ['odm', 'vendor'] else lib
 
 
-def lib_fixup_remove_proto_version_suffix(lib: str, *args, **kwargs):
+def lib_fixup_remove_proto_version_suffix(
+    lib: str,
+    *args: Any,
+    **kwargs: Any,
+):
     return lib.rsplit('-', 1)[0]
 
 
@@ -82,7 +99,7 @@ def run_libs_fixup(
     if not fixups:
         return libs
 
-    fixed_libs = []
+    fixed_libs: List[str] = []
     for lib in libs:
         fixed_lib = run_lib_fixup(fixups, lib, partition)
         if fixed_lib == '':
