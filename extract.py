@@ -9,6 +9,7 @@ import os
 
 from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
 from extract_utils.extract import ExtractCtx, ExtractFn, extract_fns_type
+from extract_utils.extract_avb import ExtractAvb
 from extract_utils.extract_misc import ExtractRenameSuperToExtVolumeName
 from extract_utils.extract_pixel import (
     extract_pixel_factory_image,
@@ -77,6 +78,12 @@ parser.add_argument(
     help='Partitions in retrofit super, in order',
 )
 parser.add_argument(
+    '--avb',
+    nargs='*',
+    type=str,
+    help='Partitions to extract AVB data from',
+)
+parser.add_argument(
     '--rename-super-to-volume-name',
     action='store_true',
     help='Rename super_*.img images to their volume name',
@@ -127,6 +134,9 @@ if __name__ == '__main__':
             extract_fns.append(
                 ExtractFn(extract_pattern, extract_star_firmware)
             )
+
+    if args.avb:
+        extract_fns.append(ExtractAvb(args.avb))
 
     if args.retrofit_super_partitions:
         extract_fns.append(ExtractSuperRetrofit(args.retrofit_super_partitions))
