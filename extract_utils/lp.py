@@ -144,7 +144,7 @@ def is_partition_for_slot(partition: LpMetadataPartition, slot: int):
     return partition.group_index == slot + 1
 
 
-def remove_partition_suffix(partition: LpMetadataPartition, slot=0):
+def remove_partition_suffix(partition: LpMetadataPartition, slot: int = 0):
     decoded_name = partition.name.decode('utf-8')
 
     # Realistically, there will never be more than two slots
@@ -165,7 +165,7 @@ class LpImage:
         if not isinstance(inputs, list):
             inputs = [inputs]
 
-        self.__mms = []
+        self.__mms: List[mmap] = []
         for i in inputs:
             mm = mmap(i.fileno(), 0, access=ACCESS_READ | MAP_PRIVATE)
             self.__mms.append(mm)
@@ -223,8 +223,9 @@ class LpImage:
         offset = extent.target_data * LP_SECTOR_SIZE
         size = extent.num_sectors * LP_SECTOR_SIZE
 
-        mm = self.__mms[extent.target_source]
-        for data_chunk in read_mmap_chunked(mm, size, offset):
+        # TODO: fix typing
+        mm = self.__mms[extent.target_source]  # type: ignore
+        for data_chunk in read_mmap_chunked(mm, size, offset):  # type: ignore
             o.write(data_chunk)
 
     def get_table_descriptor_data(
@@ -234,7 +235,7 @@ class LpImage:
         t: type[T],
     ) -> List[T]:
         assert sizeof(t) == table_descriptor.entry_size
-        entries = []
+        entries: List[T] = []
 
         for i in range(table_descriptor.num_entries):
             offset = (
@@ -247,8 +248,8 @@ class LpImage:
 
         return entries
 
-    def get_partition_names(self, slot=0):
-        names = []
+    def get_partition_names(self, slot: int = 0):
+        names: List[str] = []
         for partition in self.__partitions:
             if not is_partition_for_slot(partition, slot):
                 continue
@@ -260,7 +261,7 @@ class LpImage:
     def find_partition(
         self,
         partition_name: str,
-        slot=0,
+        slot: int = 0,
     ) -> Optional[LpMetadataPartition]:
         for partition in self.__partitions:
             if not is_partition_for_slot(partition, slot):
@@ -278,7 +279,7 @@ class LpImage:
         self,
         partition_name: str,
         output_file_path: str,
-        slot=0,
+        slot: int = 0,
     ):
         partition = self.find_partition(partition_name, slot)
         if partition is None:
