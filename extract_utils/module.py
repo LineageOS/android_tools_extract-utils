@@ -455,6 +455,7 @@ class ExtractUtilsModule:
         add_generated_carriersettings_apns: bool = False,
         add_generated_carriersettings_file: bool = False,
         add_generated_carriersettings: bool = False,
+        proprietary_files: Optional[List[ProprietaryFile]] = None,
         skip_main_proprietary_file: bool = False,
     ):
         self.device = device
@@ -499,6 +500,10 @@ class ExtractUtilsModule:
             self.add_generated_carriersettings(extract_apns=True)
         elif add_generated_carriersettings_file:
             self.add_generated_carriersettings_file()
+
+        if proprietary_files is not None:
+            for proprietary_file in proprietary_files:
+                self.proprietary_files.append(proprietary_file)
 
         if not skip_main_proprietary_file:
             self.add_proprietary_file('proprietary-files.txt')
