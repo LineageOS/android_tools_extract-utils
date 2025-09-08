@@ -10,7 +10,7 @@ import tempfile
 from enum import Enum
 from functools import partial
 from os import path
-from typing import Callable, Iterable, List, Optional, Set
+from typing import Any, Callable, Iterable, List, Optional, Set
 
 from extract_utils.extract import (
     convert_dict_extract_fns,
@@ -98,7 +98,7 @@ class ProprietaryFile:
         post_makefile_generation_fns: Optional[
             List[pre_post_makefile_generation_fn_type]
         ] = None,
-        kind=ProprietaryFileType.BLOBS,
+        kind: ProprietaryFileType = ProprietaryFileType.BLOBS,
     ):
         self.file_list_path = file_list_path
         self.vendor_rel_sub_path = vendor_rel_sub_path
@@ -153,12 +153,12 @@ class ProprietaryFile:
         return self
 
     def add_copy_files_guard(
-        self, name: str, value: str, invert=False
+        self, name: str, value: str, invert: bool = False
     ) -> ProprietaryFile:
-        def guard_begin_fn(ctx: MakefilesCtx, *args, **kwargs):
+        def guard_begin_fn(ctx: MakefilesCtx, *args: Any, **kwargs: Any):
             write_mk_guard_begin(name, value, ctx.product_mk_out, invert=invert)
 
-        def guard_end_fn(ctx: MakefilesCtx, *args, **kwargs):
+        def guard_end_fn(ctx: MakefilesCtx, *args: Any, **kwargs: Any):
             write_mk_guard_end(ctx.product_mk_out)
 
         self.add_pre_post_makefile_generation_fn(guard_begin_fn, guard_end_fn)
@@ -267,7 +267,7 @@ class FirmwareProprietaryFile(ProprietaryFile):
         file_list_path: str,
         vendor_rel_sub_path: str = 'radio',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
-        kind=ProprietaryFileType.FIRMWARE,
+        kind: ProprietaryFileType = ProprietaryFileType.FIRMWARE,
     ):
         super().__init__(
             file_list_path,
@@ -300,7 +300,7 @@ class FactoryProprietaryFile(ProprietaryFile):
         file_list_path: str,
         vendor_rel_sub_path: str = 'factory',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
-        kind=ProprietaryFileType.FACTORY,
+        kind: ProprietaryFileType = ProprietaryFileType.FACTORY,
     ):
         super().__init__(
             file_list_path,
@@ -344,7 +344,7 @@ class GeneratedProprietaryFile(ProprietaryFile):
         skip_file_list_name: Optional[str] = None,
         vendor_rel_sub_path: str = 'proprietary',
         fix_file_list: Optional[fix_file_list_fn_type] = None,
-        kind=ProprietaryFileType.BLOBS,
+        kind: ProprietaryFileType = ProprietaryFileType.BLOBS,
     ):
         super().__init__(
             file_list_name,
@@ -416,13 +416,13 @@ class ExtractUtilsModule:
         lib_fixups: Optional[lib_fixups_user_type] = None,
         namespace_imports: Optional[List[str]] = None,
         extract_fns: Optional[extract_fns_user_type] = None,
-        check_elf=True,
-        add_firmware_proprietary_file=False,
-        add_factory_proprietary_file=False,
-        add_generated_carriersettings_apns=False,
-        add_generated_carriersettings_file=False,
-        add_generated_carriersettings=False,
-        skip_main_proprietary_file=False,
+        check_elf: bool = True,
+        add_firmware_proprietary_file: bool = False,
+        add_factory_proprietary_file: bool = False,
+        add_generated_carriersettings_apns: bool = False,
+        add_generated_carriersettings_file: bool = False,
+        add_generated_carriersettings: bool = False,
+        skip_main_proprietary_file: bool = False,
     ):
         self.device = device
         self.vendor = vendor
@@ -524,12 +524,17 @@ class ExtractUtilsModule:
         self.postprocess_fns.append(fn)
         return self
 
-    def add_rro_package(self, *args, **kwargs):
+    def add_rro_package(self, *args: Any, **kwargs: Any):
         rro_package = RuntimeResourceOverlay(*args, *kwargs)
         self.rro_packages.append(rro_package)
         return rro_package
 
-    def add_proprietary_file(self, file_list_name: str, *args, **kwargs):
+    def add_proprietary_file(
+        self,
+        file_list_name: str,
+        *args: Any,
+        **kwargs: Any,
+    ):
         file_list_path = self.proprietary_file_path(file_list_name)
         proprietary_file = ProprietaryFile(file_list_path, *args, **kwargs)
         self.proprietary_files.append(proprietary_file)
@@ -538,8 +543,8 @@ class ExtractUtilsModule:
     def add_generated_proprietary_file(
         self,
         file_list_name: str,
-        *args,
-        **kwargs,
+        *args: Any,
+        **kwargs: Any,
     ):
         file_list_path = self.proprietary_file_path(file_list_name)
         proprietary_file = GeneratedProprietaryFile(
@@ -580,7 +585,7 @@ class ExtractUtilsModule:
         self.proprietary_files.append(proprietary_file)
         return proprietary_file
 
-    def add_generated_carriersettings(self, extract_apns=False):
+    def add_generated_carriersettings(self, extract_apns: bool = False):
         package_name = 'CarrierConfigOverlay'
         proprietary_file = self.add_generated_carriersettings_file()
         self.add_rro_package(
@@ -619,8 +624,8 @@ class ExtractUtilsModule:
             def add_apn_copy_fn(
                 ctx: MakefilesCtx,
                 packages_ctx: ProductPackagesCtx,
-                *args,
-                **kwargs,
+                *args: Any,
+                **kwargs: Any,
             ):
                 write_product_copy_files(
                     ctx,
