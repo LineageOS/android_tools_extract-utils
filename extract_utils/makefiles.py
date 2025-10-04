@@ -769,6 +769,10 @@ def write_mk_firmware(
     files: Iterable[File],
     out: TextIO,
 ):
+    if any(file.dst == 'pvmfw.img' for file in files):
+        out.write('\nINSTALLED_PVMFWIMAGE_TARGET := $(PRODUCT_OUT)/pvmfw.img')
+        out.write('\n')
+
     for file in files:
         write_mk_firmware_file(vendor_path, rel_sub_path, file, out)
 
