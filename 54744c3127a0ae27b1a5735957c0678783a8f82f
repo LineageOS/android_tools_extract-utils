@@ -16,6 +16,24 @@
       "message": "I don\u0027t think this is the right way to fix this. If you have pvmfw you should be setting PRODUCT_BUILD_PVMFW_IMAGE and any other flags that are needed in your device. Tensor pixels have it set up.",
       "revId": "54744c3127a0ae27b1a5735957c0678783a8f82f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a3b39fc_10b081a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2025-10-06T20:18:52Z",
+      "side": 1,
+      "message": "I have no plans to merge that for now, also supposedly pbmfw cannot be built from source on QCOM since there are signature checks for it.",
+      "parentUuid": "cbcfa822_4d913218",
+      "revId": "54744c3127a0ae27b1a5735957c0678783a8f82f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
