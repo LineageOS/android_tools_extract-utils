@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+
+version = 1
+SPDX-PackageName = "extract-utils"
+SPDX-PackageSupplier = "The LineageOS Project"
+SPDX-PackageDownloadLocation = "https://github.com/LineageOS/android_tools_extract-utils"
+
+[[annotations]]
+path = [".github/workflows/**", ".gitignore", ".pre-commit-config.yaml", "pylintrc.toml", "ruff.toml"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "The LineageOS Project"
+SPDX-License-Identifier = "Apache-2.0"
