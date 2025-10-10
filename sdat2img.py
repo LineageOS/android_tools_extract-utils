@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# SPDX-FileCopyrightText: 2021 Andrei Conache
+# SPDX-FileCopyrightText: Andrei Conache
 # SPDX-License-Identifier: MIT
 #
 #====================================================
