@@ -28,6 +28,9 @@ def get_source_file_name(line: str) -> str:
     # Remove the destination path if there
     line = re.sub(':.*', '', line)
 
+    # Remove the sha1sum arguments if there
+    line = re.sub(r'\|.*', '', line)
+
     return line
 
 
