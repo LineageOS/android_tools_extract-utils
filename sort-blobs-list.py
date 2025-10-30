@@ -14,7 +14,7 @@ from pathlib import Path
 
 def is_blob(line: str) -> bool:
     line = line.strip()
-    return line and not line.startswith('#')
+    return bool(line) and not line.startswith('#')
 
 
 def get_source_file_name(line: str) -> str:
