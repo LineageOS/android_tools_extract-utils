@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e4efa8b_c918259c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 33800
+      },
+      "writtenOn": "2025-12-03T17:55:28Z",
+      "side": 1,
+      "message": "\u003e Found on ctwo (sm8635)\nAlso on arcfox (motorola razr 50 ultra)",
+      "revId": "e7efc08c3a4373b147818d44638f8b171ffa5d34",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
