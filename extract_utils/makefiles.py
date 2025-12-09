@@ -23,6 +23,7 @@ from extract_utils.file import (
     File,
     FileArgs,
     FileTree,
+    VINTF_PARTS,
 )
 from extract_utils.fixups_lib import lib_fixups_type, run_libs_fixup
 from extract_utils.utils import Color, color_print, file_path_sha1
@@ -366,7 +367,7 @@ def write_framework_package(file: File, builder: FileBpBuilder):
 
 
 def write_etc_package(file: File, builder: FileBpBuilder):
-    if file.ext == '.xml':
+    if file.ext == '.xml' or file.contains_path_parts(VINTF_PARTS):
         rule_name = 'prebuilt_etc_xml'
     else:
         rule_name = 'prebuilt_etc'
