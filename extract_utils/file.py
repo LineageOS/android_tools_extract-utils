@@ -466,7 +466,7 @@ class CommonFileTree(FileTree):
         return file_tree
 
 
-MANIFEST_PARTS = 'etc/vintf/manifest'.split('/')
+VINTF_PARTS = 'etc/vintf'.split('/')
 DEFAULT_PACKAGES_EXT = ('.apk', '.jar', '.apex')
 
 
@@ -518,7 +518,7 @@ class FileList:
         self.__check_elf = check_elf
 
     def __is_file_package(self, file: File):
-        if file.contains_path_parts(MANIFEST_PARTS):
+        if file.contains_path_parts(VINTF_PARTS):
             return True
 
         ext = file.ext
