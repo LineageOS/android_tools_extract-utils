@@ -19,6 +19,7 @@ from extract_utils.elf import (
 )
 from extract_utils.elf_parser import EM
 from extract_utils.file import (
+    VINTF_PARTS,
     CommonFileTree,
     File,
     FileArgs,
@@ -366,7 +367,7 @@ def write_framework_package(file: File, builder: FileBpBuilder):
 
 
 def write_etc_package(file: File, builder: FileBpBuilder):
-    if file.ext == '.xml':
+    if file.ext == '.xml' or file.contains_path_parts(VINTF_PARTS):
         rule_name = 'prebuilt_etc_xml'
     else:
         rule_name = 'prebuilt_etc'
