@@ -229,6 +229,8 @@ class FileBpBuilder(BpBuilder):
         target_dict: Dict[str, bp_type] = {}
         if 'target' not in self.o:
             self.o['target'] = target_dict
+        else:
+            target_dict = self.o['target']
 
         rel_path = self.__file_rel_sub_path(f.dst)
         if machine == EM.QDSP6:
