@@ -311,7 +311,7 @@ def write_bin_package(
 
 
 def write_rfsa_package(file: File, builder: FileBpBuilder):
-    _, package_name = file_stem_package_name(file, can_have_stem=True)
+    package_name = file.dst.replace('/', '_').replace('.', '_')
 
     (
         builder.set_rule_name('prebuilt_rfsa')
