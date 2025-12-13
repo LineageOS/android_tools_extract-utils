@@ -29,10 +29,16 @@ def flatten_fixups(
 
     for entries, value in fixups.items():
         if isinstance(entries, str):
-            fixups_final[entries] = value
+            if entries in fixups_final:
+                fixups_final[entries].merge(value)
+            else:
+                fixups_final[entries] = value
         else:
             assert isinstance(entries, tuple)
             for entry in entries:
-                fixups_final[entry] = value
+                if entry in fixups_final:
+                    fixups_final[entry].merge(value)
+                else:
+                    fixups_final[entry] = value
 
     return fixups_final
