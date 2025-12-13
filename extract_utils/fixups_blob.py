@@ -83,6 +83,10 @@ class blob_fixup:
             self.__create_tmp_dir = True
         return self
 
+    def merge(self, other: blob_fixup):
+        self.__functions += other.__functions
+        self.__create_tmp_dir = self.__create_tmp_dir or other.__create_tmp_dir
+
     def patchelf_version(self, version: str) -> blob_fixup:
         self.__patchelf_path = patchelf_version_path_map[version]
         return self
