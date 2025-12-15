@@ -21,6 +21,7 @@ from extract_utils.tools import (
     DEFAULT_PATCHELF_VERSION,
     apktool_path,
     java_path,
+    llvm_objdump_path,
     llvm_strip_path,
     patchelf_version_path_map,
     stripzip_path,
@@ -188,6 +189,45 @@ class blob_fixup:
 
     def fix_soname(self) -> blob_fixup:
         return self.call(self.fix_soname_impl)
+
+    def update_graphic_buffer_size_impl(
+        self,
+        ctx: BlobFixupCtx,
+        file: File,
+        file_path: str,
+        disassemble_symbols: [str],
+        *args: Any,
+        **kwargs: Any,
+    ):
+        disassemble_argument = (
+            f'--disassemble-symbols={",".join(disassemble_symbols)}'
+            if disassemble_symbols
+            else '--disassemble-all'
+        )
+        for line in run_cmd(
+            [llvm_objdump_path, disassemble_argument, file_path]
+        ).splitlines():
+            line = line.split(maxsplit=5)
+            if len(line) != 6:
+                continue
+
+            # The size of GraphicBuffer changed from 0x100 to 0xd30
+            offset, _, instruction, register, value, _ = line
+            if (
+                instruction == 'mov'
+                and register[:-1] == 'w0'
+                and value == '#0x100'
+            ):
+                with open(file_path, 'rb+') as f:
+                    f.seek(int(offset[:-1], 16))
+                    f.write(b'\x00\xa6\x81\x52')  # AArch64 mov w0, #0xd30
+
+    def update_graphic_buffer_size(
+        self, disassemble_symbols: [str] = []
+    ) -> blob_fixup:
+        return self.call(
+            self.update_graphic_buffer_size_impl, disassemble_symbols
+        )
 
     def __get_patches(self, ctx: BlobFixupCtx, module_patches_path: str):
         patches_path = path.join(ctx.module_dir, module_patches_path)
