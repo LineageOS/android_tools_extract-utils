@@ -338,8 +338,46 @@ def write_apex_package(file: File, builder: FileBpBuilder):
     return package_name
 
 
+def write_app_package_xml_gen(file: File, builder: FileBpBuilder):
+    _, package_name = file_stem_package_name(file)
+
+    (
+        builder.set_rule_name('genrule')
+        .name(f'{package_name}_privapp_allowlist')
+        .srcs()
+        .set('out', [f'{package_name}_privapp_allowlist.xml'])
+        .set(
+            'cmd',
+            '$(location generate-priv-app-allowlist.py) --aapt2_path $(location aapt2) $(in) > $(out)',
+        )
+        .set('tools', ['aapt2', 'generate-priv-app-allowlist.py'])
+    )
+    return package_name
+
+
+def write_app_package_xml(file: File, builder: FileBpBuilder):
+    _, package_name = file_stem_package_name(file)
+
+    (
+        builder.set_rule_name('prebuilt_etc_xml')
+        .name(f'{package_name}_privapp_allowlist.xml')
+        .owner()
+        .set('src', f':{package_name}_privapp_allowlist')
+        .set('filename_from_src', True)
+        .set('sub_dir', 'permissions')
+        .specific()
+    )
+    return package_name
+
+
 def write_app_package(file: File, builder: FileBpBuilder):
     _, package_name = file_stem_package_name(file)
+
+    required = file.required
+
+    if file.privileged:
+        required = file.required or []
+        required.append(f'{package_name}_privapp_allowlist.xml')
 
     # TODO: remove required entries from package_names if actually needed
     # TODO: check if manually specified certificates are needed
@@ -349,7 +387,7 @@ def write_app_package(file: File, builder: FileBpBuilder):
         .owner()
         .apk()
         .set('overrides', file.overrides, optional=True)
-        .set('required', file.required, optional=True)
+        .set('required', required, optional=True)
         .signature()
         .set('dex_preopt', {'enabled': False})
         .set('privileged', file.privileged, optional=True)
@@ -430,17 +468,21 @@ def write_common_packages_group(
 def write_packages_group(
     ctx: ProductPackagesCtx,
     file_tree: FileTree,
-    fn: write_package_fn,
+    fns: write_package_fn | list[write_package_fn],
     package_names: List[str],
     out: TextIO,
     encoder: JSONEncoder,
     *args: Any,
     **kwargs: Any,
 ):
+    if not isinstance(fns, list):
+        fns = [fns]
+
     for file in file_tree:
-        builder = create_builder(ctx, file_tree, file, encoder)
-        package_name = fn(file, builder, *args, **kwargs)
-        builder.write(out)
+        for fn in fns:
+            builder = create_builder(ctx, file_tree, file, encoder)
+            package_name = fn(file, builder, *args, **kwargs)
+            builder.write(out)
         package_names.append(package_name)
         if file.recovery_available:
             package_names.append(f'{package_name}.recovery')
@@ -485,7 +527,7 @@ def write_product_packages(
     package_names: List[str] = []
 
     def w(
-        fn: write_package_fn,
+        fns: write_package_fn | list[write_package_fn],
         file_tree: FileTree,
         *args: Any,
         **kwargs: Any,
@@ -493,7 +535,7 @@ def write_product_packages(
         return write_packages_group(
             packages_ctx,
             file_tree,
-            fn,
+            fns,
             package_names,
             ctx.bp_out,
             encoder,
@@ -502,7 +544,7 @@ def write_product_packages(
         )
 
     def wp(
-        fn: write_package_fn,
+        fns: write_package_fn | list[write_package_fn],
         partition: str,
         sub_dir: str,
         *args: Any,
@@ -510,7 +552,7 @@ def write_product_packages(
     ):
         file_tree = base_file_tree.filter_prefixed([partition, sub_dir])
 
-        return w(fn, file_tree, *args, **kwargs)
+        return w(fns, file_tree, *args, **kwargs)
 
     for part in ALL_PARTITIONS:
         lib_rfsa_tree = None
@@ -546,7 +588,15 @@ def write_product_packages(
 
     for part in ALL_PARTITIONS:
         wp(write_app_package, part, 'app')
-        wp(write_app_package, part, 'priv-app')
+        wp(
+            [
+                write_app_package_xml_gen,
+                write_app_package_xml,
+                write_app_package,
+            ],
+            part,
+            'priv-app',
+        )
 
     for part in ALL_PARTITIONS:
         wp(write_framework_package, part, 'framework')

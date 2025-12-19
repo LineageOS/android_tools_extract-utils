@@ -190,6 +190,10 @@ class FileBpBuilder(BpBuilder):
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('src', rel_path)
 
+    def srcs(self):
+        rel_path = self.__file_rel_sub_path(self.__file.dst)
+        return self.set('srcs', [rel_path])
+
     def apk(self):
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('apk', rel_path)

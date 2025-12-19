@@ -1,0 +1,10 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+python_binary_host {
+    name: "generate-priv-app-allowlist.py",
+    main: "generate-priv-app-allowlist.py",
+    srcs: ["generate-priv-app-allowlist.py"],
+}
