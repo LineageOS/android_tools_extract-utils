@@ -34,6 +34,24 @@
       "parentUuid": "cbcfa822_4d913218",
       "revId": "54744c3127a0ae27b1a5735957c0678783a8f82f",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7d5c4b3_129834f1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2026-01-06T14:36:04Z",
+      "side": 1,
+      "message": "FYI FP6 has been tested with source built pvmfw and relocking works",
+      "parentUuid": "6a3b39fc_10b081a0",
+      "revId": "54744c3127a0ae27b1a5735957c0678783a8f82f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
