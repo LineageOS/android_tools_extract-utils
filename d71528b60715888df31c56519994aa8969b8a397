@@ -16,6 +16,23 @@
       "message": "I kinda disagree with adding very specific blobs fixups here.",
       "revId": "d71528b60715888df31c56519994aa8969b8a397",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56cfd5c3_db13032d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29080
+      },
+      "writtenOn": "2026-01-20T09:14:34Z",
+      "side": 1,
+      "message": "There is no guarantee it\u0027s always w0 register\nFor example, it\u0027s w2 on veux",
+      "revId": "d71528b60715888df31c56519994aa8969b8a397",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
