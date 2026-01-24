@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import copy
 from typing import (
     Dict,
     Optional,
@@ -32,13 +33,13 @@ def flatten_fixups(
             if entries in fixups_final:
                 fixups_final[entries].merge(value)
             else:
-                fixups_final[entries] = value
+                fixups_final[entries] = copy.deepcopy(value)
         else:
             assert isinstance(entries, tuple)
             for entry in entries:
                 if entry in fixups_final:
                     fixups_final[entry].merge(value)
                 else:
-                    fixups_final[entry] = value
+                    fixups_final[entry] = copy.deepcopy(value)
 
     return fixups_final
