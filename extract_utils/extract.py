@@ -501,8 +501,12 @@ def find_partitions(dump_dir: str, ctx: ExtractCtx, missing: bool = False):
     partitions: List[str] = []
     for partition in ctx.extract_partitions:
         dump_partition_dir = path.join(dump_dir, partition)
+        exists = (
+            path.isdir(dump_partition_dir)
+            and len(os.listdir(dump_partition_dir)) != 0
+        )
 
-        if path.isdir(dump_partition_dir) != missing:
+        if exists != missing:
             partitions.append(partition)
 
     return partitions
