@@ -618,7 +618,7 @@ def create_empty_partition_dirs(dump_dir: str, ctx: ExtractCtx):
         dump_partition_dir = path.join(dump_dir, partition)
         color_print(f'Partition {partition} not extracted', color=Color.YELLOW)
         # Create empty partition dir to prevent re-extraction
-        os.mkdir(dump_partition_dir)
+        os.makedirs(dump_partition_dir, exist_ok=True)
 
 
 def convert_dict_extract_fns(dict_extract_fns: extract_fns_dict_type):
