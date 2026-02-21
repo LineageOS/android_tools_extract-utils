@@ -50,3 +50,7 @@ carriersettings_extractor_path = path.join(
     'carriersettings-extractor/carriersettings_extractor.py',
 )
 fbpacktool_path = path.join(lineage_scripts_dir, 'fbpacktool/fbpacktool.py')
+
+system_tools_dir = path.join(android_root, 'system/tools')
+mkbootimg_dir = path.join(system_tools_dir, 'mkbootimg')
+unpack_bootimg_path = path.join(mkbootimg_dir, 'unpack_bootimg.py')
