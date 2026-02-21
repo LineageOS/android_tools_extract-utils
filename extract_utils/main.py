@@ -191,7 +191,6 @@ class ExtractUtils:
                 list(extract_partitions),
                 firmware_files,
                 factory_files,
-                self.__args.extract_all,
             )
 
             source_ctx = SourceCtx(

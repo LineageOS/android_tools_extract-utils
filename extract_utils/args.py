@@ -107,7 +107,6 @@ class ArgsSource(str, Enum):
 class Args:
     def __init__(self, args: argparse.Namespace):
         # Wrap to provide type hints
-        self.extract_all: bool = args.extract_all
         self.only_common: bool = args.only_common
         self.only_target: bool = args.only_target
         self.only_name: str = args.only_name

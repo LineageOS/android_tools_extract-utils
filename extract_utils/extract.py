@@ -83,7 +83,6 @@ class ExtractCtx:
         extract_partitions: Optional[List[str]] = None,
         firmware_files: Optional[List[File]] = None,
         factory_files: Optional[List[File]] = None,
-        extract_all: bool = False,
     ):
         if extract_fns is None:
             extract_fns = []
@@ -103,8 +102,6 @@ class ExtractCtx:
         # Files are extracted if their name matches as-is
         self.firmware_files = firmware_files
         self.factory_files = factory_files
-
-        self.extract_all = extract_all
 
 
 def find_alternate_partitions(

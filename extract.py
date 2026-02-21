@@ -146,7 +146,6 @@ if __name__ == '__main__':
     extract_ctx = ExtractCtx(
         extract_partitions=extract_partitions,
         extract_fns=extract_fns,
-        extract_all=args.all,
     )
 
     source_ctx = SourceCtx(
