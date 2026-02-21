@@ -16,9 +16,19 @@ from functools import lru_cache
 from io import SEEK_CUR
 from mmap import mmap
 from os import DirEntry, path
+from pathlib import Path
 from subprocess import PIPE, run
 from types import ModuleType
-from typing import Any, BinaryIO, Callable, Generator, Iterable, List, Optional
+from typing import (
+    Any,
+    BinaryIO,
+    Callable,
+    Generator,
+    Iterable,
+    List,
+    Optional,
+    Union,
+)
 from urllib.request import Request, urlopen
 
 CHUNK_SIZE = 1024 * 1024
@@ -110,15 +120,29 @@ def executable_path(name: str) -> str:
     return exe_path
 
 
-def run_cmd(cmd: List[str], shell: bool = False):
+def _run_cmd(
+    cmd: List[str],
+    shell: bool = False,
+    text: bool = True,
+    data: Optional[Union[str, bytes]] = None,
+    cwd: Optional[Path] = None,
+):
+    if data is not None:
+        if text:
+            assert isinstance(data, str)
+        else:
+            assert isinstance(data, bytes)
+
     cmd[0] = executable_path(cmd[0])
     proc = run(
         cmd,
         stdout=PIPE,
         stderr=PIPE,
-        text=True,
+        input=data,
+        text=text,
         shell=shell,
         check=False,
+        cwd=cwd,
     )
     if proc.returncode != 0:
         cmd_str = ' '.join(cmd)
@@ -126,7 +150,46 @@ def run_cmd(cmd: List[str], shell: bool = False):
         s += f'stdout:\n{proc.stdout}\n'
         s += f'stderr:\n{proc.stderr}\n'
         raise ValueError(s)
+
+    if text:
+        assert isinstance(proc.stdout, str)
+    else:
+        assert isinstance(proc.stdout, bytes)
+
     return proc.stdout
+
+
+def run_cmd(
+    cmd: List[str],
+    shell: bool = False,
+    data: Optional[str] = None,
+    cwd: Optional[Path] = None,
+):
+    output = _run_cmd(
+        cmd,
+        shell=shell,
+        data=data,
+        cwd=cwd,
+    )
+    assert isinstance(output, str)
+    return output
+
+
+def run_cmd_bytes(
+    cmd: List[str],
+    shell: bool = False,
+    data: Optional[bytes] = None,
+    cwd: Optional[Path] = None,
+):
+    output = _run_cmd(
+        cmd,
+        shell=shell,
+        data=data,
+        cwd=cwd,
+        text=False,
+    )
+    assert isinstance(output, bytes)
+    return output
 
 
 def uncomment_line(line: str) -> Optional[str]:
