@@ -9,7 +9,6 @@ import os
 import re
 import shutil
 import tarfile
-from concurrent.futures import ProcessPoolExecutor
 from os import path
 from tarfile import is_tarfile
 from typing import Callable, Dict, Iterable, List, Optional, Set, Union
@@ -399,24 +398,19 @@ def extract_ext4(file_path: str, output_path: str):
     # TODO: check for symlinks like the old code?
 
 
-def unzip_file(source: str, file_path: str, output_file_path: str):
-    with ZipFile(source) as zip_file:
-        with zip_file.open(file_path) as z:
-            with open(output_file_path, 'wb') as f:
-                shutil.copyfileobj(z, f)
-
-
 def extract_zip(source: str, dump_dir: str):
     with ZipFile(source) as zip_file:
-        file_paths = zip_file.namelist()
+        for info in zip_file.infolist():
+            if info.is_dir():
+                continue
 
-    with ProcessPoolExecutor() as exe:
-        for file_path in file_paths:
-            output_file_path = path.join(dump_dir, file_path)
+            output_file_path = path.join(dump_dir, info.filename)
             output_dir = path.dirname(output_file_path)
             os.makedirs(output_dir, exist_ok=True)
 
-            exe.submit(unzip_file, source, file_path, output_file_path)
+            with zip_file.open(info) as z:
+                with open(output_file_path, 'wb') as f:
+                    shutil.copyfileobj(z, f)
 
 
 def extract_tar(source: str, dump_dir: str):
@@ -554,14 +548,11 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
     partitions = normal_partitions + firmware_partitions
 
     while partitions:
-        with ProcessPoolExecutor() as exe:
-            for partition in partitions:
-                if partition in firmware_partitions:
-                    fn = extract_firmware_partition
-                else:
-                    fn = extract_partition
-
-                exe.submit(fn, partition, dump_dir)
+        for partition in partitions:
+            if partition in firmware_partitions:
+                extract_firmware_partition(partition, dump_dir)
+            else:
+                extract_partition(partition, dump_dir)
 
         found_partitions = find_partitions(dump_dir, ctx)
         partitions = find_alternate_partitions(partitions, found_partitions)
