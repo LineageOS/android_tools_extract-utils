@@ -18,6 +18,7 @@ group.add_argument(
     '--extract-all',
     action='store_true',
     help='Extract all files from archive',
+    deprecated=True,
 )
 group.add_argument(
     '--only-name',
@@ -107,7 +108,6 @@ class ArgsSource(str, Enum):
 class Args:
     def __init__(self, args: argparse.Namespace):
         # Wrap to provide type hints
-        self.extract_all: bool = args.extract_all
         self.only_common: bool = args.only_common
         self.only_target: bool = args.only_target
         self.only_name: str = args.only_name

@@ -51,6 +51,7 @@ parser.add_argument(
     '--all',
     action='store_true',
     help='Extract all files from archive',
+    deprecated=True,
 )
 parser.add_argument(
     '--pixel-factory',
@@ -146,7 +147,6 @@ if __name__ == '__main__':
     extract_ctx = ExtractCtx(
         extract_partitions=extract_partitions,
         extract_fns=extract_fns,
-        extract_all=args.all,
     )
 
     source_ctx = SourceCtx(
