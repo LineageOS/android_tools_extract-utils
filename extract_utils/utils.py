@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import os
+import re
 import shutil
 from contextlib import contextmanager
 from enum import Enum
@@ -305,3 +306,72 @@ def read_mmap_chunked(
 def write_zero(f: BinaryIO, size: int):
     f.seek(size - 1, SEEK_CUR)
     f.write(b'\x00')
+
+
+def file_name_to_partition(file_name: str):
+    return file_name.split('.', 1)[0]
+
+
+def find_files(
+    input_path: str,
+    partition: Optional[str] = None,
+    name: Optional[str] = None,
+    regex: Optional[str] = None,
+    magic: Optional[bytes] = None,
+    position: int = 0,
+    ext: Optional[str] = None,
+) -> List[str]:
+    file_paths: List[str] = []
+    for file in scan_tree(input_path):
+        if not file.is_file():
+            continue
+
+        file_partition_name = file_name_to_partition(file.name)
+        if partition is not None and partition != file_partition_name:
+            continue
+
+        if name is not None and name != file.name:
+            continue
+
+        if regex is not None and re.match(regex, file.name) is None:
+            continue
+
+        if ext is not None and not file.name.endswith(ext):
+            continue
+
+        if magic is not None:
+            with open(file, 'rb') as f:
+                f.seek(position)
+                file_magic = f.read(len(magic))
+                if file_magic != magic:
+                    continue
+
+        file_paths.append(file.path)
+
+    return file_paths
+
+
+def find_file(
+    input_path: str,
+    partition: Optional[str] = None,
+    name: Optional[str] = None,
+    regex: Optional[str] = None,
+    magic: Optional[bytes] = None,
+    position: int = 0,
+    ext: Optional[str] = None,
+):
+    file_paths = find_files(
+        input_path,
+        partition=partition,
+        name=name,
+        regex=regex,
+        magic=magic,
+        position=position,
+        ext=ext,
+    )
+
+    assert len(file_paths) <= 1
+    if file_paths:
+        return file_paths[0]
+
+    return None
