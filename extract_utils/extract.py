@@ -15,6 +15,7 @@ from zipfile import ZipFile, is_zipfile
 
 from extract_utils.ext4 import EXT4_MAGIC, EXT4_MAGIC_OFFSET
 from extract_utils.extract_moto_piv import MOTO_PIV_MAGIC, extract_moto_piv
+from extract_utils.extract_recovery import extract_recovery_partition
 from extract_utils.file import File
 from extract_utils.lp import LpImage
 from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
@@ -485,7 +486,9 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
 
     while partitions:
         for partition in partitions:
-            if partition in firmware_partitions:
+            if partition == 'recovery':
+                extract_recovery_partition(partition, dump_dir)
+            elif partition in firmware_partitions:
                 extract_firmware_partition(partition, dump_dir)
             else:
                 extract_partition(partition, dump_dir)
