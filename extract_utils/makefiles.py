@@ -601,6 +601,8 @@ def write_symlink_package(
     encoder: JSONEncoder,
 ):
     symlink_target = f'/{file.dst}'
+    if not '/' in symlink:
+        symlink = f'{os.path.dirname(file.dst)}/{symlink}'
     part, location = symlink.split('/', 1)
     package_name = symlink.replace('/', '_').replace('.', '_')
 
