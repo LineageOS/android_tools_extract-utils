@@ -104,6 +104,8 @@ class ExtractCtx:
         self.firmware_files = firmware_files
         self.factory_files = factory_files
 
+        self.processed_files: List[str] = []
+
 
 def find_alternate_partitions(
     extract_partitions: List[str],
@@ -193,10 +195,6 @@ def remove_file_paths(file_paths: Iterable[str]):
 
     for file_path in file_paths:
         os.remove(file_path)
-
-
-def remove_file_path(file_path: str):
-    remove_file_paths([file_path])
 
 
 def extract_payload_bin(partition: str, file_path: str, output_dir: str):
@@ -379,7 +377,7 @@ def extract_firmware_partition(partition: str, dump_dir: str):
         extract_payload_bin(partition, payload_bin_path, dump_dir)
 
 
-def extract_partition(partition: str, dump_dir: str):
+def extract_partition(partition: str, dump_dir: str, ctx: ExtractCtx):
     payload_bin_path = find_payload_path(PAYLOAD_BIN_FILE_NAME, dump_dir)
     if payload_bin_path:
         extract_payload_bin(partition, payload_bin_path, dump_dir)
@@ -392,37 +390,37 @@ def extract_partition(partition: str, dump_dir: str):
     if sparse_raw_paths:
         print_file_paths(sparse_raw_paths, 'sparse raw')
         extract_sparse_raw_img(sparse_raw_paths, dump_dir)
-        remove_file_paths(sparse_raw_paths)
+        ctx.processed_files.extend(sparse_raw_paths)
 
     moto_piv_path = find_moto_piv_path(partition, dump_dir)
     if moto_piv_path:
         print_file_path(moto_piv_path, 'Moto PIV')
         extract_moto_piv(moto_piv_path, dump_dir)
-        remove_file_path(moto_piv_path)
+        ctx.processed_files.append(moto_piv_path)
 
     brotli_img_path = find_brotli_path(partition, dump_dir)
     if brotli_img_path:
         print_file_path(brotli_img_path, 'brotli')
         extract_brotli_img(brotli_img_path, dump_dir)
-        remove_file_path(brotli_img_path)
+        ctx.processed_files.append(brotli_img_path)
 
     sparse_data_path = find_sparse_data_path(partition, dump_dir)
     if sparse_data_path:
         print_file_path(sparse_data_path, 'sparse data')
         extract_sparse_data_img(sparse_data_path, dump_dir)
-        remove_file_path(sparse_data_path)
+        ctx.processed_files.append(sparse_data_path)
 
     erofs_path = find_erofs_path(partition, dump_dir)
     if erofs_path:
         print_file_path(erofs_path, 'EROFS')
         extract_erofs(erofs_path, dump_dir)
-        remove_file_path(erofs_path)
+        ctx.processed_files.append(erofs_path)
 
     ext4_path = find_ext4_path(partition, dump_dir)
     if ext4_path:
         print_file_path(ext4_path, 'EXT4')
         extract_ext4(ext4_path, dump_dir)
-        remove_file_path(ext4_path)
+        ctx.processed_files.append(ext4_path)
 
 
 def find_partitions(dump_dir: str, ctx: ExtractCtx, missing: bool = False):
@@ -488,7 +486,7 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
             elif partition in firmware_partitions:
                 extract_firmware_partition(partition, dump_dir)
             else:
-                extract_partition(partition, dump_dir)
+                extract_partition(partition, dump_dir, ctx)
 
         found_partitions = find_partitions(dump_dir, ctx)
         partitions = find_alternate_partitions(partitions, found_partitions)
@@ -525,7 +523,7 @@ def extract_dump(dump_dir: str, ctx: ExtractCtx):
     if sparse_raw_paths:
         print_file_paths(sparse_raw_paths, 'sparse raw')
         extract_sparse_raw_img(sparse_raw_paths, dump_dir)
-        remove_file_paths(sparse_raw_paths)
+        ctx.processed_files.extend(sparse_raw_paths)
 
     extract_all_partitions(dump_dir, ctx)
 
@@ -537,6 +535,8 @@ def extract_dump(dump_dir: str, ctx: ExtractCtx):
     move_alternate_partition_paths(dump_dir)
 
     create_empty_partition_dirs(dump_dir, ctx)
+
+    remove_file_paths(ctx.processed_files)
 
 
 def create_empty_partition_dirs(dump_dir: str, ctx: ExtractCtx):
@@ -576,20 +576,36 @@ def run_extract_fns(dump_dir: str, ctx: ExtractCtx):
 
         found_files = find_files(dump_dir, regex=extract_pattern)
 
-        print_file_paths(found_files, f'pattern: "{extract_pattern}"')
-
         if not found_files:
             continue
 
+        not_processed_found_files = [
+            f for f in found_files if f not in ctx.processed_files
+        ]
+
         if value.paths_fn is not None:
+            # If the extract fn needs multiple files then pass already processed
+            # ones too
+            if not not_processed_found_files:
+                continue
+
+            print_file_paths(
+                found_files,
+                f'pattern: "{extract_pattern}"',
+            )
             processed_files_list = value.paths_fn(ctx, found_files, dump_dir)
-            remove_file_paths(processed_files_list)
+            ctx.processed_files.extend(processed_files_list)
             continue
 
         assert value.path_fns is not None
 
+        print_file_paths(
+            not_processed_found_files,
+            f'pattern: "{extract_pattern}"',
+        )
+
         processed_files: Set[str] = set()
-        for file_path in found_files:
+        for file_path in not_processed_found_files:
             file_name = path.basename(file_path)
             print(f'Processing {file_name}')
             for extract_fn in value.path_fns:
@@ -597,7 +613,7 @@ def run_extract_fns(dump_dir: str, ctx: ExtractCtx):
                 if processed_file is not None:
                     processed_files.add(processed_file)
 
-        remove_file_paths(processed_files)
+        ctx.processed_files.extend(processed_files)
 
 
 def move_alternate_partition_paths(dump_dir: str):
