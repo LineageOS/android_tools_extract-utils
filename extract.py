@@ -11,6 +11,7 @@ from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
 from extract_utils.extract import ExtractCtx, ExtractFn, extract_fns_type
 from extract_utils.extract_misc import ExtractRenameSuperToExtVolumeName
 from extract_utils.extract_pixel import (
+    copy_pixel_firmware,
     extract_pixel_factory_image,
     extract_pixel_firmware,
     pixel_factory_image_regex,
@@ -65,6 +66,12 @@ parser.add_argument(
     help='Files to extract as pixel firmware',
 )
 parser.add_argument(
+    '--copy-pixel-firmware',
+    nargs='*',
+    type=str,
+    help='Files to copy as pixel firmware',
+)
+parser.add_argument(
     '--star-firmware',
     nargs='*',
     type=str,
@@ -105,6 +112,9 @@ if __name__ == '__main__':
     if args.pixel_firmware is not None and not args.pixel_firmware:
         args.pixel_firmware = [pixel_firmware_regex]
 
+    if args.copy_pixel_firmware is not None and not args.copy_pixel_firmware:
+        args.copy_pixel_firmware = [pixel_firmware_regex]
+
     if args.star_firmware is not None and not args.star_firmware:
         args.star_firmware = [star_firmware_regex]
 
@@ -120,6 +130,12 @@ if __name__ == '__main__':
         for extract_pattern in args.pixel_firmware:
             extract_fns.append(
                 ExtractFn(extract_pattern, extract_pixel_firmware)
+            )
+
+    if args.copy_pixel_firmware:
+        for extract_pattern in args.pixel_firmware:
+            extract_fns.append(
+                ExtractFn(extract_pattern, copy_pixel_firmware)
             )
 
     if args.star_firmware:
