@@ -11,6 +11,7 @@ from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
 from extract_utils.extract import ExtractCtx, ExtractFn, extract_fns_type
 from extract_utils.extract_misc import ExtractRenameSuperToExtVolumeName
 from extract_utils.extract_pixel import (
+    copy_pixel_firmware,
     extract_pixel_factory_image,
     extract_pixel_firmware,
     pixel_factory_image_regex,
@@ -119,7 +120,13 @@ if __name__ == '__main__':
     if args.pixel_firmware:
         for extract_pattern in args.pixel_firmware:
             extract_fns.append(
-                ExtractFn(extract_pattern, extract_pixel_firmware)
+                ExtractFn(
+                    extract_pattern,
+                    path_fns=[
+                        copy_pixel_firmware,
+                        extract_pixel_firmware,
+                    ],
+                )
             )
 
     if args.star_firmware:
