@@ -9,6 +9,7 @@ import os
 import shutil
 import tarfile
 from os import path
+from re import Pattern
 from tarfile import is_tarfile
 from typing import Callable, Dict, Iterable, List, Optional, Set, Union
 from zipfile import ZipFile, is_zipfile
@@ -84,6 +85,7 @@ class ExtractCtx:
         extract_partitions: Optional[List[str]] = None,
         firmware_files: Optional[List[File]] = None,
         factory_files: Optional[List[File]] = None,
+        keep_files: Optional[List[Pattern[str]]] = None,
     ):
         if extract_fns is None:
             extract_fns = []
@@ -93,6 +95,8 @@ class ExtractCtx:
             firmware_files = []
         if factory_files is None:
             factory_files = []
+        if keep_files is None:
+            keep_files = []
 
         # Files for extract functions are extracted if their name
         # matches the regex
@@ -103,6 +107,8 @@ class ExtractCtx:
         # Files are extracted if their name matches as-is
         self.firmware_files = firmware_files
         self.factory_files = factory_files
+
+        self.keep_files = keep_files
 
         self.processed_files: List[str] = []
 
@@ -185,10 +191,20 @@ def print_file_path(file_path: str, file_type: str):
     print_file_paths([file_path], file_type)
 
 
-def remove_file_paths(file_paths: Iterable[str]):
+def is_kept_file(file_path: str, ctx: ExtractCtx):
+    for pattern in ctx.keep_files:
+        file_name = path.basename(file_path)
+        if pattern.match(file_name) is not None:
+            return True
+
+    return False
+
+
+def remove_file_paths(file_paths: Iterable[str], ctx: ExtractCtx):
     if not file_paths:
         return
 
+    file_paths = [f for f in file_paths if not is_kept_file(f, ctx)]
     file_names = [path.basename(fp) for fp in file_paths]
     file_names_str = ', '.join(file_names)
     print(f'Deleting {file_names_str}')
@@ -536,7 +552,7 @@ def extract_dump(dump_dir: str, ctx: ExtractCtx):
 
     create_empty_partition_dirs(dump_dir, ctx)
 
-    remove_file_paths(ctx.processed_files)
+    remove_file_paths(ctx.processed_files, ctx)
 
 
 def create_empty_partition_dirs(dump_dir: str, ctx: ExtractCtx):

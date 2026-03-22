@@ -6,6 +6,7 @@
 
 import argparse
 import os
+import re
 
 from extract_utils.args import DOWNLOAD_DIR_ENV_KEY
 from extract_utils.extract import ExtractCtx, ExtractFn, extract_fns_type
@@ -51,6 +52,12 @@ parser.add_argument(
     '--all',
     action='store_true',
     help='Extract all files from archive',
+)
+parser.add_argument(
+    '--keep',
+    nargs='*',
+    type=str,
+    help='Files to keep after being processed',
 )
 parser.add_argument(
     '--pixel-factory',
@@ -146,6 +153,7 @@ if __name__ == '__main__':
     extract_ctx = ExtractCtx(
         extract_partitions=extract_partitions,
         extract_fns=extract_fns,
+        keep_files=[re.compile(p) for p in args.keep],
     )
 
     source_ctx = SourceCtx(
