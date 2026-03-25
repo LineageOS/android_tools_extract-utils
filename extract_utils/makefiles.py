@@ -28,7 +28,14 @@ from extract_utils.file import (
 from extract_utils.fixups_lib import lib_fixups_type, run_libs_fixup
 from extract_utils.utils import Color, color_print, file_path_sha1
 
-ALL_PARTITIONS = ['system', 'vendor', 'product', 'system_ext', 'odm']
+ALL_PARTITIONS = [
+    'system',
+    'vendor',
+    'product',
+    'system_ext',
+    'odm',
+    'recovery',
+]
 APEX_PARTITIONS = ['system', 'vendor', 'system_ext']
 RFSA_PARTITIONS = ['vendor', 'odm']
 
@@ -485,6 +492,12 @@ def write_product_packages(
     encoder = BpJSONEncoder(legacy=ctx.legacy)
     package_names: List[str] = []
 
+    def get_part_path(partition: str):
+        if partition == 'recovery':
+            return ['recovery', 'system']
+        else:
+            return [partition]
+
     def w(
         fn: write_package_fn,
         file_tree: FileTree,
@@ -509,20 +522,24 @@ def write_product_packages(
         *args: Any,
         **kwargs: Any,
     ):
-        file_tree = base_file_tree.filter_prefixed([partition, sub_dir])
+        file_tree = base_file_tree.filter_prefixed(
+            get_part_path(partition) + [sub_dir]
+        )
 
         return w(fn, file_tree, *args, **kwargs)
 
     for part in ALL_PARTITIONS:
+        part_path = get_part_path(part)
+
         lib_rfsa_tree = None
         if part in RFSA_PARTITIONS:
             # Extract these first so that they don't end up in lib32
             lib_rfsa_tree = base_file_tree.filter_prefixed(
-                [part, 'lib', 'rfsa']
+                part_path + ['lib', 'rfsa']
             )
 
-        lib32_tree = base_file_tree.filter_prefixed([part, 'lib'])
-        lib64_tree = base_file_tree.filter_prefixed([part, 'lib64'])
+        lib32_tree = base_file_tree.filter_prefixed(part_path + ['lib'])
+        lib64_tree = base_file_tree.filter_prefixed(part_path + ['lib64'])
 
         lib_common_tree = CommonFileTree.common_files(lib32_tree, lib64_tree)
 
@@ -583,9 +600,18 @@ def write_product_copy_files(
     out.write('\nPRODUCT_COPY_FILES +=')
 
     for file in files:
-        target = f'$(TARGET_COPY_OUT_{file.partition.upper()})'
-        # Remove partition from destination, keeping the slash after it
-        rel_dst = file.dst[len(file.partition) :]
+        if file.partition == 'recovery':
+            target = '$(TARGET_COPY_OUT_RECOVERY)/root'
+            # 1. Strip 'recovery/' from the start
+            # 2. Strip 'root/' if it was nested inside (e.g. recovery/root/vendor)
+            dst = file.dst.removeprefix(f'{file.partition}/').removeprefix(
+                'root/'
+            )
+            rel_dst = f'/{dst}'
+        else:
+            target = f'$(TARGET_COPY_OUT_{file.partition.upper()})'
+            # Remove partition from destination, keeping the slash after it
+            rel_dst = file.dst[len(file.partition) :]
         line = f' \\\n    {rel_path}/{file.dst}:{target}{rel_dst}'
 
         out.write(line)
