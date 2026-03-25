@@ -103,6 +103,9 @@ class BpBuilder:
         if self.__partition is None:
             return self
 
+        if self.__partition == 'recovery':
+            return self.set('recovery', True)
+
         specific = PARTITION_SPECIFIC_MAP.get(self.__partition)
         if specific is None:
             return self
