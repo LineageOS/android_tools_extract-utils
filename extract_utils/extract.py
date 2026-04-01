@@ -18,6 +18,7 @@ from extract_utils.extract_moto_piv import MOTO_PIV_MAGIC, extract_moto_piv
 from extract_utils.extract_recovery import extract_recovery_partition
 from extract_utils.file import File
 from extract_utils.lp import LpImage
+from extract_utils.prohibited_files import is_prohibited, fail_prohibited
 from extract_utils.sparse_img import SPARSE_HEADER_MAGIC, unsparse_images
 from extract_utils.tools import (
     brotli_path,
@@ -512,6 +513,18 @@ def move_firmware_files(dump_dir: str, ctx: ExtractCtx):
 def move_factory_files(dump_dir: str, ctx: ExtractCtx):
     return _move_files(dump_dir, ctx.factory_files)
 
+def find_prohibited_files(dump_dir: str):
+    prohibited_files: List[str] = []
+
+    for root, _, files in os.walk(dump_dir):
+        for file_name in files:
+            file_path = path.join(root, file_name)
+            relative_file_path = path.relpath(file_path, dump_dir)
+
+            if is_prohibited(relative_file_path):
+                prohibited_files.append(relative_file_path)
+
+    return prohibited_files
 
 def extract_dump(dump_dir: str, ctx: ExtractCtx):
     should_extract = filter_already_extracted(dump_dir, ctx)
@@ -528,6 +541,9 @@ def extract_dump(dump_dir: str, ctx: ExtractCtx):
         remove_file_paths(sparse_raw_paths)
 
     extract_all_partitions(dump_dir, ctx)
+
+    prohibited_files = find_prohibited_files(dump_dir)
+    fail_prohibited(prohibited_files)
 
     run_extract_fns(dump_dir, ctx)
 
