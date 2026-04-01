@@ -47,6 +47,7 @@ from extract_utils.postprocess import (
     postprocess_carriersettings_fn_impl,
     postprocess_fn_type,
 )
+from extract_utils.prohibited_files import fail_prohibited, is_prohibited
 from extract_utils.source import DiskSource, Source
 from extract_utils.tools import android_root
 from extract_utils.utils import (
@@ -246,6 +247,14 @@ class ProprietaryFile:
 
     def parse(self):
         self.file_list.add_from_file(self.file_list_path)
+
+        prohibited_files: List[str] = []
+        for file in self.file_list.files:
+            for file_path in {file.src, file.dst}:
+                if is_prohibited(file_path):
+                    prohibited_files.append(file_path)
+
+        fail_prohibited(sorted(set(prohibited_files)))
 
     def get_files(self) -> Iterable[File]:
         return self.file_list.files
