@@ -50,6 +50,7 @@ from extract_utils.postprocess import (
     postprocess_carriersettings_fn_impl,
     postprocess_fn_type,
 )
+from extract_utils.prohibited_files import check_prohibited_file
 from extract_utils.source import DiskSource, Source
 from extract_utils.tools import android_root
 from extract_utils.utils import (
@@ -1031,6 +1032,7 @@ class ExtractUtilsModule:
         vendor_path: str,
         is_firmware: bool,
         kang: bool,
+        allow_prohibited_files: bool = False,
     ) -> bool:
         file_path = source.get_file_copy_path(file, vendor_path)
 
@@ -1083,6 +1085,9 @@ class ExtractUtilsModule:
             )
             return False
 
+        if not allow_prohibited_files:
+            check_prohibited_file(file.dst, file_path)
+
         if kang:
             self.process_kanged_file(
                 file,
@@ -1108,6 +1113,7 @@ class ExtractUtilsModule:
         backup_source: Source,
         kang: bool,
         extract_factory: bool,
+        allow_prohibited_files: bool = False,
     ) -> bool:
         all_copied = True
 
@@ -1131,6 +1137,7 @@ class ExtractUtilsModule:
                     vendor_path,
                     is_firmware,
                     kang,
+                    allow_prohibited_files=allow_prohibited_files,
                 )
 
                 if not copied:
@@ -1155,6 +1162,7 @@ class ExtractUtilsModule:
         no_cleanup: bool,
         extract_factory: bool,
         section: Optional[str],
+        allow_prohibited_files: bool = False,
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
             # Kang is usually combined with section, but allow them separately
@@ -1171,4 +1179,5 @@ class ExtractUtilsModule:
                 backup_source,
                 kang,
                 extract_factory,
+                allow_prohibited_files=allow_prohibited_files,
             )

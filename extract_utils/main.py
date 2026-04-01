@@ -121,6 +121,7 @@ class ExtractUtils:
                 self.__args.no_cleanup,
                 self.__args.extract_factory,
                 self.__args.section,
+                self.__args.allow_prohibited_files,
             )
             if not copied:
                 all_copied = False
