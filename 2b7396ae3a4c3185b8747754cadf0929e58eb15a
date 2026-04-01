@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68e4c055_ce35c7b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-01T21:18:39Z",
+      "side": 1,
+      "message": "took luk\u0027s advice:\n\n```\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ ./extract-files.py ~/dumps/fxtec/pro1x/dump/\nParsing device/fxtec/pro1x/proprietary-firmware.txt\nParsing device/fxtec/pro1x/proprietary-files.txt\nUsing source dump dir /home/nolenjohnson/dumps/fxtec/pro1x/dump/\nProcessing device/fxtec/pro1x/proprietary-firmware.txt\nProcessing device/fxtec/pro1x/proprietary-files.txt\nsystem_ext/lib64/lib-imsvideocodec.so: fixed up\nERROR: Prohibited file detected: vendor/etc/camera/license_st.lic\n  Reason: binary signature matched: SenseTime\n\nPolicy violation:\nThe following categories of files are not allowed:\n\n   - Megvii / Face++ related libraries and assets:\n    (e.g. lib*{M,m}eg*.so, lib*{M,m}g*.so, *{M,m}egvii*)\n\n   - SenseTime license artifacts:\n    (e.g. license.lic)\n\nThese files are not permitted in LineageOS repositories/builds.\n\nPlease look for available shims, or develop one to mitigate these dependencies.\n\nTo extract them anyway for a private/local build, re-run with:\n\nextract-files.py --allow-prohibited-files [...]\n\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$\n```",
+      "revId": "2b7396ae3a4c3185b8747754cadf0929e58eb15a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
