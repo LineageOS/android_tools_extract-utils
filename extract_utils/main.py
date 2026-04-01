@@ -131,6 +131,7 @@ class ExtractUtils:
             module.parse(
                 self.__args.regenerate,
                 self.__args.section,
+                allow_prohibited_files=self.__args.allow_prohibited_files,
             )
 
     def regenerate_modules(self, source: Source):
