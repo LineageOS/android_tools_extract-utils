@@ -16,6 +16,23 @@
       "message": "This works at least.",
       "revId": "889e27cbd891719083ce02d8d28902acf5b4ebb3",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71daa17c_67ba1edd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-01T05:53:27Z",
+      "side": 1,
+      "message": "This works at least - could probably use a fair chunk of review.\n\nExample hit:\n```\nnolenjohnson@ODS-PROD:~/lineage-22/device/nokia/DRG$ ./extract-files.py ~/dumps/nokia/DRG/dump/ --only-target\nParsing device/nokia/DRG/proprietary-firmware.txt\nParsing device/nokia/DRG/proprietary-files.txt\nERROR: Prohibited blobs detected in proprietary file lists:\n  - vendor/lib/libMGBeauty.so\n\nPolicy violation:\nThe following categories of files are not allowed:\n\n   - Megvii / Face++ related libraries and assets:\n    (e.g. lib*{M,m}eg*.so, lib*{M,m}g*.so, *{M,m}egvii*)\n\n   - SenseTime license artifacts:\n    (e.g. license.lic)\n\nThese files are not permitted in LineageOS repositories/builds.\n\nPlease look available shims, or develop one to mitigate these dependencies.\n```",
+      "revId": "889e27cbd891719083ce02d8d28902acf5b4ebb3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
