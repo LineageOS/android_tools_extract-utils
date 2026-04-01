@@ -52,6 +52,24 @@
       "parentUuid": "793c5941_be08023a",
       "revId": "a1de3505ba7de91f536e1ef9f8826f52b1a36215",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "23f7cbaa_ccab1cd1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 28223
+      },
+      "writtenOn": "2026-04-01T15:18:29Z",
+      "side": 1,
+      "message": "changing it to an error 24.1+ doesn’t make sense, they aren’t allowed to be pushed to the org (doesn’t matter if it’s 23 or 24) but not everyone only ships nightlies. extract was to make things simpler, people shouldn’t have to manually extract blobs because it’s not allowed on nightlies. re DMCAs if someone violates the charter they should just have their push rights taken away, not block everyone from extracting certain blobs. people could easily revert this and push it to the org, there’s no checks that stops them from pushing it there.",
+      "parentUuid": "db755c92_b53fb5f5",
+      "revId": "a1de3505ba7de91f536e1ef9f8826f52b1a36215",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
