@@ -90,6 +90,13 @@ parser.add_argument(
     '--download-sha256',
     help='SHA256 of the download',
 )
+parser.add_argument(
+    '--allow-prohibited-files',
+    action='store_true',
+    default=False,
+    dest='allow_prohibited_files',
+    help='Allow extraction of normally-prohibited files ...',
+)
 
 parser.add_argument(
     'source',
