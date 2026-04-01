@@ -16,6 +16,24 @@
       "message": "this should really be a warning",
       "revId": "a1de3505ba7de91f536e1ef9f8826f52b1a36215",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "793c5941_be08023a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19979
+      },
+      "writtenOn": "2026-04-01T10:17:41Z",
+      "side": 1,
+      "message": "warning for 23.2 and maybe 24, then hard fail for 24.1 and later",
+      "parentUuid": "46d56628_e0977f2b",
+      "revId": "a1de3505ba7de91f536e1ef9f8826f52b1a36215",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
