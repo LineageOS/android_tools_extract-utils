@@ -33,6 +33,46 @@
       "message": "This works at least - could probably use a fair chunk of review.\n\nExample hit:\n```\nnolenjohnson@ODS-PROD:~/lineage-22/device/nokia/DRG$ ./extract-files.py ~/dumps/nokia/DRG/dump/ --only-target\nParsing device/nokia/DRG/proprietary-firmware.txt\nParsing device/nokia/DRG/proprietary-files.txt\nERROR: Prohibited blobs detected in proprietary file lists:\n  - vendor/lib/libMGBeauty.so\n\nPolicy violation:\nThe following categories of files are not allowed:\n\n   - Megvii / Face++ related libraries and assets:\n    (e.g. lib*{M,m}eg*.so, lib*{M,m}g*.so, *{M,m}egvii*)\n\n   - SenseTime license artifacts:\n    (e.g. license.lic)\n\nThese files are not permitted in LineageOS repositories/builds.\n\nPlease look available shims, or develop one to mitigate these dependencies.\n```",
       "revId": "889e27cbd891719083ce02d8d28902acf5b4ebb3",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "84575833_76d7c4ab",
+        "filename": "extract_utils/prohibited_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-01T05:56:02Z",
+      "side": 1,
+      "message": "I did this instead of a long regex string because it\u0027s hard to maintain.",
+      "revId": "889e27cbd891719083ce02d8d28902acf5b4ebb3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b8b93a47_ecbc9bce",
+        "filename": "extract_utils/prohibited_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-01T05:56:02Z",
+      "side": 1,
+      "message": "unsure how/if this is the proper way to do this for extract",
+      "range": {
+        "startLine": 106,
+        "startChar": 4,
+        "endLine": 106,
+        "endChar": 12
+      },
+      "revId": "889e27cbd891719083ce02d8d28902acf5b4ebb3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
