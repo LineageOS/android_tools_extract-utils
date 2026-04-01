@@ -11,7 +11,11 @@
 #====================================================
 
 from __future__ import print_function
-import sys, os, errno
+
+import errno
+import os
+import sys
+
 
 def main(TRANSFER_LIST_FILE, NEW_DATA_FILE, OUTPUT_IMAGE_FILE):
     __version__ = '1.2'
