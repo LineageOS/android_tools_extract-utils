@@ -47,6 +47,7 @@ from extract_utils.postprocess import (
     postprocess_carriersettings_fn_impl,
     postprocess_fn_type,
 )
+from extract_utils.prohibited_files import fail_prohibited, is_prohibited
 from extract_utils.source import DiskSource, Source
 from extract_utils.tools import android_root
 from extract_utils.utils import (
@@ -244,8 +245,18 @@ class ProprietaryFile:
             check_elf=module.check_elf,
         )
 
-    def parse(self):
+    def parse(self, allow_prohibited_files: bool = False):
+        assert self.file_list_path is not None
         self.file_list.add_from_file(self.file_list_path)
+
+        if not allow_prohibited_files:
+            prohibited_files: List[str] = []
+            for file in self.file_list.files:
+                for file_path in {file.src, file.dst}:
+                    if is_prohibited(file_path):
+                        prohibited_files.append(file_path)
+
+            fail_prohibited(sorted(set(prohibited_files)))
 
     def get_files(self) -> Iterable[File]:
         return self.file_list.files
@@ -708,6 +719,7 @@ class ExtractUtilsModule:
         self,
         regenerate: bool,
         section: Optional[str],
+        allow_prohibited_files: bool = False,
     ):
         for proprietary_file in self.proprietary_files:
             if regenerate and isinstance(
@@ -715,11 +727,9 @@ class ExtractUtilsModule:
                 GeneratedProprietaryFile,
             ):
                 continue
-
             print(f'Parsing {proprietary_file.root_path}')
-
             proprietary_file.init_file_list(self, section)
-            proprietary_file.parse()
+            proprietary_file.parse(allow_prohibited_files=allow_prohibited_files)
 
     def regenerate(
         self,
