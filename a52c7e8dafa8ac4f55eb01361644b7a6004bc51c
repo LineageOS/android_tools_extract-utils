@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "02d5b5ba_295b4de7",
+        "filename": "extract_utils/prohibited_files.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 28223
+      },
+      "writtenOn": "2026-04-01T18:42:38Z",
+      "side": 1,
+      "message": "```suggestion\nPlease look for available shims or develop one to mitigate these dependencies.\n```",
+      "revId": "a52c7e8dafa8ac4f55eb01361644b7a6004bc51c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
