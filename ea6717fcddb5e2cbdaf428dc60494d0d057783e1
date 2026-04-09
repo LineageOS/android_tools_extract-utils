@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79c9e976_68df17c6",
+        "filename": "extract_utils/prohibited_files.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2026-04-09T22:00:49Z",
+      "side": 1,
+      "message": "this triggers false positives. \n\nERROR: Prohibited file detected: odm/etc/camera/fwk_config.json\n  Reason: binary signature matched: Megvii/Face++\n\ninstead of that we should just do same as repo_scan.",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 1
+      },
+      "revId": "ea6717fcddb5e2cbdaf428dc60494d0d057783e1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
