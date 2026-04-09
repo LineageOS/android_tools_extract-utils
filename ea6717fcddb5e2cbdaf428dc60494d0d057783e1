@@ -22,6 +22,30 @@
       },
       "revId": "ea6717fcddb5e2cbdaf428dc60494d0d057783e1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "15ec301c_a4a05f54",
+        "filename": "extract_utils/prohibited_files.py",
+        "patchSetId": 24
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-09T23:46:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79c9e976_68df17c6",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 1
+      },
+      "revId": "ea6717fcddb5e2cbdaf428dc60494d0d057783e1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
