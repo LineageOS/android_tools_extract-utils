@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f9eec7de_c34e2a7b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-04-09T23:45:18Z",
+      "side": 1,
+      "message": "Done.\n\n\nBefore:\n```\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ time ./extract-files.py ~/dumps/fxtec/pro1x/dump/\nParsing device/fxtec/pro1x/proprietary-firmware.txt\nParsing device/fxtec/pro1x/proprietary-files.txt\nUsing source dump dir /home/nolenjohnson/dumps/fxtec/pro1x/dump/\nProcessing device/fxtec/pro1x/proprietary-firmware.txt\nProcessing device/fxtec/pro1x/proprietary-files.txt\nsystem_ext/lib64/lib-imsvideocodec.so: fixed up\nvendor/lib64/hw/camera.qcom.so: fixed up\nvendor/lib64/hw/fingerprint.bengal.so: fixed up\nvendor/lib64/hw/microarray.fingerprint.default.so: fixed up\nvendor/lib64/libdpps.so: fixed up\nvendor/lib64/libwvhidl.so: fixed up\nvendor/lib64/mediadrm/libwvdrmengine.so: fixed up\nvendor/lib64/vendor.qti.hardware.camera.postproc@1.0-service-impl.so: fixed up\n\nreal\t0m0.529s\nuser\t0m0.243s\nsys\t0m0.282s\n```\n\nIntentionally flagging it:\n```\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ nano ^C\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ nano extract-files.py\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ nano proprietary-fi\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ nano proprietary-files.txt\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ time ./extract-files.py ~/dumps/fxtec/pro1x/dump/\nParsing device/fxtec/pro1x/proprietary-firmware.txt\nParsing device/fxtec/pro1x/proprietary-files.txt\nUsing source dump dir /home/nolenjohnson/dumps/fxtec/pro1x/dump/\nProcessing device/fxtec/pro1x/proprietary-firmware.txt\nProcessing device/fxtec/pro1x/proprietary-files.txt\nsystem_ext/lib64/lib-imsvideocodec.so: fixed up\nERROR: Prohibited file detected: vendor/etc/license.lic\n  Reason: SenseTime binary signature matched in license.lic\n\nPolicy violation:\nThe following categories of files are not allowed:\n\n   - Megvii / Face++ related libraries and assets:\n    (e.g. lib*{M,m}eg*.so, lib*{M,m}g*.so, *{M,m}egvii*)\n\n   - SenseTime license artifacts:\n    (e.g. license.lic)\n\nThese files are not permitted in LineageOS repositories/builds.\n\nPlease look for available shims, or develop one to mitigate these dependencies.\n\nTo extract them anyway for a private/local build, re-run with:\n\nextract-files.py --allow-prohibited-files [...]\n\n\nreal\t0m0.207s\nuser\t0m0.090s\nsys\t0m0.116s\n```\n\nAllowing it:\n```\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$ time ./extract-files.py ~/dumps/fxtec/pro1x/dump/ --allow-prohibited-files\nParsing device/fxtec/pro1x/proprietary-firmware.txt\nParsing device/fxtec/pro1x/proprietary-files.txt\nUsing source dump dir /home/nolenjohnson/dumps/fxtec/pro1x/dump/\nProcessing device/fxtec/pro1x/proprietary-firmware.txt\nProcessing device/fxtec/pro1x/proprietary-files.txt\nsystem_ext/lib64/lib-imsvideocodec.so: fixed up\nvendor/lib64/hw/camera.qcom.so: fixed up\nvendor/lib64/hw/fingerprint.bengal.so: fixed up\nvendor/lib64/hw/microarray.fingerprint.default.so: fixed up\nvendor/lib64/libdpps.so: fixed up\nvendor/lib64/libwvhidl.so: fixed up\nvendor/lib64/mediadrm/libwvdrmengine.so: fixed up\nvendor/lib64/vendor.qti.hardware.camera.postproc@1.0-service-impl.so: fixed up\n\nreal\t0m0.491s\nuser\t0m0.239s\nsys\t0m0.249s\nnolenjohnson@ODS-PROD:~/lineage-23/device/fxtec/pro1x$\n```",
+      "revId": "d7b69832dde1c7d9a16c56ef37244cb10ab0dda3",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
