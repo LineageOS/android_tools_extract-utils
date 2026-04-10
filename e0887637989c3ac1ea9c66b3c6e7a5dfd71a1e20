@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64c1acd6_858e34df",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 10067
+      },
+      "writtenOn": "2026-04-10T10:45:04Z",
+      "side": 1,
+      "message": "if you want ruff etc for sda2img, unexclude it from pre-commit config and fix all issues.",
+      "revId": "e0887637989c3ac1ea9c66b3c6e7a5dfd71a1e20",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
