@@ -483,12 +483,15 @@ def extract_all_partitions(dump_dir: str, ctx: ExtractCtx):
 
     while partitions:
         for partition in partitions:
-            if partition == 'recovery':
-                extract_recovery_partition(partition, dump_dir)
-            elif partition in firmware_partitions:
-                extract_firmware_partition(partition, dump_dir)
-            else:
-                extract_partition(partition, dump_dir)
+            try:
+                if partition == 'recovery':
+                    extract_recovery_partition(partition, dump_dir)
+                elif partition in firmware_partitions:
+                    extract_firmware_partition(partition, dump_dir)
+                else:
+                    extract_partition(partition, dump_dir)
+            except Exception as e:
+                print(f'Warning: Failed to extract partition {partition}: {e}')
 
         found_partitions = find_partitions(dump_dir, ctx)
         partitions = find_alternate_partitions(partitions, found_partitions)
