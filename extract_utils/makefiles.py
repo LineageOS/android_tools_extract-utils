@@ -39,6 +39,9 @@ ALL_PARTITIONS = [
 APEX_PARTITIONS = ['system', 'vendor', 'system_ext']
 RFSA_PARTITIONS = ['vendor', 'odm']
 
+RUST_DYLIB_SUFFIX = '.dylib.so'
+RUST_DYLIB_STEM_SUFFIX = '.dylib'
+
 
 class MakefilesCtx:
     def __init__(
@@ -165,6 +168,18 @@ def file_stem_package_name(
     return stem, package_name
 
 
+def file_rust_dylib_stem_package_name(file: File):
+    stem, package_name = file_stem_package_name(file, can_have_stem=True)
+
+    if stem is None:
+        stem = package_name
+
+    assert stem.endswith(RUST_DYLIB_STEM_SUFFIX)
+    stem = stem[: -len(RUST_DYLIB_STEM_SUFFIX)]
+
+    return stem, package_name
+
+
 def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> Optional[str]:
     remaining = file.dirname[subtree_prefix_len:]
     if not remaining:
@@ -198,6 +213,20 @@ def write_sh_package(
     return package_name
 
 
+def remove_deps_dylib_ending(
+    deps: Optional[List[str]],
+) -> Optional[List[str]]:
+    if deps is None:
+        return None
+
+    return [
+        dep[: -len(RUST_DYLIB_STEM_SUFFIX)]
+        if dep.endswith(RUST_DYLIB_STEM_SUFFIX)
+        else dep
+        for dep in deps
+    ]
+
+
 def write_elfs_package(
     files: List[File],
     builder: FileBpBuilder,
@@ -228,10 +257,30 @@ def write_elfs_package(
             bits = f.inferred_bits
 
         deps = remove_libs_so_ending(libs)
+        deps = remove_deps_dylib_ending(deps)
         deps = run_libs_fixup(ctx.lib_fixups, deps, file.partition)
         machines.append(machine)
         bitses.append(bits)
         depses.append(deps)
+
+    if file.basename.endswith(RUST_DYLIB_SUFFIX):
+        stem, package_name = file_rust_dylib_stem_package_name(file)
+
+        (
+            builder.set_rule_name('rust_prebuilt_dylib')
+            .name(package_name)
+            .stem(stem)
+            .owner()
+            .targets(files, machines, depses)
+            .multilibs(bitses)
+            .relative_install_path()
+            .prefer()
+            .specific()
+            .recovery_available()
+            .set('required', file.required, optional=True)
+        )
+
+        return package_name
 
     stem, package_name = file_stem_package_name(
         file,
