@@ -228,7 +228,13 @@ class FileBpBuilder(BpBuilder):
             optional=True,
         )
 
-    def target(self, f: File, machine: EM, deps: Optional[List[str]]):
+    def target(
+        self,
+        f: File,
+        machine: EM,
+        deps: Optional[List[str]],
+        rust_deps: Optional[List[str]] = None,
+    ):
         target_dict: Dict[str, bp_type] = {}
         if 'target' not in self.o:
             self.o['target'] = target_dict
@@ -246,6 +252,9 @@ class FileBpBuilder(BpBuilder):
         if deps:
             target_dict_arch['shared_libs'] = deps
 
+        if rust_deps:
+            target_dict_arch['rustlibs'] = rust_deps
+
         target_dict[arch] = target_dict_arch
 
         return self
@@ -255,7 +264,9 @@ class FileBpBuilder(BpBuilder):
         files: List[File],
         machines: List[EM],
         depses: List[Optional[List[str]]],
+        rust_depses: Optional[List[Optional[List[str]]]] = None,
     ):
-        for f, machine, deps in zip(files, machines, depses):
-            self.target(f, machine, deps)
+        for i, (f, machine, deps) in enumerate(zip(files, machines, depses)):
+            rust_deps = rust_depses[i] if rust_depses is not None else None
+            self.target(f, machine, deps, rust_deps)
         return self
