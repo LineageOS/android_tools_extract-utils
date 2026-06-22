@@ -9,7 +9,16 @@ import os
 from collections import defaultdict
 from contextlib import ExitStack, contextmanager
 from json import JSONEncoder
-from typing import Any, DefaultDict, Iterable, List, Optional, Protocol, TextIO
+from typing import (
+    Any,
+    DefaultDict,
+    Iterable,
+    List,
+    Optional,
+    Protocol,
+    TextIO,
+    Tuple,
+)
 
 from extract_utils.bp_builder import BpBuilder, FileBpBuilder
 from extract_utils.bp_encoder import BpJSONEncoder
@@ -38,6 +47,9 @@ ALL_PARTITIONS = [
 ]
 APEX_PARTITIONS = ['system', 'vendor', 'system_ext']
 RFSA_PARTITIONS = ['vendor', 'odm']
+
+RUST_DYLIB_SUFFIX = '.dylib.so'
+RUST_DYLIB_STEM_SUFFIX = '.dylib'
 
 
 class MakefilesCtx:
@@ -165,6 +177,14 @@ def file_stem_package_name(
     return stem, package_name
 
 
+def file_rust_dylib_package_name(file: File):
+    package_name = file.root
+    if package_name.endswith(RUST_DYLIB_STEM_SUFFIX):
+        package_name = package_name[: -len(RUST_DYLIB_STEM_SUFFIX)]
+
+    return package_name
+
+
 def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> Optional[str]:
     remaining = file.dirname[subtree_prefix_len:]
     if not remaining:
@@ -198,6 +218,26 @@ def write_sh_package(
     return package_name
 
 
+def split_rust_dylib_deps(
+    deps: Optional[List[str]],
+) -> Tuple[
+    Optional[List[str]],
+    Optional[List[str]],
+]:
+    if deps is None:
+        return None, None
+
+    rust_deps: List[str] = []
+    shared_deps: List[str] = []
+    for dep in deps:
+        if dep.endswith(RUST_DYLIB_STEM_SUFFIX):
+            rust_deps.append(dep[: -len(RUST_DYLIB_STEM_SUFFIX)])
+        else:
+            shared_deps.append(dep)
+
+    return shared_deps, rust_deps
+
+
 def write_elfs_package(
     files: List[File],
     builder: FileBpBuilder,
@@ -206,11 +246,14 @@ def write_elfs_package(
 ):
     file = files[0]
 
+    is_rust_dylib = not is_bin and file.basename.endswith(RUST_DYLIB_SUFFIX)
+
     gen_deps, enable_check_elf = file_gen_deps_check_elf(ctx.check_elf, file)
 
     machines: List[EM] = []
     bitses: List[int] = []
     depses: List[Optional[List[str]]] = []
+    rust_depses: List[Optional[List[str]]] = []
 
     for f in files:
         f_path = f'{ctx.vendor_prop_path}/{f.dst}'
@@ -228,10 +271,36 @@ def write_elfs_package(
             bits = f.inferred_bits
 
         deps = remove_libs_so_ending(libs)
+        rust_deps = None
+
+        if is_rust_dylib:
+            deps, rust_deps = split_rust_dylib_deps(deps)
+
         deps = run_libs_fixup(ctx.lib_fixups, deps, file.partition)
+        rust_deps = run_libs_fixup(ctx.lib_fixups, rust_deps, file.partition)
+
         machines.append(machine)
         bitses.append(bits)
         depses.append(deps)
+        rust_depses.append(rust_deps)
+
+    if is_rust_dylib:
+        package_name = file_rust_dylib_package_name(file)
+
+        (
+            builder.set_rule_name('rust_prebuilt_dylib')
+            .name(package_name)
+            .owner()
+            .targets(files, machines, depses, rust_depses)
+            .multilibs(bitses)
+            .relative_install_path()
+            .prefer()
+            .specific()
+            .recovery_available()
+            .set('required', file.required, optional=True)
+        )
+
+        return package_name
 
     stem, package_name = file_stem_package_name(
         file,
