@@ -480,7 +480,9 @@ def write_etc_package(file: File, builder: FileBpBuilder):
     else:
         rule_name = 'prebuilt_etc'
 
-    _, package_name = file_stem_package_name(file, any_extension=True)
+    _, package_name = file_stem_package_name(
+        file, can_have_stem=True, any_extension=True
+    )
 
     (
         builder.set_rule_name(rule_name)
