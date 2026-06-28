@@ -119,6 +119,9 @@ class File:
 
         self.__parse_extras(line)
 
+        self.__update()
+
+    def __update(self):
         self.src_parts = self.parts = self.dst.split('/')
         if self.has_dst:
             self.src_parts = self.src.split('/')
@@ -228,6 +231,8 @@ class File:
         else:
             self.dst = dst
             self.has_dst = True
+
+        self.__update()
 
         return self
 
