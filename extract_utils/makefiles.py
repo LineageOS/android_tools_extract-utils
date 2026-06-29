@@ -274,11 +274,17 @@ def write_elfs_package(
         deps = remove_libs_so_ending(libs)
         deps, rust_deps = split_rust_dylib_deps(deps)
 
-        deps, exc_deps = run_libs_fixup(ctx.lib_fixups, deps, file.partition)
+        deps, exc_deps = run_libs_fixup(
+            ctx.lib_fixups,
+            deps,
+            file.partition,
+            file,
+        )
         rust_deps, _ = run_libs_fixup(
             ctx.lib_fixups,
             rust_deps,
             file.partition,
+            file,
         )
 
         machines.append(machine)

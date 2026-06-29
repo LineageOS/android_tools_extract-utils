@@ -5,9 +5,12 @@
 
 from __future__ import annotations
 
+import inspect
 from enum import Enum, auto
+from functools import cache
 from typing import Any, Callable, List, Optional, Tuple, Union
 
+from extract_utils.file import File
 from extract_utils.fixups import fixups_type, fixups_user_type
 
 
@@ -24,7 +27,7 @@ lib_fixup_result_type = Union[
     # rename and exclude
     Tuple[str, LibFixupFlag],
 ]
-lib_fixup_fn_type = Callable[[str, str], lib_fixup_result_type]
+lib_fixup_fn_type = Callable[..., lib_fixup_result_type]
 lib_fixups_user_type = fixups_user_type[lib_fixup_fn_type]
 lib_fixups_type = fixups_type[lib_fixup_fn_type]
 
@@ -96,8 +99,21 @@ lib_fixups: lib_fixups_user_type = {
 }
 
 
+@cache
+def lib_fixup_accepts_file(fixup_fn: lib_fixup_fn_type) -> bool:
+    # Only pass the file kwarg to fixups that explicitly declare it
+    file_param = inspect.signature(fixup_fn).parameters.get('file')
+    return file_param is not None and file_param.kind in (
+        file_param.POSITIONAL_OR_KEYWORD,
+        file_param.KEYWORD_ONLY,
+    )
+
+
 def run_lib_fixup(
-    fixups: Optional[lib_fixups_type], lib: str, partition: str
+    fixups: Optional[lib_fixups_type],
+    lib: str,
+    partition: str,
+    file: File,
 ) -> Tuple[str, LibFixupFlag]:
     if fixups is None:
         return lib, LibFixupFlag.SHARED
@@ -106,7 +122,11 @@ def run_lib_fixup(
     if lib_fixup_fn is None:
         return lib, LibFixupFlag.SHARED
 
-    result = lib_fixup_fn(lib, partition)
+    if lib_fixup_accepts_file(lib_fixup_fn):
+        result = lib_fixup_fn(lib, partition, file=file)
+    else:
+        result = lib_fixup_fn(lib, partition)
+
     if result is None:
         return lib, LibFixupFlag.SHARED
 
@@ -120,6 +140,7 @@ def run_libs_fixup(
     fixups: lib_fixups_type,
     libs: Optional[List[str]],
     partition: str,
+    file: File,
 ) -> Tuple[Optional[List[str]], Optional[List[str]]]:
     if libs is None:
         return None, None
@@ -130,7 +151,7 @@ def run_libs_fixup(
     fixed_libs: List[str] = []
     excluded_libs: List[str] = []
     for lib in libs:
-        fixed_lib, flag = run_lib_fixup(fixups, lib, partition)
+        fixed_lib, flag = run_lib_fixup(fixups, lib, partition, file)
         if fixed_lib == '':
             continue
 
