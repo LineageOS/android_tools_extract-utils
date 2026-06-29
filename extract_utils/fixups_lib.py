@@ -5,11 +5,26 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, List, Optional
+from enum import Enum, auto
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 from extract_utils.fixups import fixups_type, fixups_user_type
 
-lib_fixup_fn_type = Callable[[str, str], Optional[str]]
+
+class LibFixupFlag(Enum):
+    SHARED = auto()
+    EXCLUDE = auto()
+
+
+lib_fixup_result_type = Union[
+    # no changes
+    None,
+    # rename or remove if ''
+    str,
+    # rename and exclude
+    Tuple[str, LibFixupFlag],
+]
+lib_fixup_fn_type = Callable[[str, str], lib_fixup_result_type]
 lib_fixups_user_type = fixups_user_type[lib_fixup_fn_type]
 lib_fixups_type = fixups_type[lib_fixup_fn_type]
 
@@ -39,6 +54,14 @@ def lib_fixup_remove(
     **kwargs: Any,
 ):
     return ''
+
+
+def lib_fixup_exclude(
+    lib: str,
+    *args: Any,
+    **kwargs: Any,
+):
+    return lib, LibFixupFlag.EXCLUDE
 
 
 def lib_fixup_remove_arch_suffix(
@@ -83,38 +106,45 @@ lib_fixups: lib_fixups_user_type = {
 
 def run_lib_fixup(
     fixups: Optional[lib_fixups_type], lib: str, partition: str
-) -> str:
+) -> Tuple[str, LibFixupFlag]:
     if fixups is None:
-        return lib
+        return lib, LibFixupFlag.SHARED
 
     lib_fixup_fn = fixups.get(lib)
     if lib_fixup_fn is None:
-        return lib
+        return lib, LibFixupFlag.SHARED
 
-    fixed_up_lib = lib_fixup_fn(lib, partition)
-    if fixed_up_lib is None:
-        return lib
+    result = lib_fixup_fn(lib, partition)
+    if result is None:
+        return lib, LibFixupFlag.SHARED
 
-    return fixed_up_lib
+    if isinstance(result, tuple):
+        return result
+
+    return result, LibFixupFlag.SHARED
 
 
 def run_libs_fixup(
     fixups: lib_fixups_type,
     libs: Optional[List[str]],
     partition: str,
-):
+) -> Tuple[Optional[List[str]], Optional[List[str]]]:
     if libs is None:
-        return None
+        return None, None
 
     if not fixups:
-        return libs
+        return libs, None
 
     fixed_libs: List[str] = []
+    excluded_libs: List[str] = []
     for lib in libs:
-        fixed_lib = run_lib_fixup(fixups, lib, partition)
+        fixed_lib, flag = run_lib_fixup(fixups, lib, partition)
         if fixed_lib == '':
             continue
 
-        fixed_libs.append(fixed_lib)
+        if flag == LibFixupFlag.EXCLUDE:
+            excluded_libs.append(fixed_lib)
+        else:
+            fixed_libs.append(fixed_lib)
 
-    return fixed_libs
+    return fixed_libs, excluded_libs
