@@ -11,6 +11,7 @@ from extract_utils.fixups_blob import (
     blob_fixups_user_type,
 )
 from extract_utils.fixups_lib import (
+    lib_fixup_exclude,
     lib_fixup_remove,
     lib_fixups,
     lib_fixups_user_type,
@@ -43,6 +44,10 @@ lib_fixups: lib_fixups_user_type = {
         'vendor.twopac.hardware.oox@1.0',
     ): lib_fixup_vendor_suffix,
     'libwpa_client': lib_fixup_remove,
+    (
+        'android.media.audio.common.types-V3-ndk',
+        'android.hardware.audio.core-V2-ndk',
+    ): lib_fixup_exclude,
 }
 
 
