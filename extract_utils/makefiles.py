@@ -254,6 +254,7 @@ def write_elfs_package(
     bitses: List[int] = []
     depses: List[Optional[List[str]]] = []
     rust_depses: List[Optional[List[str]]] = []
+    exc_depses: List[Optional[List[str]]] = []
 
     for f in files:
         f_path = f'{ctx.vendor_prop_path}/{f.dst}'
@@ -273,13 +274,18 @@ def write_elfs_package(
         deps = remove_libs_so_ending(libs)
         deps, rust_deps = split_rust_dylib_deps(deps)
 
-        deps = run_libs_fixup(ctx.lib_fixups, deps, file.partition)
-        rust_deps = run_libs_fixup(ctx.lib_fixups, rust_deps, file.partition)
+        deps, exc_deps = run_libs_fixup(ctx.lib_fixups, deps, file.partition)
+        rust_deps, _ = run_libs_fixup(
+            ctx.lib_fixups,
+            rust_deps,
+            file.partition,
+        )
 
         machines.append(machine)
         bitses.append(bits)
         depses.append(deps)
         rust_depses.append(rust_deps)
+        exc_depses.append(exc_deps)
 
     if is_rust_dylib:
         package_name = file_rust_dylib_package_name(file)
@@ -337,7 +343,12 @@ def write_elfs_package(
             .name(package_name)
             .stem(stem)
             .owner()
-            .targets(files, machines, depses)
+            .targets(
+                files,
+                machines,
+                depses,
+                exc_depses=exc_depses,
+            )
             .multilibs(bitses)
             .check_elf(enable_check_elf)
             .no_strip()
@@ -356,7 +367,12 @@ def write_elfs_package(
         .stem(stem)
         .owner()
         .no_strip()
-        .targets(files, machines, depses)
+        .targets(
+            files,
+            machines,
+            depses,
+            exc_depses=exc_depses,
+        )
         .multilibs(bitses)
         .check_elf(enable_check_elf)
         .relative_install_path()
