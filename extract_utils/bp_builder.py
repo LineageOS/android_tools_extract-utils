@@ -234,6 +234,7 @@ class FileBpBuilder(BpBuilder):
         machine: EM,
         deps: Optional[List[str]],
         rust_deps: Optional[List[str]] = None,
+        exc_deps: Optional[List[str]] = None,
     ):
         target_dict: Dict[str, bp_type] = {}
         if 'target' not in self.o:
@@ -255,6 +256,9 @@ class FileBpBuilder(BpBuilder):
         if rust_deps:
             target_dict_arch['rustlibs'] = rust_deps
 
+        if exc_deps:
+            target_dict_arch['exclude_shared_libs'] = exc_deps
+
         target_dict[arch] = target_dict_arch
 
         return self
@@ -265,8 +269,10 @@ class FileBpBuilder(BpBuilder):
         machines: List[EM],
         depses: List[Optional[List[str]]],
         rust_depses: Optional[List[Optional[List[str]]]] = None,
+        exc_depses: Optional[List[Optional[List[str]]]] = None,
     ):
         for i, (f, machine, deps) in enumerate(zip(files, machines, depses)):
             rust_deps = rust_depses[i] if rust_depses is not None else None
-            self.target(f, machine, deps, rust_deps)
+            exc_deps = exc_depses[i] if exc_depses is not None else None
+            self.target(f, machine, deps, rust_deps, exc_deps)
         return self
