@@ -613,6 +613,45 @@ class blob_fixup:
 
         return True
 
+    @staticmethod
+    def rename_dynamic_symbol_impl(
+        _ctx: BlobFixupCtx,
+        _file: File,
+        file_path: str,
+        old_name: str,
+        new_name: str,
+        *,
+        tmp_dir: Optional[str] = None,
+        **_kwargs,
+    ):
+        with tempfile.NamedTemporaryFile(
+            mode='w',
+            encoding='utf-8',
+            dir=tmp_dir,
+        ) as tmp:
+            tmp.write(f'{old_name} {new_name}')
+            tmp.flush()
+
+            run_cmd(
+                [
+                    patchelf_version_path_map[DEFAULT_PATCHELF_VERSION],
+                    '--rename-dynamic-symbols',
+                    tmp.name,
+                    file_path,
+                ]
+            )
+
+    def rename_dynamic_symbol(
+        self,
+        old_name: str,
+        new_name: str,
+    ) -> blob_fixup:
+        return self.call(
+            self.rename_dynamic_symbol_impl,
+            old_name,
+            new_name,
+        )
+
 
 blob_fixup_fn_type = blob_fixup
 blob_fixups_user_type = fixups_user_type[blob_fixup_fn_type]
