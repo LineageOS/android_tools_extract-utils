@@ -50,6 +50,7 @@ class FileArgs(str, Enum):
     MAKE_COPY_RULE_ONLY = 'MAKE_COPY_RULE_ONLY'
     MODULE = 'MODULE'
     MODULE_SUFFIX = 'MODULE_SUFFIX'
+    NO_ETC_XML = 'NO_ETC_XML'
     DISABLE_CHECKELF = 'DISABLE_CHECKELF'
     DISABLE_DEPS = 'DISABLE_DEPS'
     FIX_SONAME = 'FIX_SONAME'
@@ -75,6 +76,7 @@ FILE_ARGS_TYPE_MAP = {
     FileArgs.MAKE_COPY_RULE_ONLY: True,
     FileArgs.MODULE: str,
     FileArgs.MODULE_SUFFIX: str,
+    FileArgs.NO_ETC_XML: True,
     FileArgs.DISABLE_CHECKELF: True,
     FileArgs.DISABLE_DEPS: True,
     FileArgs.FIX_SONAME: True,

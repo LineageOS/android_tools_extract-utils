@@ -366,7 +366,7 @@ def write_framework_package(file: File, builder: FileBpBuilder):
 
 
 def write_etc_package(file: File, builder: FileBpBuilder):
-    if file.ext == '.xml':
+    if file.ext == '.xml' and FileArgs.NO_ETC_XML not in file.args:
         rule_name = 'prebuilt_etc_xml'
     else:
         rule_name = 'prebuilt_etc'
