@@ -83,18 +83,26 @@ parser.add_argument(
     help='Rename super_*.img images to their volume name',
 )
 parser.add_argument(
+    '--keep-images',
+    action='store_true',
+    help='keep the extracted partition images in the dump directory, so it '
+    'can be used as the base of a later incremental extraction',
+)
+parser.add_argument(
     '--download-dir',
     help='path to directory into which to store downloads',
 )
 parser.add_argument(
     '--download-sha256',
-    help='SHA256 of the download',
+    action='append',
+    help='SHA256 of a download, pass once per downloaded source, in order',
 )
 
 parser.add_argument(
     'source',
-    help='sources from which to extract',
-    nargs='?',
+    help='source to extract from; when multiple are given, the first one is '
+    'the dump to apply the following incremental OTAs over, in order',
+    nargs='+',
 )
 
 if __name__ == '__main__':
@@ -153,6 +161,7 @@ if __name__ == '__main__':
     extract_ctx = ExtractCtx(
         extract_partitions=extract_partitions,
         extract_fns=extract_fns,
+        keep_images=args.keep_images,
     )
 
     source_ctx = SourceCtx(
@@ -162,5 +171,5 @@ if __name__ == '__main__':
         args.download_sha256,
     )
 
-    with create_source(source_ctx, extract_ctx) as source:
+    with create_source(source_ctx, extract_ctx):
         pass
