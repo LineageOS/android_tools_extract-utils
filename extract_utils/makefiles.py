@@ -232,6 +232,8 @@ def split_rust_dylib_deps(
     for dep in deps:
         if dep.endswith(RUST_DYLIB_STEM_SUFFIX):
             rust_deps.append(dep[: -len(RUST_DYLIB_STEM_SUFFIX)])
+        elif dep.endswith('-rust'):
+            rust_deps.append(dep)
         else:
             shared_deps.append(dep)
 
