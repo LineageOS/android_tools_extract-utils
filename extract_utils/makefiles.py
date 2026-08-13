@@ -379,6 +379,9 @@ def write_framework_package(file: File, builder: FileBpBuilder):
         .specific()
     )
 
+    if file.partition == 'system_ext' and FileArgs.BOOT_JAR in file.args:
+        builder.set('use_generic_config', True)
+
     return package_name
 
 
