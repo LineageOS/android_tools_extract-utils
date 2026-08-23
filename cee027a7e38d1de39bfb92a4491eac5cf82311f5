@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "80c0aa13_57bd4f7a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 16185
+      },
+      "writtenOn": "2026-08-23T21:05:55Z",
+      "side": 1,
+      "message": "CI review was invalid `      fatal: unable to access \u0027https://codeberg.org/fsfe/reuse-tool/\u0027: The requested URL returned error: 504\n` due to downtime.",
+      "revId": "cee027a7e38d1de39bfb92a4491eac5cf82311f5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
