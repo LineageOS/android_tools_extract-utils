@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c829482c_f89b08e9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 31890
+      },
+      "writtenOn": "2026-08-23T16:32:35Z",
+      "side": 1,
+      "message": "This fixes a confusing issue where I had a system with python3 not symlinked to python and the extract utils failed to extract any standard OTA packages.\n\nSubmitted to upstream as well, but that doesn\u0027t seem to be very active:\nhttps://github.com/xpirt/sdat2img/pull/42",
+      "revId": "181b68abd1a3673dc70b15c4da3a3f8c5a9646a0",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
