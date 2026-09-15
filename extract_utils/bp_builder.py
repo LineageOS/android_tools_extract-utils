@@ -54,6 +54,9 @@ PARTITION_SPECIFIC_MAP = {
     'product': 'product',
     'system_ext': 'system_ext',
     'odm': 'device',
+    'vendor_dlkm': 'vendor_dlkm',
+    'odm_dlkm': 'odm_dlkm',
+    'system_dlkm': 'system_dlkm',
 }
 
 
