@@ -41,6 +41,7 @@ LIB_PARTS = ['lib']
 LIB_RFSA_PARTS = ['lib', 'rfsa']
 LIB64_PARTS = ['lib64']
 BIN_PARTS = ['bin']
+MODULES_PARTS = ['lib', 'modules']
 
 
 class FileArgs(str, Enum):
@@ -537,6 +538,10 @@ class FileList:
             if file.contains_path_parts(LIB_PARTS) or file.contains_path_parts(
                 LIB64_PARTS
             ):
+                return True
+
+        if ext == '.ko':
+            if file.contains_path_parts(MODULES_PARTS):
                 return True
 
         if file.contains_path_parts(BIN_PARTS) or file.contains_path_parts(
