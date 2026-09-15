@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d838cf9b_ed120b33",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 32674
+      },
+      "writtenOn": "2026-09-15T08:05:38Z",
+      "side": 1,
+      "message": "Worked for amlogic_fbc_lib.ko:\n\n```\nprebuilt_lib {\n    name: \"amlogic_fbc_lib\",\n    owner: \"amlogic\",\n    src: \"proprietary/vendor_dlkm/lib/modules/amlogic_fbc_lib.ko\",\n    filename: \"amlogic_fbc_lib.ko\",\n    sub_dir: \"modules\",\n    vendor_dlkm_specific: true,\n}\n```\n\nAlthough this needs some opinions ^ `prebuilt_kernel_modules` won\u0027t work because it won\u0027t get translated to Make rules",
+      "revId": "44e3b07397a339c2721c637e40cb73159c78ad46",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
