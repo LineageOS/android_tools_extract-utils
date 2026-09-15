@@ -54,6 +54,9 @@ PARTITION_SPECIFIC_MAP = {
     'product': 'product',
     'system_ext': 'system_ext',
     'odm': 'device',
+    'vendor_dlkm': 'vendor_dlkm',
+    'odm_dlkm': 'odm_dlkm',
+    'system_dlkm': 'system_dlkm',
 }
 
 
@@ -192,6 +195,10 @@ class FileBpBuilder(BpBuilder):
     def src(self):
         rel_path = self.__file_rel_sub_path(self.__file.dst)
         return self.set('src', rel_path)
+
+    def srcs(self):
+        rel_path = self.__file_rel_sub_path(self.__file.dst)
+        return self.set('srcs', [rel_path])
 
     def apk(self):
         rel_path = self.__file_rel_sub_path(self.__file.dst)
