@@ -35,6 +35,9 @@ ALL_PARTITIONS = [
     'system_ext',
     'odm',
     'recovery',
+    'vendor_dlkm',
+    'odm_dlkm',
+    'system_dlkm',
 ]
 APEX_PARTITIONS = ['system', 'vendor', 'system_ext']
 RFSA_PARTITIONS = ['vendor', 'odm']
@@ -332,6 +335,26 @@ def write_rfsa_package(file: File, builder: FileBpBuilder):
     return package_name
 
 
+def write_kernel_module_package(file: File, builder: FileBpBuilder):
+    _, package_name = file_stem_package_name(
+        file,
+        can_have_stem=True,
+    )
+
+    sub_dir = '/'.join(file.parts[2:-1])
+
+    (
+        builder.set_rule_name('prebuilt_lib')
+        .name(package_name)
+        .owner()
+        .src()
+        .filename()
+        .set('sub_dir', sub_dir)
+        .specific()
+    )
+    return package_name
+
+
 def write_apex_package(file: File, builder: FileBpBuilder):
     _, package_name = file_stem_package_name(file)
 
@@ -538,12 +561,16 @@ def write_product_packages(
     for part in ALL_PARTITIONS:
         part_path = get_part_path(part)
 
+        # Extract RFSA and kernel modules first so that they don't end up in lib32
         lib_rfsa_tree = None
         if part in RFSA_PARTITIONS:
-            # Extract these first so that they don't end up in lib32
             lib_rfsa_tree = base_file_tree.filter_prefixed(
                 part_path + ['lib', 'rfsa']
             )
+
+        kernel_modules_tree = base_file_tree.filter_prefixed(
+            part_path + ['lib', 'modules']
+        )
 
         lib32_tree = base_file_tree.filter_prefixed(part_path + ['lib'])
         lib64_tree = base_file_tree.filter_prefixed(part_path + ['lib64'])
@@ -565,6 +592,8 @@ def write_product_packages(
 
         if lib_rfsa_tree is not None:
             w(write_rfsa_package, lib_rfsa_tree)
+
+        w(write_kernel_module_package, kernel_modules_tree)
 
     for part in APEX_PARTITIONS:
         wp(write_apex_package, part, 'apex')
