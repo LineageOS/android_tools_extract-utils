@@ -558,6 +558,10 @@ def move_factory_files(dump_dir: str, ctx: ExtractCtx):
 
 
 def extract_dump(dump_dir: str, ctx: ExtractCtx):
+    if not os.access(dump_dir, os.W_OK):
+        # Read-only, e.g. a mounted system, use it as is
+        return
+
     should_extract = filter_already_extracted(dump_dir, ctx)
     if not should_extract:
         move_sar_system_paths(dump_dir)
@@ -846,6 +850,23 @@ def run_extract_fns(dump_dir: str, ctx: ExtractCtx):
                     processed_files.add(processed_file)
 
         remove_file_paths(processed_files)
+
+
+def resolve_alternate_partition_path(dump_dir: str, rel_path: str):
+    # Fall back to the alternate location for partitions that are only
+    # available as paths in another partition, e.g. in a read-only mount
+    partition, _, rest = rel_path.partition('/')
+    if path.isdir(path.join(dump_dir, partition)):
+        return rel_path
+
+    alternate_partition_path = ALTERNATE_PARTITION_PATH_MAP.get(partition)
+    if alternate_partition_path is None:
+        return rel_path
+
+    if not path.isdir(path.join(dump_dir, alternate_partition_path)):
+        return rel_path
+
+    return path.join(alternate_partition_path, rest)
 
 
 def move_alternate_partition_paths(dump_dir: str):
