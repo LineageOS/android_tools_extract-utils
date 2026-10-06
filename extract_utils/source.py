@@ -25,6 +25,7 @@ from extract_utils.extract import (
     extract_dump,
     extract_image_file,
     reconstruct_firmware_images,
+    resolve_alternate_partition_path,
 )
 from extract_utils.file import File, FileArgs
 from extract_utils.utils import run_cmd, urlretrieve_resume
@@ -233,6 +234,7 @@ class DiskSource(Source):
         file_path: str,
         target_file_path: str,
     ) -> bool:
+        file_path = resolve_alternate_partition_path(self.dump_dir, file_path)
         file_path = f'{self.dump_dir}/{file_path}'
 
         if not path.isfile(file_path):
@@ -245,6 +247,7 @@ class DiskSource(Source):
         return False
 
     def _list_sub_path_file_rel_paths(self, sub_path: str) -> List[str]:
+        sub_path = resolve_alternate_partition_path(self.dump_dir, sub_path)
         dump_dir_sub_path = path.join(self.dump_dir, sub_path)
 
         file_rel_paths: List[str] = []
