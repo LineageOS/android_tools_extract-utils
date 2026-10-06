@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import os
+import sys
 import tempfile
 from enum import Enum
 from functools import partial
@@ -441,6 +442,19 @@ class RuntimeResourceOverlay:
 
 
 class ExtractUtilsModule:
+    @staticmethod
+    def __find_device_rel_path(vendor: str, device: str):
+        # Use the dir of the extract-files.py that created the module, so
+        # that it can be anywhere in the tree
+        module_file = sys._getframe(2).f_globals.get('__file__')
+        if module_file is not None:
+            module_dir = path.dirname(path.abspath(module_file))
+            rel_path = path.relpath(module_dir, android_root)
+            if not rel_path.startswith(path.pardir):
+                return rel_path
+
+        return path.join('device', vendor, device)
+
     def __init__(
         self,
         device: str,
@@ -481,7 +495,7 @@ class ExtractUtilsModule:
         self.check_elf = check_elf
 
         if device_rel_path is None:
-            device_rel_path = path.join('device', vendor, device)
+            device_rel_path = self.__find_device_rel_path(vendor, device)
         self.device_rel_path = device_rel_path
 
         self.device_path = path.join(android_root, self.device_rel_path)
