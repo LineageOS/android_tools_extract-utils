@@ -176,10 +176,11 @@ class FileBpBuilder(BpBuilder):
         if not remaining:
             return None
 
-        if is_app and '/' not in remaining:
-            return None
+        if is_app:
+            # The last component is the app's own dir, added by the build
+            remaining = remaining.rpartition('/')[0]
 
-        return remaining
+        return remaining or None
 
     def relative_install_path(self, is_app: bool = False):
         p = self.__file_dir_without_prefix(is_app)
