@@ -11,8 +11,9 @@ from typing import Dict
 patchelf_versions = ['0_8', '0_9', '0_17_2', '0_18']
 DEFAULT_PATCHELF_VERSION = '0_18'
 
-script_dir = path.dirname(path.realpath(__file__))
-android_root = path.realpath(path.join(script_dir, '..', '..', '..'))
+# Don't resolve symlinks for the root, tools/extract-utils may be one
+script_dir = path.dirname(path.abspath(__file__))
+android_root = path.abspath(path.join(script_dir, '..', '..', '..'))
 
 extract_utils_dir = path.realpath(path.join(script_dir, '..'))
 sdat2img_path = path.join(extract_utils_dir, 'sdat2img.py')
