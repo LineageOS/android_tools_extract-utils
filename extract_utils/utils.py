@@ -259,7 +259,13 @@ def TemporaryWorkingDirectory(dir_path: str) -> Generator[None, None, None]:
 
 
 def scan_tree(dir_path: str) -> Generator[DirEntry[str], None, None]:
-    for entry in os.scandir(dir_path):
+    try:
+        entries = list(os.scandir(dir_path))
+    except OSError:
+        # Unreadable directory, e.g. root-only dirs in a mounted system
+        return
+
+    for entry in entries:
         if entry.is_dir(follow_symlinks=False):
             yield from scan_tree(entry.path)
         else:
