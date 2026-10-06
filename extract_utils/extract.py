@@ -465,7 +465,10 @@ def find_partitions(dump_dir: str, ctx: ExtractCtx, missing: bool = False):
             # Nothing is unpacked, a partition is done once its image is there
             exists = find_partition_image_path(partition, dump_dir) is not None
         else:
-            dump_partition_dir = path.join(dump_dir, partition)
+            dump_partition_dir = path.join(
+                dump_dir,
+                resolve_alternate_partition_path(dump_dir, partition),
+            )
             exists = (
                 path.isdir(dump_partition_dir)
                 and len(os.listdir(dump_partition_dir)) != 0
@@ -846,6 +849,27 @@ def run_extract_fns(dump_dir: str, ctx: ExtractCtx):
                     processed_files.add(processed_file)
 
         remove_file_paths(processed_files)
+
+
+def resolve_alternate_partition_path(dump_dir: str, rel_path: str):
+    # Fall back to the alternate location if the partition dir is missing,
+    # e.g. its symlink dangles in a mounted system
+    partition, _, rest = rel_path.partition('/')
+    if path.isdir(path.join(dump_dir, partition)):
+        return rel_path
+
+    alternate_partition_path = ALTERNATE_PARTITION_PATH_MAP.get(partition)
+    if alternate_partition_path is None:
+        return rel_path
+
+    # The alternate path can be in another alternate partition, e.g. odm
+    alternate_partition_path = resolve_alternate_partition_path(
+        dump_dir, alternate_partition_path
+    )
+    if not path.isdir(path.join(dump_dir, alternate_partition_path)):
+        return rel_path
+
+    return path.join(alternate_partition_path, rest)
 
 
 def move_alternate_partition_paths(dump_dir: str):
