@@ -169,20 +169,25 @@ class FileBpBuilder(BpBuilder):
 
         self.set_partition(file.partition)
 
-    def __file_dir_without_prefix(self, is_app: bool = False) -> Optional[str]:
+    def __file_dir_without_prefix(self) -> Optional[str]:
         # Remove the length of the file tree prefix from the dirname,
         # including the final slash
         remaining = self.__file.dirname[self.__prefix_len :]
         if not remaining:
             return None
 
-        if is_app and '/' not in remaining:
-            return None
-
         return remaining
 
     def relative_install_path(self, is_app: bool = False):
-        p = self.__file_dir_without_prefix(is_app)
+        p = self.__file_dir_without_prefix()
+        if is_app and p is not None:
+            head, _, last = p.rpartition('/')
+            if last == self.__file.root:
+                # The build adds the app's own dir
+                p = head or None
+            else:
+                self.set('install_path_skip_module_dir', True)
+
         return self.set('relative_install_path', p, optional=True)
 
     def sub_dir(self):
