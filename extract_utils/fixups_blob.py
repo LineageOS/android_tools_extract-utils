@@ -29,6 +29,7 @@ from extract_utils.utils import (
     Color,
     TemporaryWorkingDirectory,
     color_print,
+    import_module,
     run_cmd,
 )
 
@@ -352,11 +353,32 @@ class blob_fixup:
     def copy_file_from_tmp(self) -> blob_fixup:
         return self.call(self.copy_file_from_tmp_impl, need_tmp_dir=True)
 
-    def patch_file(self, patches_path: str) -> blob_fixup:
+    def patch_file(
+        self, patches_path: str, *args, need_tmp_dir: bool = True, **kwargs: Any
+    ) -> blob_fixup:
+        if patches_path.endswith('.py'):
+            impl = partial(self.patch_file_py_impl, patches_path)
+            return self.call(impl, *args, need_tmp_dir=need_tmp_dir, **kwargs)
+
         self.copy_file_to_tmp()
         self.patch_dir(patches_path)
         self.copy_file_from_tmp()
         return self
+
+    def patch_file_py_impl(
+        self,
+        patch_path: str,
+        ctx: BlobFixupCtx,
+        file: File,
+        file_path: str,
+        *args: Any,
+        **kwargs: Any,
+    ):
+        module = import_module(
+            os.path.splitext(patch_path)[0],
+            os.path.join(ctx.module_dir, patch_path),
+        )
+        module.blob_fixup(ctx, file, file_path, *args, **kwargs)
 
     def apktool_unpack_impl(
         self,
