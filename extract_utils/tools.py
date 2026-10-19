@@ -41,8 +41,13 @@ llvm_binaries_dir = path.join(
     android_root,
     'prebuilts/clang/host/linux-x86/llvm-binutils-stable',
 )
+llvm_cxxfilt_path = path.join(llvm_binaries_dir, 'llvm-cxxfilt')
+llvm_nm_path = path.join(llvm_binaries_dir, 'llvm-nm')
 llvm_objdump_path = path.join(llvm_binaries_dir, 'llvm-objdump')
 llvm_strip_path = path.join(llvm_binaries_dir, 'llvm-strip')
+
+rust_config_path = path.join(android_root, 'build/soong/rust/config/global.go')
+rust_toolchain_dir = path.join(android_root, 'prebuilts/rust-toolchain')
 
 lineage_scripts_dir = path.join(android_root, 'lineage/scripts')
 carriersettings_extractor_path = path.join(
