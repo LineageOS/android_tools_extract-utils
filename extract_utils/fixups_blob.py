@@ -17,6 +17,7 @@ from typing import Any, List, Optional, Protocol
 from extract_utils.elf import file_needs_lib
 from extract_utils.file import File
 from extract_utils.fixups import fixups_type, fixups_user_type
+from extract_utils.rust_symbols import CrateMetadata, rust_symbol_renames
 from extract_utils.tools import (
     DEFAULT_PATCHELF_VERSION,
     apktool_path,
@@ -173,6 +174,42 @@ class blob_fixup:
 
     def clear_symbol_version(self, symbol: str) -> blob_fixup:
         impl = partial(self.clear_symbol_version_impl, symbol)
+        return self.call(impl)
+
+    def fix_rust_symbols_impl(
+        self,
+        crate_metadata: Optional[CrateMetadata],
+        ctx: BlobFixupCtx,
+        file: File,
+        file_path: str,
+        *args: Any,
+        tmp_dir: Optional[str] = None,
+        **kwargs: Any,
+    ):
+        assert tmp_dir is not None
+
+        renames = rust_symbol_renames(file_path, crate_metadata)
+        if not renames:
+            return
+
+        map_path = path.join(tmp_dir, 'rust_symbols.map')
+        with open(map_path, 'w', encoding='utf-8') as f:
+            f.writelines(f'{old} {new}\n' for old, new in renames.items())
+
+        run_cmd(
+            [
+                self.__patchelf_path,
+                '--rename-dynamic-symbols',
+                map_path,
+                file_path,
+            ]
+        )
+
+    def fix_rust_symbols(
+        self,
+        crate_metadata: Optional[CrateMetadata] = None,
+    ) -> blob_fixup:
+        impl = partial(self.fix_rust_symbols_impl, crate_metadata)
         return self.call(impl)
 
     def fix_soname_impl(
