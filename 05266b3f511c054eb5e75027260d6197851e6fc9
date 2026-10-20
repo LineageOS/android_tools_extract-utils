@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af14c264_5e7b83bd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2026-10-20T18:26:05Z",
+      "side": 1,
+      "message": "This would fail for PrebuiltGmsCore/m/optional/MlkitBarcodeUIPrebuilt.apk.\nDrop the last component when it equals file.root, and otherwise keep the full dir and set install_path_skip_module_dir: true instead.",
+      "revId": "05266b3f511c054eb5e75027260d6197851e6fc9",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
