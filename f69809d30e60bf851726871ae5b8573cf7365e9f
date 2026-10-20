@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1234a839_0791eeab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 17257
+      },
+      "writtenOn": "2026-10-20T18:27:14Z",
+      "side": 1,
+      "message": "I don\u0027t think this handles odm -\u003e vendor/odm -\u003e system/vendor/odm alternate path properly.",
+      "revId": "f69809d30e60bf851726871ae5b8573cf7365e9f",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
