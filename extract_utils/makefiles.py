@@ -154,6 +154,20 @@ def file_gen_deps_check_elf(global_check_elf: bool, file: File):
     return gen_deps, check_elf
 
 
+def file_module_name(file: File, package_name: str) -> Optional[str]:
+    if FileArgs.MODULE_SUFFIX in file.args:
+        module_suffix = file.args[FileArgs.MODULE_SUFFIX]
+        assert isinstance(module_suffix, str)
+        return package_name + module_suffix
+
+    if FileArgs.MODULE in file.args:
+        module = file.args[FileArgs.MODULE]
+        assert isinstance(module, str)
+        return module
+
+    return None
+
+
 def file_stem_package_name(
     file: File,
     can_have_stem: bool = False,
@@ -166,16 +180,10 @@ def file_stem_package_name(
         package_name = file.basename
 
     if can_have_stem:
-        if FileArgs.MODULE_SUFFIX in file.args:
+        module_name = file_module_name(file, package_name)
+        if module_name is not None:
             stem = package_name
-            module_suffix = file.args[FileArgs.MODULE_SUFFIX]
-            assert isinstance(module_suffix, str)
-            package_name += module_suffix
-        elif FileArgs.MODULE in file.args:
-            stem = package_name
-            module = file.args[FileArgs.MODULE]
-            assert isinstance(module, str)
-            package_name = module
+            package_name = module_name
 
     return stem, package_name
 
@@ -185,7 +193,7 @@ def file_rust_dylib_package_name(file: File):
     if package_name.endswith(RUST_DYLIB_STEM_SUFFIX):
         package_name = package_name[: -len(RUST_DYLIB_STEM_SUFFIX)]
 
-    return package_name
+    return file_module_name(file, package_name) or package_name
 
 
 def file_subtree_rel_path(file: File, subtree_prefix_len: int) -> Optional[str]:
