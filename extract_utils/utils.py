@@ -23,10 +23,12 @@ from typing import (
     Any,
     BinaryIO,
     Callable,
+    Dict,
     Generator,
     Iterable,
     List,
     Optional,
+    Tuple,
     Union,
 )
 from urllib.request import Request, urlopen
@@ -83,6 +85,45 @@ def file_path_hash(file_path: str, file_hash: Any):
 
 def file_path_sha1(file_path: str):
     return file_path_hash(file_path, hashlib.sha1())
+
+
+def iter_dir_files(dir_path: str) -> Generator[str, None, None]:
+    for root, dirs, files in os.walk(dir_path):
+        dirs[:] = [d for d in dirs if d[0] != '.']
+        for f in files:
+            if f[0] == '.':
+                continue
+            yield path.join(root, f)
+
+
+def snapshot_dir_files(dir_path: str) -> Dict[str, Tuple[int, int, str]]:
+    snapshot: Dict[str, Tuple[int, int, str]] = {}
+    for file_path in iter_dir_files(dir_path):
+        st = os.stat(file_path)
+        snapshot[file_path] = (
+            st.st_size,
+            st.st_mtime_ns,
+            file_path_sha1(file_path),
+        )
+    return snapshot
+
+
+def restore_unchanged_mtimes(snapshot: Dict[str, Tuple[int, int, str]]):
+    # Rewriting identical files bumps their mtime, which makes ninja
+    # rebuild everything depending on them, restore the old mtime instead
+    for file_path, (size, mtime_ns, sha1) in snapshot.items():
+        try:
+            st = os.stat(file_path)
+        except FileNotFoundError:
+            continue
+
+        if st.st_size != size or st.st_mtime_ns == mtime_ns:
+            continue
+
+        if file_path_sha1(file_path) != sha1:
+            continue
+
+        os.utime(file_path, ns=(st.st_atime_ns, mtime_ns))
 
 
 def file_path_sha256(file_path: str):

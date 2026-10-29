@@ -23,6 +23,8 @@ from extract_utils.utils import (
     color_print,
     get_module_attr,
     import_module,
+    restore_unchanged_mtimes,
+    snapshot_dir_files,
 )
 
 
@@ -163,6 +165,17 @@ class ExtractUtils:
             )
 
     def run(self):
+        snapshot = {}
+        for module in self.__modules:
+            if path.isdir(module.vendor_path):
+                snapshot.update(snapshot_dir_files(module.vendor_path))
+
+        try:
+            self.__run()
+        finally:
+            restore_unchanged_mtimes(snapshot)
+
+    def __run(self):
         extract_fns: extract_fns_type = []
         extract_partitions: Set[str] = set()
         firmware_files: List[File] = []
