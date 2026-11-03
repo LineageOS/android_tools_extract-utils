@@ -27,6 +27,7 @@ from typing import (
     Iterable,
     List,
     Optional,
+    Set,
     Union,
 )
 from urllib.request import Request, urlopen
@@ -56,9 +57,12 @@ def get_module_attr(module: Optional[ModuleType], attr: str):
     return getattr(module, attr, None)
 
 
-def remove_dir_contents(dir_path: str):
+def remove_dir_contents(dir_path: str, preserve: Optional[Set[str]] = None):
+    if preserve is None:
+        preserve = set()
+
     for f in os.scandir(dir_path):
-        if f.name[0] == '.':
+        if f.name in preserve or f.name[0] == '.':
             continue
 
         if f.is_dir():

@@ -36,6 +36,11 @@ group.add_argument(
 # TODO: --only-firmware
 
 parser.add_argument(
+    '--skip-firmware',
+    action='store_true',
+    help='skip firmware extraction',
+)
+parser.add_argument(
     '-n',
     '--no-cleanup',
     action='store_true',
@@ -123,6 +128,7 @@ class Args:
         self.only_common: bool = args.only_common
         self.only_target: bool = args.only_target
         self.only_name: str = args.only_name
+        self.skip_firmware: bool = args.skip_firmware
         self.extract_factory: bool = args.extract_factory
         self.regenerate_makefiles: bool = args.regenerate_makefiles
         self.regenerate: bool = args.regenerate
