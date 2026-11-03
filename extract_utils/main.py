@@ -122,6 +122,7 @@ class ExtractUtils:
                 self.__args.extract_factory,
                 self.__args.section,
                 self.__args.allow_prohibited_files,
+                self.__args.skip_firmware,
             )
             if not copied:
                 all_copied = False
@@ -180,9 +181,10 @@ class ExtractUtils:
                 extract_partitions.update(
                     module.get_extract_partitions(self.__args.section),
                 )
-                firmware_files.extend(
-                    module.get_firmware_files(),
-                )
+                if not self.__args.skip_firmware:
+                    firmware_files.extend(
+                        module.get_firmware_files(),
+                    )
                 factory_files.extend(
                     module.get_factory_files(),
                 )

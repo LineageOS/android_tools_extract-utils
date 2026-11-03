@@ -1114,6 +1114,7 @@ class ExtractUtilsModule:
         kang: bool,
         extract_factory: bool,
         allow_prohibited_files: bool = False,
+        skip_firmware: bool = False,
     ) -> bool:
         all_copied = True
 
@@ -1121,6 +1122,12 @@ class ExtractUtilsModule:
             if (
                 not extract_factory
                 and proprietary_file.kind is ProprietaryFileType.FACTORY
+            ):
+                continue
+
+            if (
+                skip_firmware
+                and proprietary_file.kind is ProprietaryFileType.FIRMWARE
             ):
                 continue
 
@@ -1145,8 +1152,14 @@ class ExtractUtilsModule:
 
         return all_copied
 
-    def cleanup(self):
-        remove_dir_contents(self.vendor_path)
+    def cleanup(self, skip_firmware: bool = False):
+        firmware_paths = {
+            proprietary_file.vendor_rel_sub_path.split(path.sep)[0]
+            for proprietary_file in self.proprietary_files
+            if skip_firmware
+            and proprietary_file.kind is ProprietaryFileType.FIRMWARE
+        }
+        remove_dir_contents(self.vendor_path, firmware_paths)
 
         for proprietary_file in self.proprietary_files:
             vendor_path = self.proprietary_file_vendor_path(proprietary_file)
@@ -1163,6 +1176,7 @@ class ExtractUtilsModule:
         extract_factory: bool,
         section: Optional[str],
         allow_prohibited_files: bool = False,
+        skip_firmware: bool = False,
     ):
         with tempfile.TemporaryDirectory() as backup_dir:
             # Kang is usually combined with section, but allow them separately
@@ -1170,7 +1184,7 @@ class ExtractUtilsModule:
                 self.backup_pinned_files(backup_dir)
 
             if section is None and not no_cleanup:
-                self.cleanup()
+                self.cleanup(skip_firmware)
 
             backup_source = DiskSource(backup_dir)
 
@@ -1180,4 +1194,5 @@ class ExtractUtilsModule:
                 kang,
                 extract_factory,
                 allow_prohibited_files=allow_prohibited_files,
+                skip_firmware=skip_firmware,
             )
