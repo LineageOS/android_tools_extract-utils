@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import platform
 from os import path
 from typing import Dict
 
@@ -17,7 +18,13 @@ android_root = path.realpath(path.join(script_dir, '..', '..', '..'))
 extract_utils_dir = path.realpath(path.join(script_dir, '..'))
 sdat2img_path = path.join(extract_utils_dir, 'sdat2img.py')
 
-binaries_dir = path.join(android_root, 'prebuilts/extract-tools/linux-x86/bin')
+host_prebuilt_tag = (
+    'linux-arm64' if platform.machine() == 'aarch64' else 'linux-x86'
+)
+
+binaries_dir = path.join(
+    android_root, 'prebuilts/extract-tools', host_prebuilt_tag, 'bin'
+)
 ota_extractor_path = path.join(binaries_dir, 'ota_extractor')
 stripzip_path = path.join(binaries_dir, 'stripzip')
 
@@ -27,19 +34,26 @@ for version in patchelf_versions:
         binaries_dir, f'patchelf-{version}'
     )
 
-build_tools_dir = path.join(android_root, 'prebuilts/build-tools/linux-x86/bin')
+build_tools_dir = path.join(
+    android_root, 'prebuilts/build-tools', host_prebuilt_tag, 'bin'
+)
 brotli_path = path.join(build_tools_dir, 'brotli')
 
 
 common_binaries_dir = path.join(android_root, 'prebuilts/extract-tools/common')
 apktool_path = path.join(common_binaries_dir, 'apktool/apktool.jar')
 
-jdk_binaries_dir = path.join(android_root, 'prebuilts/jdk/jdk21/linux-x86/bin')
+jdk_version = 'jdk25' if host_prebuilt_tag == 'linux-arm64' else 'jdk21'
+jdk_binaries_dir = path.join(
+    android_root, 'prebuilts/jdk', jdk_version, host_prebuilt_tag, 'bin'
+)
 java_path = path.join(jdk_binaries_dir, 'java')
 
 llvm_binaries_dir = path.join(
     android_root,
-    'prebuilts/clang/host/linux-x86/llvm-binutils-stable',
+    'prebuilts/clang/host',
+    host_prebuilt_tag,
+    'llvm-binutils-stable',
 )
 llvm_objdump_path = path.join(llvm_binaries_dir, 'llvm-objdump')
 llvm_strip_path = path.join(llvm_binaries_dir, 'llvm-strip')
