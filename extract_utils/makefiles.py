@@ -299,6 +299,7 @@ def write_elfs_package(
             .prefer()
             .specific()
             .recovery_available()
+            .set('overrides', file.overrides, optional=True)
             .set('required', file.required, optional=True)
         )
 
@@ -325,6 +326,7 @@ def write_elfs_package(
             .relative_install_path()
             .specific()
             .recovery_available()
+            .set('overrides', file.overrides, optional=True)
             .set('required', file.required, optional=True)
         )
 
@@ -350,6 +352,7 @@ def write_elfs_package(
             .relative_install_path()
             .specific()
             .recovery_available()
+            .set('overrides', file.overrides, optional=True)
             .set('required', file.required, optional=True)
         )
 
@@ -368,6 +371,7 @@ def write_elfs_package(
         .prefer()
         .specific()
         .recovery_available()
+        .set('overrides', file.overrides, optional=True)
         .set('required', file.required, optional=True)
     )
 
