@@ -16,6 +16,23 @@
       "message": "That\u0027s fine, if it works.",
       "revId": "3140b21fc222cc289d6b6816f60b5a9a382690e1",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc8fd714_82401c93",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 3917
+      },
+      "writtenOn": "2026-11-23T21:53:39Z",
+      "side": 1,
+      "message": "makes apex override work for nicepool",
+      "revId": "3140b21fc222cc289d6b6816f60b5a9a382690e1",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
