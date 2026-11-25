@@ -38,6 +38,7 @@ APKTOOL_NO_SRC_ARG = '--no-src'
 APKTOOL_SRC_PATH_PREFIX = 'smali'
 APKTOOL_RES_PATH = 'res/'
 APKTOOL_ANDROID_MANIFEST_NAME = 'AndroidManifest.xml'
+APKTOOL_YML = 'apktool.yml'
 
 
 class BlobFixupCtx:
@@ -247,7 +248,7 @@ class blob_fixup:
             if affected_file.startswith(APKTOOL_SRC_PATH_PREFIX):
                 decode_src = True
 
-            if affected_file == APKTOOL_ANDROID_MANIFEST_NAME:
+            if affected_file in [APKTOOL_ANDROID_MANIFEST_NAME, APKTOOL_YML]:
                 decode_manifest = True
 
         unpack_args: List[str] = []
