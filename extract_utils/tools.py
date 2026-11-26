@@ -5,6 +5,8 @@
 
 from __future__ import annotations
 
+import os
+import platform
 from os import path
 from typing import Dict
 
@@ -34,7 +36,22 @@ brotli_path = path.join(build_tools_dir, 'brotli')
 common_binaries_dir = path.join(android_root, 'prebuilts/extract-tools/common')
 apktool_path = path.join(common_binaries_dir, 'apktool/apktool.jar')
 
-jdk_binaries_dir = path.join(android_root, 'prebuilts/jdk/jdk21/linux-x86/bin')
+
+def get_java_home() -> str:
+    java_home = os.environ.get('OVERRIDE_ANDROID_JAVA_HOME')
+    if java_home:
+        return path.join(android_root, java_home)
+
+    jdk_dir = path.join(android_root, 'prebuilts/jdk/jdk21')
+    if platform.machine() in ('aarch64', 'arm64'):
+        arm64_java_home = path.join(jdk_dir, 'linux-arm64')
+        if path.isdir(arm64_java_home):
+            return arm64_java_home
+
+    return path.join(jdk_dir, 'linux-x86')
+
+
+jdk_binaries_dir = path.join(get_java_home(), 'bin')
 java_path = path.join(jdk_binaries_dir, 'java')
 
 llvm_binaries_dir = path.join(
